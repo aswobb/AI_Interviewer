@@ -41,7 +41,7 @@ const routes = [
 
     },
     {
-        path: '/login',
+        path: '/interview/user/login',
         component: () => import('../views/UserLoginView.vue')
 
     }

@@ -19,7 +19,7 @@ public class TextToSpeechHTTPExample {
                 "チェックボックスで選択したら送信ボタンを押してください。";
         String languageCode = "ja-JP";
         String outputFile = "output.wav";
-        String apiKey = "AIzaSyBRRb_8siztcjA19YLZ6veYzl7yCfqyOpc"; // Replace with your API key
+        String apiKey = "11"; // Replace with your API key
 
         // Construct JSON payload
         String jsonPayload = "{\"audioConfig\":{\"audioEncoding\":\"LINEAR16\",\"effectsProfileId\":[\"small-bluetooth-speaker-class-device\"],\"pitch\":0,\"speakingRate\":1},\"input\":{\"text\":\"" + text + "\"},\"voice\":{\"languageCode\":\"" + languageCode + "\",\"name\":\"ja-JP-Standard-A\"}}";

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.app.sns.aiproduct.mapper.LoginMapper">
+    <!--UserLoginInfoVO getLoginInfo(String username);-->
+    <select id="getLoginInfo" resultMap="LoginInfoResult">
+        SELECT
+        <include refid="LoginInfoQueryFiled"/>
+        FROM sns_user
+        WHERE username=#{username}
+    </select>
+
+    <resultMap id="LoginInfoResult" type="com.app.sns.aiproduct.pojo.vo.UserLoginInfoVO">
+        <id column="id" property="id"/>
+        <result column="username" property="username"/>
+        <result column="password" property="password"/>
+        <result column="enable" property="enable"/>
+    </resultMap>
+
+    <sql id="LoginInfoQueryFiled">
+        <if test="true">
+            id,username,password,enable
+        </if>
+    </sql>
+</mapper>

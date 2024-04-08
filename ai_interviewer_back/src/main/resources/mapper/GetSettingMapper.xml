@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.app.sns.aiproduct.mapper.GetGPTSettingMapper">
+    <select id="getGptSettingInfo" resultMap="GTPSettingInfoResult">
+        SELECT
+        <include refid="GPTSettingInfoQueryField"/>
+        FROM sns_gpt_setting
+        WHERE settingname=#{settingname}
+    </select>
+
+    <resultMap id="GTPSettingInfoResult" type="com.app.sns.aiproduct.pojo.vo.ChatGPTSettingVO">
+        <id column="id" property="id"/>
+        <result column="settingname" property="settingname"/>
+        <result column="model" property="model"/>
+        <result column="promptcontent" property="promptcontent"/>
+    </resultMap>
+
+    <sql id="GPTSettingInfoQueryField">
+        <if test="true">
+            id,settingname,model,promptcontent
+        </if>
+    </sql>
+</mapper>

@@ -6,7 +6,8 @@
   <div class="login">
     <!-- test用 -->
     <div class="q-pa-md q-gutter-sm">
-      <q-btn color="primary" @click="goToOtherPage" label="開発者管理画面":style="{ width: '120px', height: '50px' }"></q-btn>
+      <q-btn color="primary" @click="goToOtherPage" label="試験用開発者管理画面":style="{ width: '140px', height: '50px' }"></q-btn>
+      <q-btn color="primary" @click="goTomanagePage" label="試験用ユーザ管理者画面":style="{ width: '140px', height: '50px' }"></q-btn>
     </div>
     <!-- test用 -->
     <div class="login-form">
@@ -108,6 +109,10 @@ export default {
     goToOtherPage() {
       // 使用 $router.push() 方法进行页面导航
       this.$router.push({path :'/manage'})
+    },
+    goTomanagePage() {
+      // 使用 $router.push() 方法进行页面导航
+      this.$router.push({path :'/usermanage'})
     }
 
 

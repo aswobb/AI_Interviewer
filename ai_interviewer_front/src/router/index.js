@@ -30,6 +30,12 @@ const routes = [
         component: () => import('../views/accountset.vue')
 
     },
+    {
+        path: '/usermanage',
+        component: () => import('../views/manage.vue')
+
+    }
+    
 ]
 
 const router = new VueRouter({

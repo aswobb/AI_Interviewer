@@ -5,7 +5,7 @@
       <q-page class="welcome-page">
 
         <div class="welcome-content">
-          <h3>管理用画面</h3>
+          <h3>SNSソフト管理用画面</h3>
           
             <q-btn @click="goToDashboard" color="primary" label="ログイン画面へ" :style="{ width: '140px', height: '50px' }"class="btn-spacing"/>
             <q-btn @click="goToaccountset" color="primary" label="アカウント登録・変更" :style="{ width: '140px', height: '50px' }"class="btn-spacing"/>

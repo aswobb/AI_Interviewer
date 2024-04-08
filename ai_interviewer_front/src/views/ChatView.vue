@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <audio ref="audioPlayer"></audio>
     <el-row class="title">
       SNSソフト・AI面接官
       <el-dropdown class="title-menu">
@@ -10,14 +11,6 @@
         </el-dropdown-menu>
       </el-dropdown>
     </el-row>
-    <div>
-      <q-btn @click="getAudioData" color="primary" lebal="音声">
-      </q-btn>
-
-      <!-- <audio ref="audioPlayer" controls> -->
-      <!-- 这里的 src 属性会在 JavaScript 中设置 -->
-      <!-- </audio> -->
-    </div>
     <el-row class="content">
       <el-col class="bot-message" 
       :xl="getBreakpointConfig('xl',false)"
@@ -115,7 +108,7 @@ export default {
       isButtonDisabled: false,
       isLoading: false,
       composing: false, // 跟踪输入法状态
-
+      audioURL: '', // 存储音频的URL
       checkboxAll: false,       // 「全て」のチェックボックスがチェックされているかどうか
       checkBoxes: [             // チェックボックス制御用の変数、この変数に格納されているオブジェクトを追加すればチェックボックス増やせるはずです。
         {checked: false, point: "技術スキル"},
@@ -138,8 +131,7 @@ export default {
           md: {offset: 11, span:10},
           sm: {offset: 9, span:12},
           xs: {offset: 4, span:18},
-        },
-        audioURL: '', // 存储音频的URL
+        }
       },
 
       isCheckboxDisabled: false,    // チェックボックスの入力制御
@@ -147,7 +139,6 @@ export default {
       tmp: 0, //デバッグ用
     };
   },
-
   computed: {
     getPlaceholderText(){
       if (this.isCheckboxDisabled){
@@ -258,7 +249,7 @@ export default {
           }).join(',');
           // 发送 API 请求
           const response = await axios.post(
-            "/api/chat/sendMessage",
+            "/api/chat/sendMessageByGoogleCloud",
             {
               message: chatBody,
             },
@@ -282,15 +273,29 @@ export default {
           // 处理 API 响应
           if (response.data && response.data.state === 20000) {
             const botResponse = response.data.data;
-            const formattedResponse = botResponse.replace(/\\n/g, "\n");
+            const content = botResponse.content;
+            const formattedContent = content.replace(/\\n/g, "\n");
+            const audioContent = botResponse.audioContent;
+
+            // 创建一个 Blob 对象
+            const blob = new Blob([this.base64ToArrayBuffer(audioContent)], { type: 'audio/wav' });
+            
+            // 使用 URL.createObjectURL() 创建音频的 URL
+            this.audioURL = URL.createObjectURL(blob);
+
+            // 设置音频的源
+            this.$refs.audioPlayer.src = this.audioURL;
+
+            // 播放音频
+            this.$refs.audioPlayer.play();
 
             // 将机器人的响应添加到 messages 数组中
             this.renderMessages.push({
-              text: botResponse,
+              text: formattedContent,
               isUser: false,
             });
             this.messages.push({
-              text: botResponse,
+              text: formattedContent,
               isUser: false,
             })
             // 确保在DOM更新后执行滚动操作
@@ -317,6 +322,15 @@ export default {
         this.isButtonDisabled = false;
         this.userMessage = "";
       }
+    },
+    // 将 Base64 编码的字符串转换为 ArrayBuffer
+    base64ToArrayBuffer(base64) {
+      const binaryString = window.atob(base64);
+      const bytes = new Uint8Array(binaryString.length);
+      for (let i = 0; i < binaryString.length; i++) {
+        bytes[i] = binaryString.charCodeAt(i);
+      }
+      return bytes.buffer;
     },
     scrollToBottom() {
       const content = this.$el.querySelector(".content");
@@ -427,38 +441,6 @@ export default {
         return this.responsiveDesignSettings.botMessage[breakpoint];
       }
     },
-    getAudioData() {
-      // 发送HTTP请求获取音频数据
-      axios.get('URL_TO_YOUR_BACKEND_ENDPOINT')
-        .then(response => {
-          // 解析从后端获取的音频数据
-          const audioContent = response.data.audioContent;
- 
-          // 创建一个 Blob 对象
-          const blob = new Blob([this.base64ToArrayBuffer(audioContent)], { type: 'audio/wav' });
- 
-          // 使用 URL.createObjectURL() 创建音频的 URL
-          this.audioURL = URL.createObjectURL(blob);
- 
-          // 设置音频的源
-          this.$refs.audioPlayer.src = this.audioURL;
- 
-          // 播放音频
-          this.$refs.audioPlayer.play();
-        })
-        .catch(error => {
-          console.error('Error fetching audio data:', error);
-        });
-    },
-    base64ToArrayBuffer(base64) {
-      const binaryString = window.atob(base64);
-      const bytes = new Uint8Array(binaryString.length);
-      for (let i = 0; i < binaryString.length; i++) {
-        bytes[i] = binaryString.charCodeAt(i);
-      }
-      return bytes.buffer;
-    },
-  
   },
 
   watch: {
@@ -477,7 +459,6 @@ export default {
   },
   mounted: function() {
     // 読み込まれたらdatalayerにloginid書き出し
-    this.getAudioData(); // 在组件加载时获取音频数据
     dataLayer = [{
       login_id: sessionStorage.getItem('username') || ''
     }]

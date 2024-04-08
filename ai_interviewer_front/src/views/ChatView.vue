@@ -89,6 +89,9 @@
           </template>
           <template v-else> 送信 </template>
         </el-button>
+        <!-- 音声入力試験用-->
+        <q-btn @click="toggleSpeechRecognition" :label="speechRecognitionActive ? '音声入力停止' : '音声入力開始'" color="primary" :style="{ width: '140px', height: '50px' }"/>
+        <!-- 音声入力試験用-->
       </el-col>
     </el-row>
   </div>
@@ -109,6 +112,8 @@ export default {
       isLoading: false,
       composing: false, // 跟踪输入法状态
       audioURL: '', // 存储音频的URL
+      speechRecognitionActive: false, // 记录语音输入是否激活
+      recognition: null ,// 存储语音识别对象
       checkboxAll: false,       // 「全て」のチェックボックスがチェックされているかどうか
       checkBoxes: [             // チェックボックス制御用の変数、この変数に格納されているオブジェクトを追加すればチェックボックス増やせるはずです。
         {checked: false, point: "技術スキル"},
@@ -441,7 +446,39 @@ export default {
         return this.responsiveDesignSettings.botMessage[breakpoint];
       }
     },
+    // 音声入力試験用
+    startSpeechRecognition() {
+      const recognition = new webkitSpeechRecognition(); // 创建语音识别对象
+      recognition.lang = 'ja-JP'; // 设置语言，这里是简体中文
+      recognition.start(); // 开始语音识别
+
+      recognition.onresult = (event) => { // 当识别完成时
+        this.userMessage = event.results[0][0].transcript; // 将识别结果赋值给transcript变量
+      }
+
+      this.recognition.onend = () => {
+        this.stopSpeechRecognition();
+      }
+    },
+
+    stopSpeechRecognition() {
+      if (this.recognition) {
+        this.recognition.stop(); // 停止语音识别
+        this.recognition = null; // 释放语音识别对
+      }
+    },
+    toggleSpeechRecognition() {
+      if (!this.speechRecognitionActive) {
+        // 开始语音识别
+        this.startSpeechRecognition();
+      } else {
+        // 停止语音识别
+        this.stopSpeechRecognition();
+      }
+      this.speechRecognitionActive = !this.speechRecognitionActive; // 切换语音输入状态
+    }
   },
+
 
   watch: {
     userMessage(newVal) {

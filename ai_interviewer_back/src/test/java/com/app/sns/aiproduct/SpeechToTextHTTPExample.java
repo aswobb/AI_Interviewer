@@ -34,7 +34,7 @@ public class SpeechToTextHTTPExample {
     }
 
     private static String sendPostRequest(String audioContent) throws IOException {
-        String apiKey = "AIzaSyBRRb_8siztcjA19YLZ6veYzl7yCfqyOpc"; // 替换为您的 Google Cloud API 密钥
+        String apiKey = "11"; // 替换为您的 Google Cloud API 密钥
         String url = "https://speech.googleapis.com/v1/speech:recognize?key=" + apiKey;
 
         String jsonPayload = "{\"config\": {\"encoding\":\"LINEAR16\",\"languageCode\":\"ja-JP\"},\"audio\": {\"content\": \"" + audioContent + "\"}}";

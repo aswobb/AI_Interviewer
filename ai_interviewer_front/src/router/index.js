@@ -34,7 +34,13 @@ const routes = [
         path: '/usermanage',
         component: () => import('../views/manage.vue')
 
+    },
+    {
+        path: '/setpassword',
+        component: () => import('../views/setpassword.vue')
+
     }
+
     
 ]
 

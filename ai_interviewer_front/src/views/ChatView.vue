@@ -447,9 +447,12 @@ export default {
       }
     },
     // 音声入力試験用
-    startSpeechRecognition() {
+    async startSpeechRecognition() {
+    try{  
+      this.stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const recognition = new webkitSpeechRecognition(); // 创建语音识别对象
       recognition.lang = 'ja-JP'; // 设置语言，这里是简体中文
+      recognition.interimResults = false;
       recognition.start(); // 开始语音识别
 
       recognition.onresult = (event) => { // 当识别完成时
@@ -458,6 +461,11 @@ export default {
 
       this.recognition.onend = () => {
         this.stopSpeechRecognition();
+        stream.getTracks().forEach(track => track.stop());
+      }
+    }catch (error) {
+        console.error('権限取得失敗しました：', error);
+        // 处理获取媒体权限失败的情况
       }
     },
 
@@ -466,6 +474,10 @@ export default {
         this.recognition.stop(); // 停止语音识别
         this.recognition = null; // 释放语音识别对
       }
+      if (this.stream !== null) {
+    this.stream.getTracks().forEach(track => track.stop());
+    this.stream = null; // 将stream置为null，释放资源
+  }
     },
     toggleSpeechRecognition() {
       if (!this.speechRecognitionActive) {
@@ -478,7 +490,8 @@ export default {
         this.stopSpeechRecognition();
       }
     
-    }
+    },
+
   },
 
 

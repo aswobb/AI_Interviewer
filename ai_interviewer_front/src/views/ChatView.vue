@@ -461,7 +461,6 @@ export default {
 
       this.recognition.onend = () => {
         this.stopSpeechRecognition();
-        stream.getTracks().forEach(track => track.stop());
       }
     }catch (error) {
         console.error('権限取得失敗しました：', error);

@@ -51,7 +51,9 @@ public class LoginServiceImpl implements ILoginService {
                     }
                 }
                 Map<String, String> payload = new HashMap<>();
-                payload.put("username", userLoginInfoOutDTO.getUsername());
+                payload.put("userId", userLoginInfoOutDTO.getId()+"");
+                payload.put("userName", userLoginInfoOutDTO.getUsername());
+                payload.put("roleId", userLoginInfoOutDTO.getRoleId());
                 String tokenMessage = JWTUtil.getToken(payload);
                 userLoginInfoOutDTO.setToken(tokenMessage);
                 return userLoginInfoOutDTO;

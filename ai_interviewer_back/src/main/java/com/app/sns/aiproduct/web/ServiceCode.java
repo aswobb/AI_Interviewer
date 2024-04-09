@@ -42,4 +42,8 @@ public interface ServiceCode {
      * 原密码错误
      */
     Integer INVALID_OLD_PASSWORD = 60001;
+    /**
+     * 余额不足
+     */
+    Integer INSUFFICIENT_BALANCE = 70001;
 }

@@ -100,14 +100,6 @@ export default {
       this.$refs[formName].resetFields();
     },
 
-    goToOtherPage() {
-      // 使用 $router.push() 方法进行页面导航
-      this.$router.push({path :'/manage'})
-    },
-    goTomanagePage() {
-      // 使用 $router.push() 方法进行页面导航
-      this.$router.push({path :'/usermanage'})
-    }
 
 
   }

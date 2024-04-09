@@ -90,7 +90,7 @@
           <template v-else> 送信 </template>
         </el-button>
         <!-- 音声入力試験用-->
-        <q-btn @click="toggleSpeechRecognition"  :label="speechRecognitionActive ? '音声入力停止' : '音声入力開始'" color="primary" :style="{ width: '140px', height: '45px'}"class="btn-spacing"/>
+        <q-btn @click="toggleSpeechRecognition"  :label="speechRecognitionActive ? '音声入力停止' : '音声入力開始'" color="primary" :style="{ width: '130px', height: '45px'}"class="btn-spacing"/>
         <!-- 音声入力試験用-->
       </el-col>
     </el-row>
@@ -128,7 +128,7 @@ export default {
           lg: {offset: 3, span:8},
           md: {offset: 3, span:10},
           sm: {offset: 3, span:12},
-          xs: {offset: 2, span:18},
+          xs: {offset: 2, span:17},
         },
         userMessage: {
           xl: {offset: 13, span:7},
@@ -531,7 +531,7 @@ html {
   background-color: #fae6f9 !important;
   font-family: "Arial", sans-serif;
   height: 100%;
-  margin: 0;
+  margin:0;
   padding: 0;
   box-sizing: border-box;
   overflow: hidden;
@@ -703,10 +703,10 @@ input[type="file"] {
   display: none;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 767px) {
   body,
   html {
-    font-size: 14px;
+    font-size: 13px;
   }
 
   .content {
@@ -783,7 +783,8 @@ input[type="file"] {
 .btn-spacing {
   margin-bottom: 50px;
   margin-top:10px;
-  text-align: center;
   white-space: nowrap;
+  margin-right: 30px;
+  padding-left: 10px;
 }
 </style>

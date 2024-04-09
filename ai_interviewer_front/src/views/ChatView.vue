@@ -90,7 +90,7 @@
           <template v-else> 送信 </template>
         </el-button>
         <!-- 音声入力試験用-->
-        <q-btn @click="toggleSpeechRecognition" :label="speechRecognitionActive ? '音声入力停止' : '音声入力開始'" color="primary" :style="{ width: '140px', height: '50px' }"/>
+        <q-btn @click="toggleSpeechRecognition"  :label="speechRecognitionActive ? '音声入力停止' : '音声入力開始'" color="primary" :style="{ width: '140px', height: '45px'}"class="btn-spacing"/>
         <!-- 音声入力試験用-->
       </el-col>
     </el-row>
@@ -462,7 +462,7 @@ export default {
     },
 
     stopSpeechRecognition() {
-      if (this.recognition) {
+      if (this.recognition !== null) {
         this.recognition.stop(); // 停止语音识别
         this.recognition = null; // 释放语音识别对
       }
@@ -470,12 +470,14 @@ export default {
     toggleSpeechRecognition() {
       if (!this.speechRecognitionActive) {
         // 开始语音识别
+        this.speechRecognitionActive = !this.speechRecognitionActive;
         this.startSpeechRecognition();
       } else {
         // 停止语音识别
+        this.speechRecognitionActive = !this.speechRecognitionActive;
         this.stopSpeechRecognition();
       }
-      this.speechRecognitionActive = !this.speechRecognitionActive; // 切换语音输入状态
+    
     }
   },
 
@@ -776,5 +778,12 @@ input[type="file"] {
 }
 .bg-purple {
   background: #d3dce6;
+}
+
+.btn-spacing {
+  margin-bottom: 50px;
+  margin-top:10px;
+  text-align: center;
+  white-space: nowrap;
 }
 </style>

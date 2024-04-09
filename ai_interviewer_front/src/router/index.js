@@ -18,7 +18,7 @@ const routes = [
     {
         path: '/',
         component: LoginView
-        
+
     },
     {
         path: '/manage',
@@ -30,6 +30,22 @@ const routes = [
         component: () => import('../views/accountset.vue')
 
     },
+    {
+        path: '/manage-login',
+        component: () => import('../views/ManageLogin.vue')
+
+    },
+    {
+        path: '/interview-list',
+        component: () => import('../views/InterviewList.vue')
+
+    },
+    {
+        path: '/manage-info',
+        component: () => import('../views/ManageInfo.vue')
+
+    }
+
 ]
 
 const router = new VueRouter({

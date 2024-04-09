@@ -452,11 +452,11 @@ export default {
       this.stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const recognition = new webkitSpeechRecognition(); // 创建语音识别对象
       recognition.lang = 'ja-JP'; // 日本語に設定
-      recognition.interimResults = false;
+      recognition.interimResults = true;
       recognition.start(); // 开始语音识别
 
       recognition.onresult = (event) => { // 当识别完成时
-        this.userMessage = event.results[0][0].transcript; // 将识别结果赋值给transcript变量
+        this.userMessage = this.userMessage + event.results[0][0].transcript; // 将识别结果赋值给transcript变量
       }
 
       recognition.onend = () => {

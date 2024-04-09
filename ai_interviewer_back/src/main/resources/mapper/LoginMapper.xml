@@ -14,13 +14,22 @@
     <resultMap id="LoginInfoResult" type="com.app.sns.aiproduct.pojo.vo.UserLoginInfoVO">
         <id column="id" property="id"/>
         <result column="username" property="username"/>
+        <result column="user_num" property="userNum"/>
         <result column="password" property="password"/>
+        <result column="role_id" property="roleId"/>
+        <result column="description" property="description"/>
         <result column="enable" property="enable"/>
+        <result column="usage_count" property="usageCount"/>
+        <result column="contractor" property="contractor"/>
+        <result column="join_time" property="joinTime"/>
+        <result column="effective_time" property="effectiveTime"/>
+        <result column="course_id" property="courseId"/>
+        <result column="balance" property="balance"/>
     </resultMap>
 
     <sql id="LoginInfoQueryFiled">
         <if test="true">
-            id,username,password,enable
+            id,username,password,enable,role_id,user_num,description,usage_count,contractor,join_time,effective_time,course_id,balance
         </if>
     </sql>
 </mapper>

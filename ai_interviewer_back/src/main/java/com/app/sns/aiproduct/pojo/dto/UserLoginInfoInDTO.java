@@ -10,4 +10,6 @@ public class UserLoginInfoInDTO implements Serializable {
     private String username;
     private String password;
     private Integer enable;
+    private String oldPassword;
+    private String newPassword;
 }

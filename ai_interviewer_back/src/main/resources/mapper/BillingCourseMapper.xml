@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.app.sns.aiproduct.mapper.BillingCourseMapper">
+    <resultMap id="BaseResultMap" type="com.app.sns.aiproduct.pojo.entity.BillingCourse">
+        <id column="id" property="id" />
+        <result column="course_name" property="courseName" />
+        <result column="course_cost" property="courseCost" />
+        <result column="questions_num" property="questionsNum" />
+        <result column="description" property="description" />
+        <result column="gmt_update" property="gmtUpdate" />
+        <result column="gmt_create" property="gmtCreate" />
+    </resultMap>
+</mapper>

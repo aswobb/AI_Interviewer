@@ -38,4 +38,8 @@ public interface ServiceCode {
      * 删除数据时的错误
      */
     Integer ERR_DELETE = 50003;
+    /**
+     * 原密码错误
+     */
+    Integer INVALID_OLD_PASSWORD = 60001;
 }

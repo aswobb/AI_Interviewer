@@ -451,7 +451,7 @@ export default {
     try{  
       this.stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const recognition = new webkitSpeechRecognition(); // 创建语音识别对象
-      recognition.lang = 'ja-JP'; // 设置语言，这里是简体中文
+      recognition.lang = 'ja-JP'; // 日本語に設定
       recognition.interimResults = false;
       recognition.start(); // 开始语音识别
 
@@ -474,9 +474,9 @@ export default {
         this.recognition = null; // 释放语音识别对
       }
       if (this.stream !== null) {
-    this.stream.getTracks().forEach(track => track.stop());
-    this.stream = null; // 将stream置为null，释放资源
-  }
+        this.stream.getTracks().forEach(track => track.stop());
+        this.stream = null; // 将stream置为null，释放资源
+      }
     },
     toggleSpeechRecognition() {
       if (!this.speechRecognitionActive) {

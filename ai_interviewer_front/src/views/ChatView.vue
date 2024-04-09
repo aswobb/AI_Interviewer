@@ -459,7 +459,7 @@ export default {
         this.userMessage = event.results[0][0].transcript; // 将识别结果赋值给transcript变量
       }
 
-      this.recognition.onend = () => {
+      recognition.onend = () => {
         this.stopSpeechRecognition();
       }
     }catch (error) {

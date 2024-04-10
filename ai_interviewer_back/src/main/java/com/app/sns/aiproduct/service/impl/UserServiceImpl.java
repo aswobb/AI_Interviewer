@@ -5,6 +5,7 @@ import com.app.sns.aiproduct.pojo.entity.SnsUser;
 import com.app.sns.aiproduct.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -26,12 +27,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public SnsUser createUser(SnsUser user) {
         userMapper.insert(user);
         return user;
     }
 
     @Override
+    @Transactional
     public SnsUser updateUser(Long id, SnsUser user) {
         user.setId(id);
         userMapper.updateById(user);
@@ -40,6 +43,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void deleteUser(Long id) {
         SnsUser user = userMapper.selectById(id);
         if (user != null) {
@@ -50,6 +54,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public boolean updatePassword(Long userId, String oldPassword, String newPassword) {
         SnsUser user = userMapper.selectById(userId);
         if (user != null && user.getPassword().equals(oldPassword)) {

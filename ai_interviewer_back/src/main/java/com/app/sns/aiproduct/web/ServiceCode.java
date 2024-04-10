@@ -15,6 +15,10 @@ public interface ServiceCode {
      */
     Integer ERR_BAN_REQUEST = 40000;
     /**
+     * 请求参数为空
+     */
+    Integer ERR_PAR_EMPTY = 40001;
+    /**
      * 相关资源或数据不存在
      */
     Integer ERR_NOT_FOUND = 40400;
@@ -42,4 +46,8 @@ public interface ServiceCode {
      * 原密码错误
      */
     Integer INVALID_OLD_PASSWORD = 60001;
+    /**
+     * 余额不足
+     */
+    Integer INSUFFICIENT_BALANCE = 70001;
 }

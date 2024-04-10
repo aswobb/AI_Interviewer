@@ -408,6 +408,32 @@ export default {
           // console.log("csvData : " + csvData);
           const encodeData = new TextEncoder('utf-8').encode('\ufeff' + csvData); 
           const blob = new Blob([encodeData], {type: "text/csv;charset=utf-8"}); // CSVデータ作成
+
+          const formData = new FormData(); // csvファイルbackendへ送信 
+          formData.append('csvFile', blob, csvFileName);
+          axios.post('/your/backend/endpoint', formData, { // backendのapiに変更
+          headers: {
+          'Content-Type': 'multipart/form-data', // 指定请求头
+          'token' : token,
+          // 如果需要其他的请求头，可以在此添加
+            },
+          })
+            .then(response => {
+            // ユーザーに見る必要ないから何もしない
+            console.log("csvアプロードしました。");
+            })
+          .catch(error => {
+            console.error("API request error:", error);
+            this.$notify.error({
+            title: "DBへのCSVファイルアプロード失敗しました.",
+            message: error,
+          });
+          // 处理错误
+            });
+
+
+
+
           const blobUrl = URL.createObjectURL(blob);  // ダウンロードリンク作成
           // console.log(blobUrl);
           this.renderMessages.push({

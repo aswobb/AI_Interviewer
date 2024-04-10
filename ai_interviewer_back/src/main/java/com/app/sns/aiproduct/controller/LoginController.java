@@ -2,6 +2,7 @@ package com.app.sns.aiproduct.controller;
 
 import com.app.sns.aiproduct.pojo.dto.UserLoginInfoInDTO;
 import com.app.sns.aiproduct.pojo.dto.UserLoginInfoOutDTO;
+import com.app.sns.aiproduct.pojo.vo.InterviewerInfoVO;
 import com.app.sns.aiproduct.service.ILoginService;
 import com.app.sns.aiproduct.web.JsonResult;
 import lombok.extern.slf4j.Slf4j;
@@ -30,5 +31,12 @@ public class LoginController {
         log.debug("开始处理登录的请求:{}", userLoginInfoInDTO);
         UserLoginInfoOutDTO userLoginInfoOutDTO = loginService.loginInfo(userLoginInfoInDTO);
         return JsonResult.ok(userLoginInfoOutDTO);
+    }
+
+    @PostMapping("/interviewerLoginInfo")
+    public JsonResult interviewerLoginInfo(@RequestBody InterviewerInfoVO interviewerInfoVO) {
+        log.debug("开始处理登录的请求:{}", interviewerInfoVO);
+        InterviewerInfoVO response = loginService.interviewerLoginInfo(interviewerInfoVO);
+        return JsonResult.ok(response);
     }
 }

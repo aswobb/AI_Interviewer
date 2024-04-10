@@ -15,6 +15,10 @@ public interface ServiceCode {
      */
     Integer ERR_BAN_REQUEST = 40000;
     /**
+     * 请求参数为空
+     */
+    Integer ERR_PAR_EMPTY = 40001;
+    /**
      * 相关资源或数据不存在
      */
     Integer ERR_NOT_FOUND = 40400;

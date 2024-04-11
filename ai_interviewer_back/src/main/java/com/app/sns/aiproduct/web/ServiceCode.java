@@ -23,6 +23,10 @@ public interface ServiceCode {
      */
     Integer ERR_NOT_FOUND = 40400;
     /**
+     * 相关资源已失效
+     */
+    Integer ERR_DISABLE = 40401;
+    /**
      * 数据冲突，例如尝试添加不允许重复的数据
      */
     Integer ERR_CONFLICT = 40900;

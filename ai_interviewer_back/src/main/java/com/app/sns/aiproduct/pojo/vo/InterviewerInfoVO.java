@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 public class InterviewerInfoVO {
     private Long id;
     private Long userId;
+    private String contractor;
     private String interviewerId;
     private String interviewerName;
     private Integer questionsNum;

@@ -22,7 +22,7 @@ const routes = [
     },
     {
         path: '/manage',
-        component: ManageView
+        component: () => import('../views/SNSsoftmanage.vue')
 
     },
     {
@@ -44,7 +44,24 @@ const routes = [
         path: '/manage-info',
         component: () => import('../views/ManageInfo.vue')
 
+    },
+    {
+        path: '/usermanage',
+        component: () => import('../views/manage.vue')
+
+    },
+    {
+        path: '/setpassword',
+        component: () => import('../views/setpassword.vue')
+
+    },
+    {
+        path: '/interview/user/login',
+        component: () => import('../views/UserLoginView.vue')
+
     }
+
+
 
 ]
 

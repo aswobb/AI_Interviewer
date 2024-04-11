@@ -56,7 +56,7 @@
         <v-dialog v-model="dialog" max-width="400">
             <v-card-title class="headline">パスワードの変更</v-card-title>
             <v-form ref="form" :model="changePwForm" lazy-validation>
-                <v-text-field v-model="changePwForm.password" :rules="oldPW" label="現PW" required></v-text-field>
+                <v-text-field v-model="changePwForm.password" label="現PW" required></v-text-field>
                 <v-text-field v-model="changePwForm.newPassword"
                     :rules="[rules.required, rules.maxLengh, rules.minLengh, rules.isDifferent(changePwForm.reNewPassword)]"
                     label="新PW" required></v-text-field>
@@ -81,15 +81,6 @@ export default {
                 v => !!v || 'パスワードを入力してください',
                 v => (v && v === this.user.password) || 'パスワードが間違っています'
             ],
-            //         newPW: {
-
-            //             v => !!v || 'パスワードを入力してください',
-            //         v => (v && v.length <= 15) || '文字数は4から15文字まで',
-            //         v => (v && v.length >= 4) || '文字数は4から15文字まで',
-            //         isDifferent: (valueToCompare) => {
-            //             return value => value !== valueToCompare || 'The values must be different.'
-            //         }
-            // },
             rules: {
                 required: v => !!v || 'パスワードを入力してください',
                 maxLengh: v => (v && v.length <= 15) || '文字数は4から15文字まで',
@@ -110,20 +101,82 @@ export default {
     },
     created() {
         this.user = this.$store.state.manageInfo
+        console.log(this.user);
     },
     methods: {
         editUser() {
-            // 导航到编辑用户信息的页面
-            this.$router.push('/edit-user');
+            const token = localStorage.getItem('token');
+            console.log(token);
+            if (token) {
+                let url = 'api/interviewerInfo/list'
+                this.axios.get(url, {
+                    params: { pageNum: 1, pageSize: 1 },
+                    headers: {
+                        'token': token
+                    },
+                }).then((response) => {
+                    console.log(121, response);
+                    if (response.data.state == 20000) {
+                    } else {
+                    }
+                });
+
+
+
+
+                // 导航到编辑用户信息的页面
+                // this.$router.push('/interview-list');
+
+            } else {
+                this.$router.push('/manage-login');
+                this.$message({
+                    message: 'ログインが期限切れです。再度ログインしてください',
+                    type: 'warn'
+                });
+            }
         },
         changePw() {
-            console.log(this.user);
-            if (this.$refs.form.validate()) {
 
+            if (this.$refs.form.validate()) {
+                const token = localStorage.getItem('token');
+                let config = {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                };
+                let url = 'api/snsUser/updatePassword'
+                let data = {
+                    id: "3",
+                    oldPassword: this.changePwForm.password,
+                    newPassword: this.changePwForm.newPassword
+                }
+                console.log(124, data);
+                if (token) {
+                    this.axios.post(url, data, {
+                        headers: {
+                            'token': `${token}`
+                        }
+                    }, config).then((response) => {
+                        console.log(126, response);
+                        if (response.data.state == 20000) {
+                            this.$message({
+                                message: 'パスワード変更に成功しました.',
+                                type: 'success'
+                            });
+                            this.dialog = false
+                        } else {
+                            this.$notify.error({
+                                message: 'パスワード変更に失敗しました.',
+                                type: 'error'
+                            });
+                        }
+                    });
+                }
             }
         }
     }
 }
+
 </script>
 
 <style>

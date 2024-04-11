@@ -1,0 +1,12 @@
+# 激活Profile配置
+spring:
+  profiles:
+    active: dev
+# 响应Json时不包含为Null的属性
+  jackson:
+    default-property-inclusion: non_null
+
+# 指定Mybatis的XML文件的位置
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+

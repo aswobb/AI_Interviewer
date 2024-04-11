@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.app.sns.aiproduct.mapper.LoginMapper">
+    <!--UserLoginInfoVO getLoginInfo(String username);-->
+    <select id="getLoginInfo" resultMap="LoginInfoResult">
+        SELECT
+        <include refid="LoginInfoQueryFiled"/>
+        FROM sns_user
+        WHERE username=#{username}
+    </select>
+
+    <resultMap id="LoginInfoResult" type="com.app.sns.aiproduct.pojo.vo.UserLoginInfoVO">
+        <id column="id" property="id"/>
+        <result column="username" property="username"/>
+        <result column="user_num" property="userNum"/>
+        <result column="password" property="password"/>
+        <result column="role_id" property="roleId"/>
+        <result column="description" property="description"/>
+        <result column="enable" property="enable"/>
+        <result column="usage_count" property="usageCount"/>
+        <result column="contractor" property="contractor"/>
+        <result column="join_time" property="joinTime"/>
+        <result column="effective_time" property="effectiveTime"/>
+        <result column="course_id" property="courseId"/>
+        <result column="balance" property="balance"/>
+    </resultMap>
+
+    <sql id="LoginInfoQueryFiled">
+        <if test="true">
+            id,username,password,enable,role_id,user_num,description,usage_count,contractor,join_time,effective_time,course_id,balance
+        </if>
+    </sql>
+</mapper>

@@ -85,6 +85,7 @@ export default {
                             });
                             const token = response.data.data.token;
                             this.$store.commit('initManageInfo', response.data.data)
+                            console.log(token);
                             localStorage.setItem('token', token);
                             sessionStorage.setItem('username', this.ruleForm.username);
                             this.$gtm.sendLoginEvent(this.ruleForm.username); // ログインイベント送出

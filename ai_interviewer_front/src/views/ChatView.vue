@@ -2,7 +2,7 @@
   <div id="app">
     <audio ref="audioPlayer"></audio>
     <el-row class="title">
-      SNSソフト・AI面接官
+      {{ pageTitle+'・AI面接官' }}
       <el-dropdown class="title-menu">
         <span class="el-dropdown-link"> ☰ </span>
         <el-dropdown-menu slot="dropdown">
@@ -102,6 +102,7 @@ import axios from "axios";
 export default {
   data() {
     return {
+      pageTitle: '',
       userMessage: "",
       renderMessages: [], // 画面に表示させるメッセージを格納
       messages: [], // chatAPIに投げるメッセージを格納
@@ -390,7 +391,7 @@ export default {
         const response = await axios.post(
         "/api/chat/sendMessage",
         {
-          message: chatBody + ",{\"role\":\"user\", \"content\":\"CSVインポートしたいので面接での質問と回答を出力してください。必ず「質問」と「回答」の2列にしてください。CSV以外の出力はしないでください。CSVデータとそうではないところがわかるように、CSVデータは```で囲ってください。\" }"
+          message: chatBody + ",{\"role\":\"user\", \"content\":\"CSVインポートしたいので面接での質問と回答と評価を出力してください。必ず「質問」,「回答」,「各プログラム評価」,「総合評価」,「評価理由」,「改善点」の6列にしてください。評価理由は4行程度で出力してください。 改善点は4行程度で出力してください。 CSV以外の出力はしないでください。CSVデータとそうではないところがわかるように、CSVデータは```で囲ってください。\" }"
         },
         {
           headers: {
@@ -410,8 +411,8 @@ export default {
           const blob = new Blob([encodeData], {type: "text/csv;charset=utf-8"}); // CSVデータ作成
 
           const formData = new FormData(); // csvファイルbackendへ送信 
-          formData.append('csvFile', blob, csvFileName);
-          axios.post('/your/backend/endpoint', formData, { // backendのapiに変更
+          formData.append('file', blob, csvFileName);
+          axios.post('/api/interviewerInfo/completeInterviewerInfo', formData, { // backendのapiに変更
           headers: {
           'Content-Type': 'multipart/form-data', // 指定请求头
           'token' : token,
@@ -535,6 +536,10 @@ export default {
     },
   },
   mounted: function() {
+
+
+    // 契約者の会社名表示
+    this.pageTitle = localStorage.getItem('contractor');
     // 読み込まれたらdatalayerにloginid書き出し
     dataLayer = [{
       login_id: sessionStorage.getItem('username') || ''

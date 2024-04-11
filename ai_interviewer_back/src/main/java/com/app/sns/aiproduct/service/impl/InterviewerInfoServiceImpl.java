@@ -150,4 +150,12 @@ public class InterviewerInfoServiceImpl extends ServiceImpl<InterviewerInfoMappe
 
         return interviewerInfo;
     }
+
+    @Override
+    public CsvFile getCsvFile(Long interviewersInfoId){
+        QueryWrapper<CsvFile> csvFileQueryWrapper = new QueryWrapper<>();
+        csvFileQueryWrapper.lambda().eq(CsvFile::getInterviewersInfoId,interviewersInfoId);
+        CsvFile csvFile = csvFileMapper.selectOne(csvFileQueryWrapper);
+        return csvFile;
+    }
 }

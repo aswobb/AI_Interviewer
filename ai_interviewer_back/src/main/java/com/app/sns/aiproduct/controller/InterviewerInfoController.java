@@ -1,6 +1,7 @@
 package com.app.sns.aiproduct.controller;
 
 import com.app.sns.aiproduct.ex.ServiceException;
+import com.app.sns.aiproduct.pojo.entity.CsvFile;
 import com.app.sns.aiproduct.pojo.entity.InterviewerInfo;
 import com.app.sns.aiproduct.pojo.vo.InterviewerInfoVO;
 import com.app.sns.aiproduct.service.InterviewerInfoService;
@@ -14,6 +15,9 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -38,7 +42,7 @@ public class InterviewerInfoController {
     }
 
     @GetMapping("/list")
-    public IPage<InterviewerInfo> list(@RequestBody InterviewerInfoVO interviewerInfoVO,
+    public JsonResult list(@RequestBody InterviewerInfoVO interviewerInfoVO,
                                        HttpServletRequest request
     ) {
         Page<InterviewerInfo> page = new Page<>(interviewerInfoVO.getPageNum(), interviewerInfoVO.getPageSize());
@@ -57,7 +61,7 @@ public class InterviewerInfoController {
         }
         Long userId = JWTUtil.getUserIdFromToken(request);
         wrapper.lambda().eq(InterviewerInfo::getUserId, userId);
-        return interviewerInfoService.page(page, wrapper);
+        return JsonResult.ok(interviewerInfoService.page(page, wrapper));
     }
 
     @PostMapping("/updateInterviewerInfo")
@@ -78,6 +82,28 @@ public class InterviewerInfoController {
         }
         Long userId = JWTUtil.getUserIdFromToken(request);
         return JsonResult.ok(interviewerInfoService.completeInterviewerInfo(userId, file));
+    }
+
+
+    @GetMapping("/downLoadCsv/{fileId}")
+    public ResponseEntity  downLoadCsv(@PathVariable Long fileId) {
+        if (EmptyUtil.isNull(fileId)) {
+            throw new ServiceException(ServiceCode.ERR_PAR_EMPTY, "fileId is empty");
+        }
+        CsvFile csvFile = interviewerInfoService.getCsvFile(fileId);
+        if (EmptyUtil.isNull(csvFile)) {
+            throw new ServiceException(ServiceCode.ERR_PAR_EMPTY, "fileId is not exist");
+        }
+        ByteArrayResource resource = new ByteArrayResource(csvFile.getFileContent());
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=output.csv");
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .contentLength(csvFile.getFileContent().length)
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(resource);
     }
 //    @PostMapping
 //    public InterviewerInfo createInterviewerInfo(@RequestBody InterviewerInfoVO interviewerInfoVO) {

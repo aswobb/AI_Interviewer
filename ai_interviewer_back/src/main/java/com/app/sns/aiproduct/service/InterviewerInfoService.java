@@ -1,5 +1,6 @@
 package com.app.sns.aiproduct.service;
 
+import com.app.sns.aiproduct.pojo.entity.CsvFile;
 import com.app.sns.aiproduct.pojo.entity.InterviewerInfo;
 import com.app.sns.aiproduct.pojo.vo.InterviewerInfoVO;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -15,4 +16,5 @@ public interface InterviewerInfoService extends IService<InterviewerInfo> {
     InterviewerInfoVO getInterviewerInfo(Long id);
 
     InterviewerInfo completeInterviewerInfo(Long userId, MultipartFile file);
+    CsvFile getCsvFile(Long interviewersInfoId);
 }

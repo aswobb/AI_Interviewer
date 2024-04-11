@@ -3,7 +3,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 </head>
 <template>
-  <div class="login">
+  <div class="login-container">
     <div class="login-form">
       <h1 style="text-align: center; margin: 20px 0;">AI面接官 ログイン</h1>
       <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
@@ -110,13 +110,22 @@ export default {
 };
 </script>
 <style>
+@media only screen and (min-width: 768px){
 body {
-  /* background-color: #f8d8ef !important; */
   background-image: url('./bot-avatar.png');
-  background-size: cover; /* 可选，将背景图片缩放以填充整个屏幕 */
+  background-size:cover; /* 可选，将背景图片缩放以填充整个屏幕 */
   /* background-position: center;  */
 
+  }
 }
+
+@media only screen and (max-width: 767px) {
+  body {
+    background-image: url('./bot-avatar.png');
+    background-size: contain; /* 或 contain */
+  }
+}
+
 </style>
 <style scoped>
 
@@ -132,11 +141,30 @@ body {
 /* 如果需要保持在大屏幕上的一些样式，可以使用媒体查询 */
   @media only screen and (min-width: 600px) {
     .login-form {
-      width: 500px; /* 在大屏幕上保持原有宽度 */
+      width: 470px; /* 在大屏幕上保持原有宽度 */
       margin: 50px auto; /* 保持上下居中 */
     padding: 30px 50px;
   }
 }
+
+@media only screen and (min-width: 768px){
+.login-container {
+  display: flex;
+  justify-content: center; /* 水平居中 */
+  align-items: flex-end; /* 垂直居中 */
+  height: 100vh; /* 将容器高度设置为视口的100%，使其铺满整个屏幕 */
+ }
+}
+
+@media only screen and (max-width: 767px){
+.login-container {
+  display: flex;
+  justify-content: center; /* 水平居中 */
+  align-items: center; /* 垂直居中 */
+  height: 100vh; /* 将容器高度设置为视口的100%，使其铺满整个屏幕 */
+ }
+}
+
 
 h1 {
   text-align: center;

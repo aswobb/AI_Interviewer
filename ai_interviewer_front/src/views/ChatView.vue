@@ -598,7 +598,7 @@ html {
   height: 3rem;
   line-height: 3rem;
   text-align: center;
-  background-color: #138f6a;
+  background-color: #92c2d8;
   color: #ffffff;
   font-size: 1.5rem;
   border-radius: 50px;

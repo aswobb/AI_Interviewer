@@ -18,11 +18,15 @@
       :md="getBreakpointConfig('md',false)" 
       :sm="getBreakpointConfig('sm',false)" 
       :xs="getBreakpointConfig('xs',false)" >
+ 
         <v-card-text>
           こんにちは、AI面接官です。<br>
           あなたの面接を担当させていただきます。よろしくお願いいたします。
         </v-card-text> 
+
       </el-col>
+    
+
 
       <el-col :span="24" class="bot-message"
       :xl="getBreakpointConfig('xl',false)"
@@ -59,7 +63,7 @@
           'bot-message': !message.isUser,
         }"
       >
-        <v-card-text v-html="parseHTML(message.text)"> </v-card-text>
+          <v-card-text v-html="parseHTML(message.text)"> </v-card-text>
       </el-col>
     </el-row>
     <el-row class="footer footer-row">
@@ -829,5 +833,11 @@ input[type="file"] {
   white-space: nowrap;
   margin-right: 30px;
   padding-left: 10px;
+}
+
+.avatar {
+  width: 100px; /* 调整头像宽度 */
+  height: 100px; /* 调整头像高度 */
+  border-radius: 50%; /* 设置圆角 */
 }
 </style>

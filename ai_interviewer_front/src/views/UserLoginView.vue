@@ -111,7 +111,10 @@ export default {
 </script>
 <style>
 body {
-  background-color: #fae6f9 !important;
+  /* background-color: #f8d8ef !important; */
+  background-image: url('./bot-avatar.png');
+  background-size: cover; /* 可选，将背景图片缩放以填充整个屏幕 */
+  /* background-position: center;  */
 
 }
 </style>

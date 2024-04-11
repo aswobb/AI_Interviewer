@@ -3,15 +3,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 </head>
 <template>
-  <div class="login">
+  <div class="login-container">
     <div class="login-form">
       <h1 style="text-align: center; margin: 20px 0;">AI面接官 ログイン</h1>
       <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
         <el-form-item label="面接ID" prop="username">
-          <el-input v-model="ruleForm.username"></el-input>
+          <el-input v-model="ruleForm.interviewerId"></el-input>
         </el-form-item>
         <el-form-item label="面接者氏名" prop="password">
-          <el-input v-model="ruleForm.password"></el-input>
+          <el-input v-model="ruleForm.interviewerName"></el-input>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="submitForm('ruleForm')">ログイン</el-button>
@@ -31,15 +31,15 @@ export default {
     return {
       isDesktop: window.innerWidth > 600,
       ruleForm: {
-        username: '',
-        password: ''
+        interviewerId: '',
+        interviewerName: ''
       },
       rules: {
-        username: [
+        interviewerId: [
           {required: true, message: 'ユーザー名を入力してください', trigger: 'blur'},
           {min: 2, max: 15, message: '文字数は2から15文字まで', trigger: 'blur'}
         ],
-        password: [
+        interviewerName: [
           {required: true, message: 'パスワードを入力してください', trigger: 'blur'},
           {min: 4, max: 15, message: '文字数は4から15文字まで', trigger: 'blur'}
         ]
@@ -57,7 +57,7 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           var localPath = this.GLOBAL.localSrc;
-          let url = '/api/users/login';
+          let url = '/api/users/interviewerLoginInfo';
           console.log('尝试登录')
           console.log('请求路径为:' + url)
           console.log('请求参数为:' + this.ruleForm)
@@ -77,10 +77,14 @@ export default {
                 message: 'ログインが成功しました.',
                 type: 'success'
               });
+
               const token = response.data.data.token;
+              const contractor = response.data.data.contractor;
               localStorage.setItem('token', token);
-              sessionStorage.setItem('username', this.ruleForm.username);
-              this.$gtm.sendLoginEvent(this.ruleForm.username); // ログインイベント送出
+              localStorage.setItem('contractor', contractor);
+
+              sessionStorage.setItem('username', this.ruleForm.interviewerId);
+              this.$gtm.sendLoginEvent(this.ruleForm.interviewerId); // ログインイベント送出
               this.$router.push({name: 'ChatApp'})
             } else {
               console.log('ログインに失敗しました。ユーザー名またはパスワードが正しくありません.')
@@ -106,10 +110,22 @@ export default {
 };
 </script>
 <style>
+@media only screen and (min-width: 768px){
 body {
-  background-color: #fae6f9 !important;
+  background-image: url('./bot-avatar.png');
+  background-size:cover; /* 可选，将背景图片缩放以填充整个屏幕 */
+  /* background-position: center;  */
 
+  }
 }
+
+@media only screen and (max-width: 767px) {
+  body {
+    background-image: url('./bot-avatar.png');
+    background-size: contain; /* 或 contain */
+  }
+}
+
 </style>
 <style scoped>
 
@@ -125,11 +141,30 @@ body {
 /* 如果需要保持在大屏幕上的一些样式，可以使用媒体查询 */
   @media only screen and (min-width: 600px) {
     .login-form {
-      width: 500px; /* 在大屏幕上保持原有宽度 */
+      width: 470px; /* 在大屏幕上保持原有宽度 */
       margin: 50px auto; /* 保持上下居中 */
     padding: 30px 50px;
   }
 }
+
+@media only screen and (min-width: 768px){
+.login-container {
+  display: flex;
+  justify-content: center; /* 水平居中 */
+  align-items: flex-end; /* 垂直居中 */
+  height: 100vh; /* 将容器高度设置为视口的100%，使其铺满整个屏幕 */
+ }
+}
+
+@media only screen and (max-width: 767px){
+.login-container {
+  display: flex;
+  justify-content: center; /* 水平居中 */
+  align-items: center; /* 垂直居中 */
+  height: 100vh; /* 将容器高度设置为视口的100%，使其铺满整个屏幕 */
+ }
+}
+
 
 h1 {
   text-align: center;

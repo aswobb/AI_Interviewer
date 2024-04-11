@@ -15,9 +15,17 @@ public interface ServiceCode {
      */
     Integer ERR_BAN_REQUEST = 40000;
     /**
+     * 请求参数为空
+     */
+    Integer ERR_PAR_EMPTY = 40001;
+    /**
      * 相关资源或数据不存在
      */
     Integer ERR_NOT_FOUND = 40400;
+    /**
+     * 相关资源已失效
+     */
+    Integer ERR_DISABLE = 40401;
     /**
      * 数据冲突，例如尝试添加不允许重复的数据
      */

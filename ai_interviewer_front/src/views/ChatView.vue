@@ -2,7 +2,7 @@
   <div id="app">
     <audio ref="audioPlayer"></audio>
     <el-row class="title">
-      SNSソフト・AI面接官
+      {{ pageTitle+'・AI面接官' }}
       <el-dropdown class="title-menu">
         <span class="el-dropdown-link"> ☰ </span>
         <el-dropdown-menu slot="dropdown">
@@ -18,11 +18,15 @@
       :md="getBreakpointConfig('md',false)" 
       :sm="getBreakpointConfig('sm',false)" 
       :xs="getBreakpointConfig('xs',false)" >
+ 
         <v-card-text>
           こんにちは、AI面接官です。<br>
           あなたの面接を担当させていただきます。よろしくお願いいたします。
         </v-card-text> 
+
       </el-col>
+    
+
 
       <el-col :span="24" class="bot-message"
       :xl="getBreakpointConfig('xl',false)"
@@ -59,7 +63,7 @@
           'bot-message': !message.isUser,
         }"
       >
-        <v-card-text v-html="parseHTML(message.text)"> </v-card-text>
+          <v-card-text v-html="parseHTML(message.text)"> </v-card-text>
       </el-col>
     </el-row>
     <el-row class="footer footer-row">
@@ -102,6 +106,7 @@ import axios from "axios";
 export default {
   data() {
     return {
+      pageTitle: '',
       userMessage: "",
       renderMessages: [], // 画面に表示させるメッセージを格納
       messages: [], // chatAPIに投げるメッセージを格納
@@ -390,7 +395,7 @@ export default {
         const response = await axios.post(
         "/api/chat/sendMessage",
         {
-          message: chatBody + ",{\"role\":\"user\", \"content\":\"CSVインポートしたいので面接での質問と回答を出力してください。必ず「質問」と「回答」の2列にしてください。CSV以外の出力はしないでください。CSVデータとそうではないところがわかるように、CSVデータは```で囲ってください。\" }"
+          message: chatBody + ",{\"role\":\"user\", \"content\":\"CSVインポートしたいので面接での質問と回答と評価を出力してください。必ず「質問」,「回答」,「各プログラム評価」,「総合評価」,「評価理由」,「改善点」の6列にしてください。評価理由は4行程度で出力してください。 改善点は4行程度で出力してください。 CSV以外の出力はしないでください。CSVデータとそうではないところがわかるように、CSVデータは```で囲ってください。\" }"
         },
         {
           headers: {
@@ -408,6 +413,32 @@ export default {
           // console.log("csvData : " + csvData);
           const encodeData = new TextEncoder('utf-8').encode('\ufeff' + csvData); 
           const blob = new Blob([encodeData], {type: "text/csv;charset=utf-8"}); // CSVデータ作成
+
+          const formData = new FormData(); // csvファイルbackendへ送信 
+          formData.append('file', blob, csvFileName);
+          axios.post('/api/interviewerInfo/completeInterviewerInfo', formData, { // backendのapiに変更
+          headers: {
+          'Content-Type': 'multipart/form-data', // 指定请求头
+          'token' : token,
+          // 如果需要其他的请求头，可以在此添加
+            },
+          })
+            .then(response => {
+            // ユーザーに見る必要ないから何もしない
+            console.log("csvアプロードしました。");
+            })
+          .catch(error => {
+            console.error("API request error:", error);
+            this.$notify.error({
+            title: "DBへのCSVファイルアプロード失敗しました.",
+            message: error,
+          });
+          // 处理错误
+            });
+
+
+
+
           const blobUrl = URL.createObjectURL(blob);  // ダウンロードリンク作成
           // console.log(blobUrl);
           this.renderMessages.push({
@@ -509,6 +540,10 @@ export default {
     },
   },
   mounted: function() {
+
+
+    // 契約者の会社名表示
+    this.pageTitle = localStorage.getItem('contractor');
     // 読み込まれたらdatalayerにloginid書き出し
     dataLayer = [{
       login_id: sessionStorage.getItem('username') || ''
@@ -563,7 +598,7 @@ html {
   height: 3rem;
   line-height: 3rem;
   text-align: center;
-  background-color: #138f6a;
+  background-color: #92c2d8;
   color: #ffffff;
   font-size: 1.5rem;
   border-radius: 50px;
@@ -798,5 +833,11 @@ input[type="file"] {
   white-space: nowrap;
   margin-right: 30px;
   padding-left: 10px;
+}
+
+.avatar {
+  width: 100px; /* 调整头像宽度 */
+  height: 100px; /* 调整头像高度 */
+  border-radius: 50%; /* 设置圆角 */
 }
 </style>

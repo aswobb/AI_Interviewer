@@ -82,6 +82,6 @@ public class JWTUtil {
         }
 
         // 返回用户 ID
-        return userIdClaim.asLong();
+        return Long.parseLong(userIdClaim.asString());
     }
 }

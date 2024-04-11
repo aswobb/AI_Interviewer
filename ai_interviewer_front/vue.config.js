@@ -10,7 +10,7 @@ module.exports = {
         target: 'http://192.168.1.161:9999',
         changeOrigin: true,
         pathRewrite: {
-          //'^/api': '',  // 将 /api 前缀重写为空，即去掉 /api
+          '^/api': '',  // 将 /api 前缀重写为空，即去掉 /api
         },
       },
     },

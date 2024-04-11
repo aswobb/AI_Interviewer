@@ -77,8 +77,12 @@ export default {
                 message: 'ログインが成功しました.',
                 type: 'success'
               });
+
               const token = response.data.data.token;
+              const contractor = response.data.data.contractor;
               localStorage.setItem('token', token);
+              localStorage.setItem('contractor', contractor);
+
               sessionStorage.setItem('username', this.ruleForm.interviewerId);
               this.$gtm.sendLoginEvent(this.ruleForm.interviewerId); // ログインイベント送出
               this.$router.push({name: 'ChatApp'})

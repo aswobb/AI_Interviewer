@@ -123,7 +123,12 @@ export default {
       checkBoxes: [             // チェックボックス制御用の変数、この変数に格納されているオブジェクトを追加すればチェックボックス増やせるはずです。
         {checked: false, point: "技術スキル"},
         {checked: false, point: "コミュニケーション能力"},
-        {checked: false, point: "SE経験"},
+        {checked: false, point: "プロジェクト管理能力"},
+        {checked: false, point: "問題解決能力"},
+        {checked: false, point: "チームワーク"},
+        {checked: false, point: "セキュリティ意識と対策"},
+        {checked: false, point: "リーダーシップ"},
+        {checked: false, point: "継続的な学習と技術的成長への意欲"}
         // {checked: false, point: "追加したい重視ポイント"},
         ],
       

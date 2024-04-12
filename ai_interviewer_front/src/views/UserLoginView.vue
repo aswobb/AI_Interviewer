@@ -102,18 +102,18 @@ export default {
     },
     resetForm(formName) {
       this.$refs[formName].resetFields();
-    },
+    }
 
 
 
   }
 };
 </script>
-<style>
+<style scoped>
 @media only screen and (min-width: 768px){
   body {
-  background-image: url('./bot-avatar.png');
-  background-size:cover; /* 可选，将背景图片缩放以填充整个屏幕 */
+  background-image: url('./bot-avatar.png') !important;
+  background-size:cover !important; /* 可选，将背景图片缩放以填充整个屏幕 */
   /* background-position: center;  */
 
   }
@@ -121,8 +121,8 @@ export default {
 
 @media only screen and (max-width: 767px) {
   body {
-    background-image: url('./bot-avatar.png');
-    background-size: contain; /* 或 contain */
+    background-image: url('./bot-avatar.png') !important;
+    background-size: contain !important; /* 或 contain */
   }
 }
 

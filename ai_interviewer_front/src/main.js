@@ -20,6 +20,7 @@ import QLayout from 'quasar'
 import QIcon from 'quasar'
 import 'quasar/dist/quasar.css'
 
+
 Vue.use(QBtn)
 Vue.use(QTable)
 Vue.use(QPage)
@@ -48,6 +49,7 @@ router.beforeEach((to, from, next) => {
   document.title = 'AI面接練習特化システム'; // 设置文档标题，优先使用路由元信息中的标题
   next(); // 继续路由导航
 });
+
 
 
 

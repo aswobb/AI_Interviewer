@@ -111,7 +111,7 @@ export default {
 </script>
 <style>
 @media only screen and (min-width: 768px){
-body {
+  body {
   background-image: url('./bot-avatar.png');
   background-size:cover; /* 可选，将背景图片缩放以填充整个屏幕 */
   /* background-position: center;  */
@@ -151,7 +151,7 @@ body {
 .login-container {
   display: flex;
   justify-content: center; /* 水平居中 */
-  align-items: flex-end; /* 垂直居中 */
+  align-items: center; /* 垂直居中 */
   height: 100vh; /* 将容器高度设置为视口的100%，使其铺满整个屏幕 */
  }
 }

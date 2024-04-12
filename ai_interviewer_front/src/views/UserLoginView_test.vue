@@ -6,7 +6,7 @@
     <QLayout>
         <q-page class="flex flex-center" :style="{ backgroundImage: `url(${bgImg})`, backgroundSize: 'cover'}">
         <div class="q-pa-md" style="width: 350px; max-width: 90vw;">
-          <div class="text-h4 text-center q-mb-md" style="color: #FFFF00;font-weight: bold;">ログイン</div>
+          <div class="text-h4 text-center q-mb-md" style="color: #FFFF00;font-weight: bold;">AI面接官ログイン</div>
           <q-form @submit="onSubmit" @reset="onReset" class="transparent-form q-gutter-md">
             <q-input filled v-model="ruleForm.interviewerId" label="面接ID" lazy-rules :rules="[val => val && val.length > 0 || '面接IDを入力してください']"/>
             <q-input filled type="password" v-model="ruleForm.interviewerName" label="パスワード" lazy-rules :rules="[val => val && val.length > 0 || '面接者氏名を入力してください']"/>

@@ -3,14 +3,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     </head>
 <template>
-    <div class="login">
+    <div class="login" :style="{ backgroundImage: `url(${bgImg})` }">
         <!-- test用 -->
         <div class="q-pa-md q-gutter-sm">
             <q-btn color="primary" @click="goToOtherPage" label="開発者管理画面"
                 :style="{ width: '120px', height: '50px' }"></q-btn>
         </div>
         <!-- test用 -->
-        <div class="login-form">
+        <div class="login-form" :style="textStyle">
             <h1 style="text-align: center; margin: 20px 0;">管理者 ログイン</h1>
             <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
                 <el-form-item label="ユーザー" prop="username">
@@ -32,9 +32,16 @@
 
 </template>
 <script>
+import bgImg from '../assets/image.png'
 export default {
     data() {
         return {
+            textStyle: {
+                fontWeight: 'bold', // 粗体
+                color: 'black', // 黑色
+                // 如果需要其他样式，可以继续添加
+            },
+            bgImg: bgImg,
             isDesktop: window.innerWidth > 600,
             ruleForm: {
                 username: '',
@@ -120,20 +127,24 @@ export default {
 <style>
 body {
     background-color: #fae6f9 !important;
+    background-position: center;
+    /* 背景图片居中 */
 
 }
 </style>
 <style scoped>
 .login-form {
+    background-color: rgba(35, 33, 33, 0.5);
     width: 100%;
     /* 使用100%宽度，充满整个屏幕 */
     box-sizing: border-box;
     /* 使padding不会撑大宽度 */
     padding: 20px;
     /* 减小padding，以适应小屏幕 */
-    background: #fff;
     margin: 0;
     /* 取消上下边距，以充分利用空间 */
+    border: none;
+    /* 去除边框 */
 }
 
 /* 如果需要保持在大屏幕上的一些样式，可以使用媒体查询 */
@@ -151,5 +162,9 @@ h1 {
     text-align: center;
     margin: 10px 0;
     font-size: 1.5em;
+}
+
+.login {
+    height: 700px;
 }
 </style>

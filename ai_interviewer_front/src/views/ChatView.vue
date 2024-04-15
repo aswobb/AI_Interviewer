@@ -123,7 +123,12 @@ export default {
       checkBoxes: [             // チェックボックス制御用の変数、この変数に格納されているオブジェクトを追加すればチェックボックス増やせるはずです。
         {checked: false, point: "技術スキル"},
         {checked: false, point: "コミュニケーション能力"},
-        {checked: false, point: "SE経験"},
+        {checked: false, point: "プロジェクト管理能力"},
+        {checked: false, point: "問題解決能力"},
+        {checked: false, point: "チームワーク"},
+        {checked: false, point: "セキュリティ意識と対策"},
+        {checked: false, point: "リーダーシップ"},
+        {checked: false, point: "継続的な学習と技術的成長への意欲"}
         // {checked: false, point: "追加したい重視ポイント"},
         ],
       
@@ -395,7 +400,7 @@ export default {
         const response = await axios.post(
         "/api/chat/sendMessage",
         {
-          message: chatBody + ",{\"role\":\"user\", \"content\":\"CSVインポートしたいので面接での質問と回答と評価を出力してください。必ず「質問」,「回答」,「各プログラム評価」,「総合評価」,「評価理由」,「改善点」の6列にしてください。評価理由は4行程度で出力してください。 改善点は4行程度で出力してください。 CSV以外の出力はしないでください。CSVデータとそうではないところがわかるように、CSVデータは```で囲ってください。\" }"
+          message: chatBody + ",{\"role\":\"user\", \"content\":\"CSVインポートしたいので面接での質問と回答と評価を出力してください。必ず「質問」,「回答」,「各プログラム評価」,「総合評価」,「評価理由」,「改善点」の6列にしてください。評価理由は4行程度で出力してください。 改善点は4行程度で出力してください。CSV以外の出力はしないでください。CSVデータとそうではないところがわかるように、CSVデータは```で囲ってください。\" }"
         },
         {
           headers: {

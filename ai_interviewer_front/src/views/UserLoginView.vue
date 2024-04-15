@@ -102,18 +102,18 @@ export default {
     },
     resetForm(formName) {
       this.$refs[formName].resetFields();
-    },
+    }
 
 
 
   }
 };
 </script>
-<style>
+<style scoped>
 @media only screen and (min-width: 768px){
-body {
-  background-image: url('./bot-avatar.png');
-  background-size:cover; /* 可选，将背景图片缩放以填充整个屏幕 */
+  body {
+  background-image: url('./bot-avatar.png') !important;
+  background-size:cover !important; /* 可选，将背景图片缩放以填充整个屏幕 */
   /* background-position: center;  */
 
   }
@@ -121,8 +121,8 @@ body {
 
 @media only screen and (max-width: 767px) {
   body {
-    background-image: url('./bot-avatar.png');
-    background-size: contain; /* 或 contain */
+    background-image: url('./bot-avatar.png') !important;
+    background-size: contain !important; /* 或 contain */
   }
 }
 
@@ -151,7 +151,7 @@ body {
 .login-container {
   display: flex;
   justify-content: center; /* 水平居中 */
-  align-items: flex-end; /* 垂直居中 */
+  align-items: center; /* 垂直居中 */
   height: 100vh; /* 将容器高度设置为视口的100%，使其铺满整个屏幕 */
  }
 }

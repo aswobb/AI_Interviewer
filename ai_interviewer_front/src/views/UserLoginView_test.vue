@@ -7,12 +7,12 @@
       <QPageContainer>
         <q-page id="background" class="flex flex-center">
         <div class="q-pa-md" style="width: 350px; max-width: 90vw;">
-          <div class="text-h4 text-center q-mb-md" style="color: #007bff; font-weight: bold;">AI面接官ログイン</div>
+          <div class="text-h4 text-center q-mb-md" style="color: #00FFFF; font-weight: bold;">AI面接官ログイン</div>
           <q-form ref="form" @submit="onSubmit" @reset="onReset" class="q-gutter-md">
-            <q-input filled v-model="ruleForm.interviewerId" label="面接ID" lazy-rules :rules="[val => val && val.length > 0 || '面接IDを入力してください']"style="background-color: #fff;height: 50px;"/>
-            <q-input filled type="password" v-model="ruleForm.interviewerName" label="パスワード" lazy-rules :rules="[val => val && val.length > 0 || '面接者氏名を入力してください']"style="background-color: #fff;height: 50px;"/>
+            <q-input filled v-model="ruleForm.interviewerId" label="面接ID" lazy-rules :rules="[val => val && val.length > 0 || '面接IDを入力してください']"style="background-color: #fff;height: 54px;"/>
+            <q-input filled v-model="ruleForm.interviewerName" label="面接者氏名" lazy-rules :rules="[val => val && val.length > 0 || '面接者氏名を入力してください']"style="background-color: #fff;height: 54px;"/>
             <div>
-              <q-btn label="ログイン" type="submit" color="primary" class="full-width q-mb-sm"/>
+              <q-btn label="面接練習へ" type="submit" color="primary" class="full-width q-mb-sm"/>
               <q-btn label="リセット" type="reset" color="primary" class="full-width q-mb-sm"/>
             </div>
           </q-form>
@@ -99,6 +99,9 @@
 
 /* 小屏幕下的背景图片 */
 @media only screen and (max-width: 600px) {
+  body {
+    overflow-y: hidden; /* 隐藏垂直滚动条 */
+  }
   #background {
     background-image: url('./bot-avatar.png');
     background-size: contain;
@@ -109,6 +112,7 @@
 @media only screen and (min-width: 601px) and (max-width: 1024px) {
   #background {
     background-image: url('./bot-avatar.png');
+    background-size: contain;
   }
 }
 
@@ -116,6 +120,7 @@
 @media only screen and (min-width: 1025px) {
   #background {
     background-image: url('./bot-avatar.png');
+    background-size: cover;
   }
 }
 

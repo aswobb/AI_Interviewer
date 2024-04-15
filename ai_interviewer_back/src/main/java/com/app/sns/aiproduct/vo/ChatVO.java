@@ -8,4 +8,7 @@ import javax.validation.constraints.NotBlank;
 public class ChatVO {
     @NotBlank(message = "Message cannot be blank")
     private String message;
+    private String role;
+    private String content;
+
 }

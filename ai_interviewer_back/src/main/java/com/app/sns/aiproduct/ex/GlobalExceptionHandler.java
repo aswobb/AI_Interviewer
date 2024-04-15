@@ -1,7 +1,7 @@
 package com.app.sns.aiproduct.ex;
 
+import com.app.sns.aiproduct.constant.ServiceCodeEnum;
 import com.app.sns.aiproduct.web.JsonResult;
-import com.app.sns.aiproduct.web.ServiceCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.List;
 
 /**
- * 全局异常处理的配置类
+ * グローバルな例外処理の設定クラス
  *
  * @author 張
  * @version 0.0.1
@@ -20,7 +20,7 @@ import java.util.List;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     public GlobalExceptionHandler() {
-        log.debug("创建统一处理异常的类：GlobalExceptionHandler");
+        log.debug("グローバルな例外処理クラスを作成：GlobalExceptionHandler");
     }
 
     @ExceptionHandler
@@ -30,21 +30,21 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler
     public JsonResult<Void> handleThrowable(Throwable e) {
-        log.debug("处理了Throwable");
+        log.debug("Throwableを処理しました");
         e.printStackTrace();
-        String message = "运行过程中出现意外错误,请联系系统管理员!";
-        return JsonResult.fail(ServiceCode.ERR_INTERNAL_SERVICE_ERROR, message);
+        String message = "実行中に予期せぬエラーが発生しました。システム管理者にお問い合わせください。";
+        return JsonResult.fail(ServiceCodeEnum.ERR_INTERNAL_SERVICE_ERROR.getCode(), message);
     }
 
     @ExceptionHandler
     public JsonResult<Void> handleBindException(BindException e) {
-        log.debug("处理了BindException:{}", e.getMessage());
+        log.debug("BindExceptionを処理しました:{}", e.getMessage());
         StringBuilder stringBuilder = new StringBuilder();
         List<FieldError> fieldErrors = e.getFieldErrors();
         for (FieldError fieldError : fieldErrors) {
             String message = fieldError.getDefaultMessage();
             stringBuilder.append(message);
         }
-        return JsonResult.fail(ServiceCode.ERR_BAN_REQUEST, stringBuilder.toString());
+        return JsonResult.fail(ServiceCodeEnum.ERR_BAN_REQUEST.getCode(), stringBuilder.toString());
     }
 }

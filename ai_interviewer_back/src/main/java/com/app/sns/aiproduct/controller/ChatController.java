@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 @RestController
 @RequestMapping("/chat")
@@ -39,6 +40,22 @@ public class ChatController {
     public JsonResult<ChatResponse> sendMessageByGoogleCloud(@Validated @RequestBody ChatVO chatVO) {
         //        jsonResult.setData("请问有什么可以帮到您的吗？");
         String content = chatGPTService.generateResponse(chatVO.getMessage());
+        String audioContent = googleVoiceSerice.googleCloudTextToSpeech(content);
+
+        ChatResponse chatResponse = new ChatResponse();
+        chatResponse.setContent(content);
+        chatResponse.setAudioContent(audioContent);
+        return JsonResult.ok(chatResponse);
+    }
+
+    /**
+     * ユーザのコンテントをopenaiに送信して返事を音声化する
+     * @param chatVOList
+     * @return
+     */
+    @PostMapping("/sendContentByGoogleCloud")
+    public JsonResult<ChatResponse> sendContentByGoogleCloud(@Validated @RequestBody List<ChatVO> chatVOList) {
+        String content = chatGPTService.generateResponse(chatVOList);
         String audioContent = googleVoiceSerice.googleCloudTextToSpeech(content);
 
         ChatResponse chatResponse = new ChatResponse();

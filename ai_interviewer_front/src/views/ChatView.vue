@@ -260,14 +260,12 @@ export default {
           const token = localStorage.getItem("token");
           const chatBody = this.messages.map(rowData => { // {text: String, isUser: Boolean}の形
             const role = rowData.isUser ? "user" : "assistant";
-            return JSON.stringify({role: role, content: rowData.text});
-          }).join(',');
+            return {role: role, content: rowData.text};
+          });
           // 发送 API 请求
           const response = await axios.post(
-            "/api/chat/sendMessageByGoogleCloud",
-            {
-              message: chatBody,
-            },
+            "/api/chat/sendContentByGoogleCloud",
+            chatBody,
             {
               headers: {
                 "Content-Type": "application/json",

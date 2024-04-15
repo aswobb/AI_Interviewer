@@ -41,7 +41,7 @@ public class InterviewerInfoServiceImpl extends ServiceImpl<InterviewerInfoMappe
         SnsUser snsUser = userMapper.selectById(userId);
         Integer createNum = 0;
         if (accountNum <= 0 || snsUser.getRemainNum() <= 0) {
-            throw new ServiceException(INSUFFICIENT_BALANCE, "余额不足");
+            throw new ServiceException(INSUFFICIENT_BALANCE, "残数不足");
         }
         if (snsUser.getRemainNum() > accountNum) {
             createNum = accountNum;
@@ -54,7 +54,6 @@ public class InterviewerInfoServiceImpl extends ServiceImpl<InterviewerInfoMappe
             interviewerInfo.setInterviewerId(UUID.randomUUID().toString().replaceAll("-",""));
             interviewerInfo.setEnable(0);
             interviewerInfo.setUserId(userId);
-            interviewerInfo.setGmtUpdate(LocalDateTime.now());
             interviewerInfo.setGmtCreate(LocalDateTime.now());
             interviewerInfoList.add(interviewerInfo);
         }
@@ -65,6 +64,7 @@ public class InterviewerInfoServiceImpl extends ServiceImpl<InterviewerInfoMappe
         snsUserQueryWrapper.eq("id",snsUser.getId());
         snsUserQueryWrapper.eq("remain_num",oldRemainNum);
 
+        snsUser.setGmtUpdate(LocalDateTime.now());
         userMapper.update(snsUser,snsUserQueryWrapper);
         this.saveBatch(interviewerInfoList);
         return null;

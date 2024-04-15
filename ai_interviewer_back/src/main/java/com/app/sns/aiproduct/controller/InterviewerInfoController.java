@@ -42,7 +42,7 @@ public class InterviewerInfoController {
     }
 
     @GetMapping("/list")
-    public JsonResult list(@RequestBody InterviewerInfoVO interviewerInfoVO,
+    public JsonResult list(@ModelAttribute   InterviewerInfoVO interviewerInfoVO,
                                        HttpServletRequest request
     ) {
         Page<InterviewerInfo> page = new Page<>(interviewerInfoVO.getPageNum(), interviewerInfoVO.getPageSize());

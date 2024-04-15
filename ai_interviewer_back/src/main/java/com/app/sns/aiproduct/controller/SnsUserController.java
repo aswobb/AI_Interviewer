@@ -1,12 +1,21 @@
 package com.app.sns.aiproduct.controller;
 import com.app.sns.aiproduct.ex.ServiceException;
 import com.app.sns.aiproduct.pojo.dto.UserLoginInfoInDTO;
+import com.app.sns.aiproduct.pojo.entity.InterviewerInfo;
 import com.app.sns.aiproduct.pojo.entity.SnsUser;
+import com.app.sns.aiproduct.pojo.vo.InterviewerInfoVO;
+import com.app.sns.aiproduct.pojo.vo.SnsUserVO;
 import com.app.sns.aiproduct.service.UserService;
+import com.app.sns.aiproduct.web.JWTUtil;
 import com.app.sns.aiproduct.web.JsonResult;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 import static com.app.sns.aiproduct.web.ServiceCode.INVALID_OLD_PASSWORD;
@@ -25,6 +34,29 @@ public class SnsUserController {
             throw new ServiceException(INVALID_OLD_PASSWORD, "Failed to update password. Invalid old password.");
         }
     }
+
+
+    @GetMapping("/list")
+    public JsonResult list(@RequestBody SnsUserVO snsUserVO) {
+        Page<SnsUser> page = new Page<>(snsUserVO.getPageNum(), snsUserVO.getPageSize());
+        QueryWrapper<SnsUser> wrapper = new QueryWrapper<>();
+        if (snsUserVO.getGmtCreateStart() != null && snsUserVO.getGmtCreateEnd() != null) {
+            wrapper.lambda().between(SnsUser::getGmtCreate, snsUserVO.getGmtCreateStart(), snsUserVO.getGmtCreateEnd());
+        }
+        wrapper.lambda().eq(SnsUser::getRoleId, "2");
+        return JsonResult.ok(userService.page(page, wrapper));
+    }
+    @PostMapping("/create")
+    public SnsUser createUser(@RequestBody SnsUserVO userVO,HttpServletRequest request) {
+        Long creator = JWTUtil.getUserIdFromToken(request);
+        return userService.createUser(creator,userVO);
+    }
+
+    @PostMapping("/update")
+    public SnsUser updateUser( @RequestBody SnsUserVO userVO,HttpServletRequest request) {
+        Long creator = JWTUtil.getUserIdFromToken(request);
+        return userService.updateUser(creator,userVO);
+    }
 //
 //    @GetMapping("/{id}")
 //    public SnsUser getUserById(@PathVariable Long id) {
@@ -36,18 +68,10 @@ public class SnsUserController {
 //        return userService.getAllUsers();
 //    }
 //
-//    @PostMapping("/create")
-//    public SnsUser createUser(@RequestBody SnsUser user) {
-//        return userService.createUser(user);
-//    }
-//
-//    @PutMapping("/update/{id}")
-//    public SnsUser updateUser(@PathVariable Long id, @RequestBody SnsUser user) {
-//        return userService.updateUser(id, user);
-//    }
-//
-//    @DeleteMapping("/delete/{id}")
-//    public void deleteUser(@PathVariable Long id) {
-//        userService.deleteUser(id);
-//    }
+
+
+    @DeleteMapping("/delete/{id}")
+    public void deleteUser(@PathVariable Long id) {
+        userService.deleteUser(id);
+    }
 }

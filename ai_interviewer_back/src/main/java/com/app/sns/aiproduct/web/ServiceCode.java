@@ -27,6 +27,10 @@ public interface ServiceCode {
      */
     Integer ERR_DISABLE = 40401;
     /**
+     * 没有访问此资源的权限
+     */
+    Integer ERR_NOT_ALLOWED = 40402;
+    /**
      * 数据冲突，例如尝试添加不允许重复的数据
      */
     Integer ERR_CONFLICT = 40900;

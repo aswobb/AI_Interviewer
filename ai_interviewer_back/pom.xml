@@ -79,6 +79,11 @@
 <!--            <scope>test</scope>-->
 <!--        </dependency>-->
         <!--引入jwt-->
+        <!--SpringSecurity依赖配置-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
         <dependency>
             <groupId>com.auth0</groupId>
             <artifactId>java-jwt</artifactId>

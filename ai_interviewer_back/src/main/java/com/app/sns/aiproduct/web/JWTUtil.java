@@ -7,10 +7,13 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Calendar;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.app.sns.aiproduct.web.ServiceCode.ERR_NOT_FOUND;
 
@@ -83,5 +86,30 @@ public class JWTUtil {
 
         // 返回用户 ID
         return Long.parseLong(userIdClaim.asString());
+    }
+
+    public static boolean validateToken(String token) {
+        try {
+            verify(token);
+            return true;
+        } catch (Exception e) {
+
+        }
+        return false;
+    }
+    public static Authentication getAuthentication(String token) {
+        DecodedJWT verify = verify(token);
+        Map<String, Claim> claims = JWTUtil.getTokenInfo(token);
+        // 获取用户名
+        String userName = claims.get("userId").asString();
+        String roleId = claims.get("roleId").asString();
+
+        // 获取用户角色字符串
+        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+
+        SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + roleId);
+        authorities.add(authority);
+        return new UsernamePasswordAuthenticationToken(userName, token, authorities);
+
     }
 }

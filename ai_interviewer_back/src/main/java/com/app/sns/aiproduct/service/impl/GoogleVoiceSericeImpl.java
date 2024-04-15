@@ -68,7 +68,7 @@ public class GoogleVoiceSericeImpl implements GoogleVoiceSerice {
             jsonPayload.put("voice", voice);
             String jsonResponse = sendGoogleVoicePost(jsonPayload.toJSONString());
             JSONObject jsonObject = JSONObject.parseObject(jsonResponse);
-            log.debug(jsonResponse);
+//            log.debug(jsonResponse);
             return jsonObject.getString("audioContent");
         }
         catch (Exception e) {

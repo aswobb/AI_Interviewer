@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.app.sns.aiproduct.ex.ServiceException;
 import com.app.sns.aiproduct.service.ChatGPTService;
+import com.app.sns.aiproduct.vo.ChatVO;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.Duration;
+import java.util.List;
+
 import com.app.sns.aiproduct.mapper.GetGPTSettingMapper;
 import com.app.sns.aiproduct.pojo.vo.ChatGPTSettingVO;
 
@@ -50,12 +53,15 @@ public class ChatGPTServiceImpl implements ChatGPTService {
                 payloadJson.put("model",model);
                 JSONArray messages = new JSONArray();
                 JSONObject message = new JSONObject();
-                message.put("role","system");
-                message.put("content",prompt);
+                JSONObject promptMessage = new JSONObject();
+                promptMessage.put("role","system");
+                promptMessage.put("content",prompt);
+                messages.add(promptMessage);
                 message.put("role","user");
                 message.put("content",userMessage);
                 messages.add(message);
                 payloadJson.put("messages",messages);
+                log.debug(payloadJson.toJSONString());
             String jsonResponse = sendChatGptPost(payloadJson.toJSONString());
 
             // 解析 JSON 字符串
@@ -69,6 +75,54 @@ public class ChatGPTServiceImpl implements ChatGPTService {
                     .getJSONObject(0)
                     .getJSONObject("message")
                     .getString("content");
+
+            log.debug(jsonResponse);
+            // 发送 POST 请求
+            return assistantMessage;
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("调用chatgptapi错误：{}", e.getMessage());
+            throw new ServiceException(401, e.getMessage());
+        }
+    }
+
+    public String generateResponse(List<ChatVO> chatVOList) {
+        ChatGPTSettingVO settingInfo = getGPTSettingMapper.getGptSettingInfo("sns_interviewer");
+        String prompt = escapeLineCode(settingInfo.getPromptcontent());
+        String model = escapeLineCode(settingInfo.getModel());
+        try {
+            // log.debug(userMessage);
+            //  payload
+            JSONObject payloadJson = new JSONObject();
+            payloadJson.put("model",model);
+            JSONArray messages = new JSONArray();
+            JSONObject promptMessage = new JSONObject();
+            promptMessage.put("role","system");
+            promptMessage.put("content",prompt);
+            messages.add(promptMessage);
+            for (ChatVO chatVO : chatVOList) {
+                JSONObject message = new JSONObject();
+                message.put("role",chatVO.getRole());
+                message.put("content",chatVO.getContent());
+                messages.add(message);
+            }
+            payloadJson.put("messages",messages);
+            log.debug(payloadJson.toJSONString());
+            String jsonResponse = sendChatGptPost(payloadJson.toJSONString());
+
+            // 解析 JSON 字符串
+            JSONObject jsonObject = JSONObject.parseObject(jsonResponse);
+            // log.debug(jsonObject.toJSONString());
+            log.debug("completion_tokens: {}",jsonObject.getJSONObject("usage").getInteger("completion_tokens"));
+            log.debug("prompt_tokens: {}",jsonObject.getJSONObject("usage").getInteger("prompt_tokens"));
+            log.debug("total_tokens: {}",jsonObject.getJSONObject("usage").getInteger("total_tokens"));
+            // 提取 message 字段
+            String assistantMessage = jsonObject.getJSONArray("choices")
+                    .getJSONObject(0)
+                    .getJSONObject("message")
+                    .getString("content");
+
+            log.debug(jsonResponse);
             // 发送 POST 请求
             return assistantMessage;
         } catch (Exception e) {

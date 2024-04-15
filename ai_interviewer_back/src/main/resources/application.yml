@@ -4,7 +4,7 @@ spring:
     active: dev
 # 响应Json时不包含为Null的属性
   jackson:
-    default-property-inclusion: non_null
+    default-property-inclusion: always
 
 # 指定Mybatis的XML文件的位置
 mybatis:

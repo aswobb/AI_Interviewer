@@ -48,10 +48,13 @@ public class ChatController {
         return JsonResult.ok(chatResponse);
     }
 
-
+    /**
+     * ユーザのコンテントをopenaiに送信して返事を音声化する
+     * @param chatVOList
+     * @return
+     */
     @PostMapping("/sendContentByGoogleCloud")
     public JsonResult<ChatResponse> sendContentByGoogleCloud(@Validated @RequestBody List<ChatVO> chatVOList) {
-        //        jsonResult.setData("请问有什么可以帮到您的吗？");
         String content = chatGPTService.generateResponse(chatVOList);
         String audioContent = googleVoiceSerice.googleCloudTextToSpeech(content);
 

@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * 用户登录控制器
+ * ユーザログイン
  *
  * @author 張
  * @version 0.0.1
@@ -28,14 +28,14 @@ public class LoginController {
 
     @PostMapping("/login")
     public JsonResult loginInfo(@RequestBody UserLoginInfoInDTO userLoginInfoInDTO) {
-        log.debug("开始处理登录的请求:{}", userLoginInfoInDTO);
+        log.debug("ログインリクエストの処理を始める:{}", userLoginInfoInDTO);
         UserLoginInfoOutDTO userLoginInfoOutDTO = loginService.loginInfo(userLoginInfoInDTO);
         return JsonResult.ok(userLoginInfoOutDTO);
     }
 
     @PostMapping("/interviewerLoginInfo")
     public JsonResult interviewerLoginInfo(@RequestBody InterviewerInfoVO interviewerInfoVO) {
-        log.debug("开始处理登录的请求:{}", interviewerInfoVO);
+        log.debug("ログインリクエストの処理を始める:{}", interviewerInfoVO);
         InterviewerInfoVO response = loginService.interviewerLoginInfo(interviewerInfoVO);
         return JsonResult.ok(response);
     }

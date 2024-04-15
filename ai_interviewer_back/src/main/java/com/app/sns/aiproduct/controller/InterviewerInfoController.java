@@ -1,5 +1,6 @@
 package com.app.sns.aiproduct.controller;
 
+import com.app.sns.aiproduct.constant.ServiceCodeEnum;
 import com.app.sns.aiproduct.ex.ServiceException;
 import com.app.sns.aiproduct.pojo.entity.CsvFile;
 import com.app.sns.aiproduct.pojo.entity.InterviewerInfo;
@@ -8,13 +9,8 @@ import com.app.sns.aiproduct.service.InterviewerInfoService;
 import com.app.sns.aiproduct.util.EmptyUtil;
 import com.app.sns.aiproduct.web.JWTUtil;
 import com.app.sns.aiproduct.web.JsonResult;
-import com.app.sns.aiproduct.web.ServiceCode;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -25,8 +21,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
-import static com.app.sns.aiproduct.web.ServiceCode.ERR_NOT_FOUND;
-
 @RestController
 @RequestMapping("/interviewerInfo")
 public class InterviewerInfoController {
@@ -34,6 +28,12 @@ public class InterviewerInfoController {
     @Resource
     private InterviewerInfoService interviewerInfoService;
 
+    /**
+     * 契約会社は面接者情報を大量作成する
+     * @param interviewerInfoVO
+     * @param request
+     * @return
+     */
     @PostMapping("/batchCreate")
     public JsonResult batchCreate(@RequestBody InterviewerInfoVO interviewerInfoVO, HttpServletRequest request) {
         Long userId = JWTUtil.getUserIdFromToken(request);
@@ -41,6 +41,12 @@ public class InterviewerInfoController {
         return JsonResult.ok();
     }
 
+    /**
+     * 面接者情報をリストする
+     * @param interviewerInfoVO
+     * @param request
+     * @return
+     */
     @GetMapping("/list")
     public JsonResult list(@ModelAttribute   InterviewerInfoVO interviewerInfoVO,
                                        HttpServletRequest request
@@ -64,35 +70,51 @@ public class InterviewerInfoController {
         return JsonResult.ok(interviewerInfoService.page(page, wrapper));
     }
 
+    /**
+     * 面接者情報を更新する
+     * @param interviewerInfoVO
+     * @return
+     */
     @PostMapping("/updateInterviewerInfo")
     public JsonResult updateInterviewerInfo(@RequestBody InterviewerInfoVO interviewerInfoVO) {
         if (EmptyUtil.isNull(interviewerInfoVO.getId())) {
-            throw new ServiceException(ServiceCode.ERR_PAR_EMPTY, "请求参数为空");
+            throw new ServiceException(ServiceCodeEnum.ERR_PAR_EMPTY);
         }
         if (EmptyUtil.isNull(interviewerInfoVO.getInterviewerName())) {
-            throw new ServiceException(ServiceCode.ERR_PAR_EMPTY, "请求参数为空");
+            throw new ServiceException(ServiceCodeEnum.ERR_PAR_EMPTY);
         }
         return  JsonResult.ok(interviewerInfoService.updateInterviewerInfo(interviewerInfoVO.getId(), interviewerInfoVO));
     }
 
+    /**
+     * 面接の流れ完了して、CSVファイルをアップロード
+     * @param request
+     * @param file
+     * @return
+     */
     @PostMapping("/completeInterviewerInfo")
     public JsonResult completeInterviewerInfo(HttpServletRequest request,@RequestParam("file") MultipartFile file) {
         if (file.isEmpty()) {
-            throw new ServiceException(ServiceCode.ERR_PAR_EMPTY, "File is empty");
+            throw new ServiceException(ServiceCodeEnum.ERR_PAR_EMPTY);
         }
         Long userId = JWTUtil.getUserIdFromToken(request);
         return JsonResult.ok(interviewerInfoService.completeInterviewerInfo(userId, file));
     }
 
 
+    /**
+     * CSVファイル　ダウンロード
+     * @param fileId
+     * @return
+     */
     @GetMapping("/downLoadCsv/{fileId}")
     public ResponseEntity  downLoadCsv(@PathVariable Long fileId) {
         if (EmptyUtil.isNull(fileId)) {
-            throw new ServiceException(ServiceCode.ERR_PAR_EMPTY, "fileId is empty");
+            throw new ServiceException(ServiceCodeEnum.ERR_PAR_EMPTY);
         }
         CsvFile csvFile = interviewerInfoService.getCsvFile(fileId);
         if (EmptyUtil.isNull(csvFile)) {
-            throw new ServiceException(ServiceCode.ERR_PAR_EMPTY, "fileId is not exist");
+            throw new ServiceException(ServiceCodeEnum.ERR_NOT_FOUND);
         }
         ByteArrayResource resource = new ByteArrayResource(csvFile.getFileContent());
 

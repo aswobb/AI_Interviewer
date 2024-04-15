@@ -1,5 +1,6 @@
 package com.app.sns.aiproduct.web;
 
+import com.app.sns.aiproduct.constant.ServiceCodeEnum;
 import com.app.sns.aiproduct.ex.ServiceException;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTCreator;
@@ -12,10 +13,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import static com.app.sns.aiproduct.web.ServiceCode.ERR_NOT_FOUND;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Map;
 
 @Configuration
 public class JWTUtil {
@@ -72,7 +73,7 @@ public class JWTUtil {
         // 从请求头中获取 token
         String token = request.getHeader("token");
         if (token == null ) {
-            throw new ServiceException(ERR_NOT_FOUND,"Token存在しないあるいは間違い");
+            throw new ServiceException(ServiceCodeEnum.ERR_NOT_FOUND.getCode(),"Token存在しないあるいは間違い");
         }
 
         // 验证 token 合法性，并获取 token 信息
@@ -81,7 +82,7 @@ public class JWTUtil {
         // 从 token 信息中获取用户 ID
         Claim userIdClaim = claims.get("userId");
         if (userIdClaim == null || userIdClaim.isNull()) {
-            throw new ServiceException(ERR_NOT_FOUND,"Tokenの中で、userIdが存在しない");
+            throw new ServiceException(ServiceCodeEnum.ERR_NOT_FOUND.getCode(),"Tokenの中で、userIdが存在しない");
         }
 
         // 返回用户 ID

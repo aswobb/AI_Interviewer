@@ -30,16 +30,14 @@ public class GoogleVoiceSericeImpl implements GoogleVoiceSerice {
             .build();
 
 
-    @Retryable(maxAttempts = 3, backoff = @Backoff(delay = 1000)) // 最多重试3次，每次间隔1秒
+    @Retryable(maxAttempts = 3, backoff = @Backoff(delay = 1000)) // 1秒間隔で最大3回再試行します
     private String sendGoogleVoicePost(String payload) throws ServiceException {
 
-        // 设置请求头
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         HttpEntity<String> requestEntity = new HttpEntity<>(payload, headers);
 
-        // 发送请求
         ResponseEntity<String> responseEntity = restTemplate.postForEntity(googleCloud_apiUrl+ googleCloud_apiKey, requestEntity, String.class);
 
         return responseEntity.getBody();
@@ -73,7 +71,7 @@ public class GoogleVoiceSericeImpl implements GoogleVoiceSerice {
         }
         catch (Exception e) {
             e.printStackTrace();
-            log.error("调用google text to speech错误：{}", e.getMessage());
+            log.error("google text to speechエラーを呼び出しました：{}", e.getMessage());
             throw new ServiceException(401, e.getMessage());
         }
     }

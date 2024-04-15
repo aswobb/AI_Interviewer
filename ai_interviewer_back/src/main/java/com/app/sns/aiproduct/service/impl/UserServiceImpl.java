@@ -1,12 +1,11 @@
 package com.app.sns.aiproduct.service.impl;
 
+import com.app.sns.aiproduct.constant.ServiceCodeEnum;
 import com.app.sns.aiproduct.ex.ServiceException;
 import com.app.sns.aiproduct.mapper.BillingCourseMapper;
-import com.app.sns.aiproduct.mapper.InterviewerInfoMapper;
 import com.app.sns.aiproduct.mapper.UserBillingHistoryMapper;
 import com.app.sns.aiproduct.mapper.UserMapper;
 import com.app.sns.aiproduct.pojo.entity.BillingCourse;
-import com.app.sns.aiproduct.pojo.entity.InterviewerInfo;
 import com.app.sns.aiproduct.pojo.entity.SnsUser;
 import com.app.sns.aiproduct.pojo.entity.UserBillingHistory;
 import com.app.sns.aiproduct.pojo.vo.SnsUserVO;
@@ -14,11 +13,9 @@ import com.app.sns.aiproduct.pojo.vo.UserBillingHistoryVO;
 import com.app.sns.aiproduct.service.InterviewerInfoService;
 import com.app.sns.aiproduct.service.UserService;
 import com.app.sns.aiproduct.util.EmptyUtil;
-import com.app.sns.aiproduct.web.ServiceCode;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,8 +23,6 @@ import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
-
-import static com.app.sns.aiproduct.web.ServiceCode.INSUFFICIENT_BALANCE;
 
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, SnsUser> implements UserService {
@@ -59,7 +54,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, SnsUser> implements
         queryWrapper.lambda().eq(SnsUser::getEnable,0);
         Integer integer = userMapper.selectCount(queryWrapper);
         if(integer>0){
-            throw new ServiceException(ServiceCode.ERR_CONFLICT, "用户名已存在");
+            throw new ServiceException(ServiceCodeEnum.ERR_CONFLICT);
         }
         SnsUser snsUser = new SnsUser();
         BeanUtils.copyProperties(userVO, snsUser);
@@ -88,7 +83,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, SnsUser> implements
         queryWrapper.lambda().ne(SnsUser::getId,userVO.getId());
         Integer integer = userMapper.selectCount(queryWrapper);
         if(integer>0){
-            throw new ServiceException(ServiceCode.ERR_CONFLICT, "用户名已存在");
+            throw new ServiceException(ServiceCodeEnum.ERR_CONFLICT);
         }
         oldData.setUsername(userVO.getUsername());
         oldData.setPassword(userVO.getPassword());

@@ -1,5 +1,6 @@
 package com.app.sns.aiproduct.ex;
 
+import com.app.sns.aiproduct.constant.ServiceCodeEnum;
 import lombok.Getter;
 /**
  * 异常处理类
@@ -14,5 +15,10 @@ public class ServiceException extends RuntimeException {
     public ServiceException(Integer state, String message) {
         super(message);
         this.state = state;
+    }
+
+    public ServiceException(ServiceCodeEnum serviceCodeEnum) {
+        super(serviceCodeEnum.getMessage());
+        this.state = serviceCodeEnum.getCode();
     }
 }

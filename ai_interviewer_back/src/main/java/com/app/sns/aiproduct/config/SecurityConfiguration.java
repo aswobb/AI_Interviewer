@@ -14,7 +14,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 /**
- * Web 安全配置
+ * spring security 配置クラス
  *
  * @author star
  **/
@@ -28,7 +28,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 
     /**
-     * 使用 Spring Security 推荐的加密方式进行登录密码的加密
+     * Spring Securityが推奨する暗号化方式を使用して、ログインパスワードを暗号化します。
      */
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder(){
@@ -36,7 +36,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
     /**
-     * 此方法配置的资源路径不会进入 Spring Security 机制进行验证
+     * このメソッドで設定されたリソースパスは、Spring Securityの検証メカニズムを通過しません。
      */
     @Override
     public void configure(WebSecurity web) {
@@ -56,17 +56,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
     /**
-     * 定义安全策略，设置 HTTP 访问规则
+     * セキュリティポリシーを定義し、HTTPアクセスルールを設定します。
      */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
 //                .addFilterBefore(corsFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling()
-//                // 当用户无权访问资源时发送 401 响应
-//                .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
-                // 当用户访问资源因权限不足时发送 403 响应
-//                .authenticationEntryPoint(new MyEntryPoint())
                 .accessDeniedHandler(new MyAccessDeniedHandler())
 
                 .and()
@@ -76,9 +72,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .and()
                 .logout().logoutUrl("/auth/logout").and()
                 .authorizeRequests()
-                // 指定路径下的资源需要进行验证后才能访问
+                // 指定されたパス下のリソースへのアクセスには検証が必要です
                 .antMatchers("/").permitAll()
-                // 配置登录地址
+                // ログインアドレスの設定
                 .antMatchers(HttpMethod.POST, "/snsUser/updatePassword").hasAnyRole("2")
                 .antMatchers(HttpMethod.POST, "/snsUser/list").hasAnyRole("0","1")
                 .antMatchers(HttpMethod.POST, "/snsUser/create").hasAnyRole("0","1")
@@ -93,10 +89,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, "/chat/sendMessageByGoogleCloud").hasAnyRole("3")
                 .antMatchers(HttpMethod.POST, "/chat/sendContentByGoogleCloud").hasAnyRole("3")
                 .antMatchers(HttpMethod.POST, "/upload").hasAnyRole("3")
-                // 其他请求需验证
+                // 他のリクエストには検証が必要
                 .anyRequest().authenticated()
                 .and()
-                // 不需要 session（不创建会话）
+                // セッションは必要ない（セッションを作成しない）
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()

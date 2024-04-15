@@ -4,11 +4,6 @@
     <el-row class="title">
       {{ pageTitle+'・AI面接官' }}
       <el-dropdown class="title-menu">
-        <span class="el-dropdown-link"> ☰ </span>
-        <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item @click.native="showPersonalInfo">個人情報</el-dropdown-item>
-          <el-dropdown-item @click.native="logout">ログアウト</el-dropdown-item>
-        </el-dropdown-menu>
       </el-dropdown>
     </el-row>
     <el-row class="content">
@@ -94,7 +89,7 @@
           <template v-else> 送信 </template>
         </el-button>
         <!-- 音声入力試験用-->
-        <q-btn @click="toggleSpeechRecognition"  :label="speechRecognitionActive ? '音声入力停止' : '音声入力開始'" color="primary" :style="{ width: '130px', height: '45px'}"class="btn-spacing"/>
+        <q-btn @click="toggleSpeechRecognition"  :label="speechRecognitionActive ? '音声停止' : '音声入力'" color="purple-7" :style="{ width: '76px', height: '45px'}"class="btn-spacing"/>
         <!-- 音声入力試験用-->
       </el-col>
     </el-row>
@@ -398,7 +393,7 @@ export default {
         const response = await axios.post(
         "/api/chat/sendMessage",
         {
-          message: chatBody + ",{\"role\":\"user\", \"content\":\"CSVインポートしたいので面接での質問と回答と評価を出力してください。必ず「質問」,「回答」,「各プログラム評価」,「総合評価」,「評価理由」,「改善点」の6列にしてください。評価理由は4行程度で出力してください。 改善点は4行程度で出力してください。CSV以外の出力はしないでください。CSVデータとそうではないところがわかるように、CSVデータは```で囲ってください。\" }"
+          message: chatBody + ",{\"role\":\"user\", \"content\":\"CSVインポートしたいので面接での質問と回答と評価を出力してください。必ず「質問」,「回答」,「各プログラム評価」,「総合評価」,「評価理由」,「改善点」の6列にしてください。評価理由は1行程度で出力してください。 改善点は1行程度で出力してください。CSV以外の出力はしないでください。CSVデータとそうではないところがわかるように、CSVデータは```で囲ってください。\" }"
         },
         {
           headers: {
@@ -831,11 +826,14 @@ input[type="file"] {
 }
 
 .btn-spacing {
-  margin-bottom: 50px;
+  margin-bottom: 60px;
   margin-top:10px;
   white-space: nowrap;
   margin-right: 30px;
-  padding-left: 10px;
+  padding-left: 0px;
+  border-radius: 999px;
+
+
 }
 
 .avatar {

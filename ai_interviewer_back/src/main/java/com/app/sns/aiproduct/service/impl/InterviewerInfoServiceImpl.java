@@ -10,6 +10,7 @@ import com.app.sns.aiproduct.pojo.entity.InterviewerInfo;
 import com.app.sns.aiproduct.pojo.entity.SnsUser;
 import com.app.sns.aiproduct.pojo.vo.InterviewerInfoVO;
 import com.app.sns.aiproduct.service.InterviewerInfoService;
+import com.app.sns.aiproduct.util.EmptyUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
@@ -127,6 +128,10 @@ public class InterviewerInfoServiceImpl extends ServiceImpl<InterviewerInfoMappe
         interviewerInfo.setEnable(1);
         interviewerInfo.setExecutionDate(LocalDateTime.now());
         interviewerInfo.setGmtUpdate(LocalDateTime.now());
+        SnsUser snsUser = userMapper.selectById(interviewerInfo.getUserId());
+        snsUser.setUsageCount(EmptyUtil.isNull(snsUser.getUsageCount())?1:snsUser.getUsageCount()+1);
+        snsUser.setGmtUpdate(LocalDateTime.now());
+        userMapper.updateById(snsUser);
         updateById(interviewerInfo);
         try{
             CsvFile csvFile = new CsvFile();

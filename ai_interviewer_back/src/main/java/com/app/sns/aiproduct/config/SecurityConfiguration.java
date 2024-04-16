@@ -90,6 +90,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, "/chat/sendMessageByGoogleCloud").hasAnyRole(DataDictionary.ROLE_INTERVIEWERS.getValue())
                 .antMatchers(HttpMethod.POST, "/chat/sendContentByGoogleCloud").hasAnyRole(DataDictionary.ROLE_INTERVIEWERS.getValue())
                 .antMatchers(HttpMethod.POST, "/upload").hasAnyRole(DataDictionary.ROLE_INTERVIEWERS.getValue())
+                .antMatchers(HttpMethod.GET, "/snsUser/getCurrentUser").hasAnyRole(DataDictionary.ROLE_CONTRACT.getValue())
                 // 他のリクエストには検証が必要
                 .anyRequest().authenticated()
                 .and()

@@ -34,9 +34,16 @@ public class SnsUserController {
         }
     }
 
+    @GetMapping("/getCurrentUser")
+    public JsonResult getCurrentUser(HttpServletRequest request) {
+        Long userId = JWTUtil.getUserIdFromToken(request);
+        SnsUser snsUser = userService.getUserById(userId);
+
+        return JsonResult.ok(snsUser);
+    }
 
     @GetMapping("/list")
-    public JsonResult list(@RequestBody SnsUserVO snsUserVO) {
+    public JsonResult list(@ModelAttribute SnsUserVO snsUserVO) {
         Page<SnsUser> page = new Page<>(snsUserVO.getPageNum(), snsUserVO.getPageSize());
         QueryWrapper<SnsUser> wrapper = new QueryWrapper<>();
         if (snsUserVO.getGmtCreateStart() != null && snsUserVO.getGmtCreateEnd() != null) {

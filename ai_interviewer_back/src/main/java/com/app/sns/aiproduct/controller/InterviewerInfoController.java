@@ -2,8 +2,10 @@ package com.app.sns.aiproduct.controller;
 
 import com.app.sns.aiproduct.constant.ServiceCodeEnum;
 import com.app.sns.aiproduct.ex.ServiceException;
+import com.app.sns.aiproduct.lock.LockManager;
 import com.app.sns.aiproduct.pojo.entity.CsvFile;
 import com.app.sns.aiproduct.pojo.entity.InterviewerInfo;
+import com.app.sns.aiproduct.pojo.entity.SnsUser;
 import com.app.sns.aiproduct.pojo.vo.InterviewerInfoVO;
 import com.app.sns.aiproduct.service.InterviewerInfoService;
 import com.app.sns.aiproduct.util.EmptyUtil;
@@ -20,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.concurrent.locks.ReentrantLock;
 
 @RestController
 @RequestMapping("/interviewerInfo")
@@ -27,7 +30,8 @@ public class InterviewerInfoController {
 
     @Resource
     private InterviewerInfoService interviewerInfoService;
-
+    @Resource
+    private LockManager lockManager;
     /**
      * 契約会社は面接者情報を大量作成する
      * @param interviewerInfoVO
@@ -37,8 +41,19 @@ public class InterviewerInfoController {
     @PostMapping("/batchCreate")
     public JsonResult batchCreate(@RequestBody InterviewerInfoVO interviewerInfoVO, HttpServletRequest request) {
         Long userId = JWTUtil.getUserIdFromToken(request);
-        interviewerInfoService.batchCreate(userId, 20);
-        return JsonResult.ok();
+
+        ReentrantLock lock = lockManager.getLock(SnsUser.class, userId);
+
+        lock.lock();
+        try {
+            interviewerInfoService.batchCreate(userId, 20);
+            return JsonResult.ok();
+        }catch (Exception e){
+            throw e;
+        }finally {
+            lock.unlock();
+        }
+
     }
 
     /**
@@ -98,7 +113,18 @@ public class InterviewerInfoController {
             throw new ServiceException(ServiceCodeEnum.ERR_PAR_EMPTY);
         }
         Long userId = JWTUtil.getUserIdFromToken(request);
-        return JsonResult.ok(interviewerInfoService.completeInterviewerInfo(userId, file));
+        ReentrantLock lock = lockManager.getLock(SnsUser.class, userId);
+
+        lock.lock();
+        try {
+            return JsonResult.ok(interviewerInfoService.completeInterviewerInfo(userId, file));
+        }catch (Exception e){
+            throw e;
+        }finally {
+            lock.unlock();
+        }
+
+
     }
 
 

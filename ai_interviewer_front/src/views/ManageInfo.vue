@@ -74,6 +74,8 @@
 </template>
 
 <script>
+import { date } from 'quasar';
+
 export default {
     data() {
         return {
@@ -101,7 +103,6 @@ export default {
     },
     created() {
         this.user = this.$store.state.manageInfo
-        console.log(this.user);
     },
     methods: {
         editUser() {
@@ -110,22 +111,24 @@ export default {
             if (token) {
                 let url = 'api/interviewerInfo/list'
                 this.axios.get(url, {
-                    params: { pageNum: 1, pageSize: 1 },
+                    params: { pageNum: 1, pageSize: 5 },
                     headers: {
                         'token': token
                     },
+
                 }).then((response) => {
-                    console.log(121, response);
                     if (response.data.state == 20000) {
+                        //面试者信息赋值
+                        this.$store.commit('initInterviewerInfo', response.data)
                     } else {
+                        this.$notify.error({
+                            message: '面接者情報の取得に失敗しました',
+                            type: 'error'
+                        });
                     }
                 });
-
-
-
-
                 // 导航到编辑用户信息的页面
-                // this.$router.push('/interview-list');
+                this.$router.push('/interview-list');
 
             } else {
                 this.$router.push('/manage-login');

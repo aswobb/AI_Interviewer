@@ -1,14 +1,27 @@
 <template>
     <div>
+        <v-container>
+            <v-row justify="center">
+                <v-col cols="12" md="auto">
+                    <div class="text-center">会社:{{ companyInfo.contractor }}</div>
+                </v-col>
+                <v-col cols="12" md="auto">
+                    <div class="text-center">利用实績:{{ companyInfo.usageCount }}回</div>
+                </v-col>
+                <v-col cols="12" md="auto">
+                    <div class="text-center">残面接:{{ companyInfo.remainNum }}回</div>
+                </v-col>
+            </v-row>
+        </v-container>
         <v-data-table :headers="headers" :items="interviewerList" item-key="id" class="elevation-1"
             :options.sync="tableOptions" :server-items-length="totalItems">
             <template v-slot:item.actions="{ item }">
                 <div class="d-flex">
-                    <v-btn color="primary" class="mx-2" @click="download(item)">
+                    <v-btn color="primary" :disabled="!item.executionDate" class="mx-2" @click="download(item.id)">
                         ダウンロード
                     </v-btn>
                     <!-- 每一行的更改按钮 -->
-                    <v-btn color="primary" class="mx-2" @click="openChangeInfo(item)">面接者情報の変更</v-btn>
+                    <v-btn color="primary" class="mx-2" @click="openChangeInfo(item)">情報の変更</v-btn>
                 </div>
             </template>
         </v-data-table>
@@ -17,7 +30,7 @@
         </v-card-actions>
         <!-- 更改信息弹出框 -->
         <v-dialog v-model="dialog" max-width="400">
-            <v-card-title class="headline">面接者情報の変更</v-card-title>
+            <v-card-title class="headline">情報の変更</v-card-title>
             <v-form ref="form" :model="changeInfo" lazy-validation>
                 <v-text-field v-model="changeInfo.interviewerId" label="面接id" readonly></v-text-field>
                 <v-text-field v-model="changeInfo.interviewerName" :rules="name" label="面接者" required></v-text-field>
@@ -38,9 +51,15 @@ export default {
         this.changePage(1, 5)
         this.interviewerList = this.$store.state.interviewerInfo
         this.totalItems = this.$store.state.totalItems
+        this.getCompanyInfo()
     },
     data() {
         return {
+            companyInfo: {
+                contractor: '',
+                remainNum: 0,
+                usageCount: 0
+            },
             //旧名称储存用于比较新名称校验规则
             oldName: '',
             //更改姓名校验规则
@@ -71,13 +90,41 @@ export default {
                 { text: '面接id', value: 'interviewerId' },
                 { text: '面接者', value: 'interviewerName' },
                 { text: '実施日', value: 'executionDate' },
-                { text: '結果情報', value: 'actions', sortable: false },
+                { text: '結果情報', value: 'actions', sortable: false }
             ],
             //面试者信息
             interviewerList: {},
         };
     },
     methods: {
+        //公司基本信息赋值
+        getCompanyInfo() {
+            const token = localStorage.getItem('token');
+            console.log(token);
+            if (token) {
+                let url = 'api/snsUser/getCurrentUser'
+                this.axios.get(url, {
+                    headers: {
+                        'token': token
+                    },
+
+                }).then((response) => {
+                    if (response.data.state == 20000) {
+                        console.log(response);
+                        this.companyInfo.contractor = response.data.data.contractor
+                        this.companyInfo.remainNum = response.data.data.remainNum
+                        this.companyInfo.usageCount = response.data.data.usageCount
+
+                    } else {
+                        this.$notify.error({
+                            message: '面接者情報の取得に失敗しました',
+                            type: 'error'
+                        });
+                    }
+                });
+            }
+        },
+        //增加条数
         addData() {
             const token = localStorage.getItem('token');
             console.log(token);
@@ -92,6 +139,11 @@ export default {
                 }).then((response) => {
                     if (response.data.state == 20000) {
                         this.changePage(this.tableOptions.page, this.tableOptions.itemsPerPage)
+                        this.getCompanyInfo()
+                        this.$message({
+                            message: '面接者データ20件追加成功しました',
+                            type: 'success'
+                        })
                     } else {
                         this.$notify.error({
                             message: '面接者情報の取得に失敗しました',
@@ -117,9 +169,35 @@ export default {
             this.changeInfo.interviewerId = item.interviewerId
         },
         //下载结果信息
-        download(item) {
-            console.log(item);
-
+        download(Id) {
+            console.log(124, this.interviewerList);
+            const token = localStorage.getItem('token');
+            console.log(token);
+            if (token) {
+                let url = 'api/interviewerInfo/downLoadCsv/' + Id
+                this.axios.get(url, {
+                    headers: {
+                        'token': token
+                    },
+                    responseType: 'blob'
+                }).then((response) => {
+                    try {
+                        const blob = new Blob([response.data], { type: 'application/octet-stream' }); // ダウンロードリンクを作成 
+                        const url = window.URL.createObjectURL(blob);
+                        const link = document.createElement('a');
+                        link.href = url;
+                        link.setAttribute('download', 'output.csv'); // ダウンロードファイル名を設定 // リンクをクリックしてファイルをダウンロード 
+                        document.body.appendChild(link);
+                        link.click(); // リンクを削除 
+                        document.body.removeChild(link);
+                    } catch (error) {
+                        this.$message({
+                            message: error.message,
+                            type: 'error'
+                        });
+                    }
+                });
+            }
         },
         //修改面试者信息
         sumbit() {
@@ -171,7 +249,6 @@ export default {
         //修改页签
         changePage(pageNum1, pageSize1) {
             const token = localStorage.getItem('token');
-            console.log(token);
             if (token) {
                 let url = 'api/interviewerInfo/list'
                 this.axios.get(url, {
@@ -182,12 +259,12 @@ export default {
                 }).then((response) => {
                     if (response.data.state == 20000) {
                         //面试者信息赋值
-                        this.$store.commit('initInterviewerInfo', response.data.data.records)
+                        this.$store.commit('initInterviewerInfo', response.data)
                         this.interviewerList = this.$store.state.interviewerInfo
                         this.totalItems = this.$store.state.totalItems
                     } else {
                         this.$notify.error({
-                            message: '面接者情報の取得に失敗しました',
+                            message: response.data.message,
                             type: 'error'
                         });
                     }

@@ -18,11 +18,10 @@ export default new Vuex.Store({
   mutations: {
     initManageInfo(state, data) {
       state.manageInfo = data
-      console.log(state.manageInfo);
     },
     initInterviewerInfo(state, data) {
-      state.interviewerInfo = data
-      console.log(state.interviewerInfo);
+      state.interviewerInfo = data.data.records
+      state.totalItems = data.data.total
     }
   },
   actions: {

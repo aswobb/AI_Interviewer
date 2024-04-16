@@ -95,8 +95,13 @@ export default {
                             console.log(token);
                             localStorage.setItem('token', token);
                             sessionStorage.setItem('username', this.ruleForm.username);
-                            this.$gtm.sendLoginEvent(this.ruleForm.username); // ログインイベント送出
-                            this.$router.push('/manage-info')
+                            this.$gtm.sendLoginEvent(this.ruleForm.username);
+                            console.log(99, response); // ログインイベント送出
+                            const type = response.data.data.roleId
+                            if (type === '2') {
+                                this.$router.push('/manage-info')
+                            }
+
                         } else {
                             console.log('ログインに失敗しました。ユーザー名またはパスワードが正しくありません.')
                             this.$notify.error({

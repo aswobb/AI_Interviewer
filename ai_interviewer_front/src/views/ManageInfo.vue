@@ -118,10 +118,8 @@ export default {
 
                 }).then((response) => {
                     if (response.data.state == 20000) {
-                        //总页数赋值
-                        this.$store.state.totalItems = response.data.data.total
                         //面试者信息赋值
-                        this.$store.commit('initInterviewerInfo', response.data.data.records)
+                        this.$store.commit('initInterviewerInfo', response.data)
                     } else {
                         this.$notify.error({
                             message: '面接者情報の取得に失敗しました',

@@ -1,5 +1,6 @@
 package com.app.sns.aiproduct.web;
 
+import com.app.sns.aiproduct.constant.ServiceCodeEnum;
 import com.app.sns.aiproduct.ex.ServiceException;
 import lombok.Data;
 
@@ -32,7 +33,7 @@ public class JsonResult<T> implements Serializable {
 
     public static <T> JsonResult<T> ok(T data) {
         JsonResult jsonResult = new JsonResult();
-        jsonResult.setState(ServiceCode.OK);
+        jsonResult.setState(ServiceCodeEnum.OK.getCode());
         jsonResult.setData(data);
         return jsonResult;
     }

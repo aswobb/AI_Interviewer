@@ -1,5 +1,6 @@
 package com.app.sns.aiproduct.service.impl;
 
+import com.app.sns.aiproduct.constant.ServiceCodeEnum;
 import com.app.sns.aiproduct.ex.ServiceException;
 import com.app.sns.aiproduct.mapper.CsvFileMapper;
 import com.app.sns.aiproduct.mapper.InterviewerInfoMapper;
@@ -9,7 +10,7 @@ import com.app.sns.aiproduct.pojo.entity.InterviewerInfo;
 import com.app.sns.aiproduct.pojo.entity.SnsUser;
 import com.app.sns.aiproduct.pojo.vo.InterviewerInfoVO;
 import com.app.sns.aiproduct.service.InterviewerInfoService;
-import com.app.sns.aiproduct.web.ServiceCode;
+import com.app.sns.aiproduct.util.EmptyUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
@@ -22,9 +23,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
-import static com.app.sns.aiproduct.web.ServiceCode.INSUFFICIENT_BALANCE;
-import static com.app.sns.aiproduct.web.ServiceCode.ERR_NOT_FOUND;
 @Slf4j
 @Service
 public class InterviewerInfoServiceImpl extends ServiceImpl<InterviewerInfoMapper, InterviewerInfo>
@@ -41,7 +39,7 @@ public class InterviewerInfoServiceImpl extends ServiceImpl<InterviewerInfoMappe
         SnsUser snsUser = userMapper.selectById(userId);
         Integer createNum = 0;
         if (accountNum <= 0 || snsUser.getRemainNum() <= 0) {
-            throw new ServiceException(INSUFFICIENT_BALANCE, "余额不足");
+            throw new ServiceException(ServiceCodeEnum.INSUFFICIENT_BALANCE);
         }
         if (snsUser.getRemainNum() > accountNum) {
             createNum = accountNum;
@@ -54,7 +52,6 @@ public class InterviewerInfoServiceImpl extends ServiceImpl<InterviewerInfoMappe
             interviewerInfo.setInterviewerId(UUID.randomUUID().toString().replaceAll("-",""));
             interviewerInfo.setEnable(0);
             interviewerInfo.setUserId(userId);
-            interviewerInfo.setGmtUpdate(LocalDateTime.now());
             interviewerInfo.setGmtCreate(LocalDateTime.now());
             interviewerInfoList.add(interviewerInfo);
         }
@@ -65,6 +62,7 @@ public class InterviewerInfoServiceImpl extends ServiceImpl<InterviewerInfoMappe
         snsUserQueryWrapper.eq("id",snsUser.getId());
         snsUserQueryWrapper.eq("remain_num",oldRemainNum);
 
+        snsUser.setGmtUpdate(LocalDateTime.now());
         userMapper.update(snsUser,snsUserQueryWrapper);
         this.saveBatch(interviewerInfoList);
         return null;
@@ -74,12 +72,9 @@ public class InterviewerInfoServiceImpl extends ServiceImpl<InterviewerInfoMappe
     @Transactional
     public InterviewerInfo createInterviewerInfo(InterviewerInfoVO interviewerInfoVO) {
         InterviewerInfo interviewerInfo = new InterviewerInfo();
-        // 设置属性
-        // interviewerInfo.setXXX(interviewerInfoVO.getXXX());
-        // 设置其他属性
         interviewerInfo.setGmtCreate(LocalDateTime.now());
         interviewerInfo.setGmtUpdate(LocalDateTime.now());
-        // 插入数据
+
         save(interviewerInfo);
         return interviewerInfo;
     }
@@ -89,7 +84,7 @@ public class InterviewerInfoServiceImpl extends ServiceImpl<InterviewerInfoMappe
     public InterviewerInfo updateInterviewerInfo(Long id, InterviewerInfoVO interviewerInfoVO) {
         InterviewerInfo interviewerInfo = getById(id);
         if (interviewerInfo == null) {
-            throw new ServiceException(ERR_NOT_FOUND,"id不存在: " + id );
+            throw new ServiceException(ServiceCodeEnum.ERR_NOT_FOUND);
         }
         // interviewerInfo.setXXX(interviewerInfoVO.getXXX());
         interviewerInfo.setInterviewerName(interviewerInfoVO.getInterviewerName());
@@ -100,28 +95,26 @@ public class InterviewerInfoServiceImpl extends ServiceImpl<InterviewerInfoMappe
 
     @Override
     public InterviewerInfoVO getInterviewerInfo(Long id) {
-        // 查询数据
+
         InterviewerInfo interviewerInfo = getById(id);
         if (interviewerInfo == null) {
-            throw new ServiceException(ERR_NOT_FOUND,"InterviewerInfo with id " + id + " not found.");
+            throw new ServiceException(ServiceCodeEnum.ERR_NOT_FOUND);
         }
-        // 转换为 VO 对象
+
         InterviewerInfoVO interviewerInfoVO = new InterviewerInfoVO();
-        // 设置属性
-        // interviewerInfoVO.setXXX(interviewerInfo.getXXX());
-        // 设置其他属性
+
         return interviewerInfoVO;
     }
 
     @Override
     @Transactional
     public void deleteInterviewerInfo(Long id) {
-        // 判断id是否存在
+
         InterviewerInfo interviewerInfo = getById(id);
         if (interviewerInfo == null) {
-            throw new ServiceException(ERR_NOT_FOUND,"InterviewerInfo with id " + id + " not found.");
+            throw new ServiceException(ServiceCodeEnum.ERR_NOT_FOUND);
         }
-        // 删除数据
+
         removeById(id);
     }
 
@@ -130,11 +123,15 @@ public class InterviewerInfoServiceImpl extends ServiceImpl<InterviewerInfoMappe
     public InterviewerInfo completeInterviewerInfo(Long userId, MultipartFile file){
         InterviewerInfo interviewerInfo = getById(userId);
         if (interviewerInfo == null) {
-            throw new ServiceException(ERR_NOT_FOUND,"InterviewerInfo with id " + userId + " not found.");
+            throw new ServiceException(ServiceCodeEnum.ERR_NOT_FOUND);
         }
         interviewerInfo.setEnable(1);
         interviewerInfo.setExecutionDate(LocalDateTime.now());
         interviewerInfo.setGmtUpdate(LocalDateTime.now());
+        SnsUser snsUser = userMapper.selectById(interviewerInfo.getUserId());
+        snsUser.setUsageCount(EmptyUtil.isNull(snsUser.getUsageCount())?1:snsUser.getUsageCount()+1);
+        snsUser.setGmtUpdate(LocalDateTime.now());
+        userMapper.updateById(snsUser);
         updateById(interviewerInfo);
         try{
             CsvFile csvFile = new CsvFile();
@@ -144,7 +141,7 @@ public class InterviewerInfoServiceImpl extends ServiceImpl<InterviewerInfoMappe
             csvFileMapper.insert(csvFile);
         }catch (Exception e){
             log.error("save csv file error:{}",e);
-            throw new ServiceException(ServiceCode.ERR_INSERT,"save csv file error");
+            throw new ServiceException(ServiceCodeEnum.ERR_INSERT);
 
         }
 

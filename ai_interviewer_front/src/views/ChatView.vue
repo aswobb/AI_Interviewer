@@ -89,7 +89,7 @@
           <template v-else> 送信 </template>
         </el-button>
         <!-- 音声入力試験用-->
-        <q-btn @click="toggleSpeechRecognition"  :label="speechRecognitionActive ? '音声停止' : '音声入力'" color="purple-7" :style="{ width: '76px', height: '45px'}"class="btn-spacing"/>
+        <q-btn @click="toggleSpeechRecognition"  :label="speechRecognitionActive ? '音声停止' : '音声入力'" color="purple-7" :style="{ width: '78px', height: '45px'}"class="btn-spacing"/>
         <!-- 音声入力試験用-->
       </el-col>
     </el-row>
@@ -825,15 +825,26 @@ input[type="file"] {
   background: #d3dce6;
 }
 
+@media only screen and (max-width: 600px) {
 .btn-spacing {
   margin-bottom: 60px;
+  margin-top:8px;
+  white-space: nowrap;
+  margin-right: 30px;
+  padding-left: 0px;
+  border-radius: 999px;
+}
+}
+
+@media only screen and (min-width: 601px){
+  .btn-spacing {
+  margin-bottom: 10px;
   margin-top:10px;
   white-space: nowrap;
   margin-right: 30px;
   padding-left: 0px;
   border-radius: 999px;
-
-
+}
 }
 
 .avatar {

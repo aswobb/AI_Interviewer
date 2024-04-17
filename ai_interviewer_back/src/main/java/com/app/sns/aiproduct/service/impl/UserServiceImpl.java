@@ -2,6 +2,7 @@ package com.app.sns.aiproduct.service.impl;
 
 import com.app.sns.aiproduct.constant.ServiceCodeEnum;
 import com.app.sns.aiproduct.ex.ServiceException;
+import com.app.sns.aiproduct.lock.LockManager;
 import com.app.sns.aiproduct.mapper.BillingCourseMapper;
 import com.app.sns.aiproduct.mapper.UserBillingHistoryMapper;
 import com.app.sns.aiproduct.mapper.UserMapper;
@@ -16,13 +17,16 @@ import com.app.sns.aiproduct.util.EmptyUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
 
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, SnsUser> implements UserService {
@@ -35,7 +39,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, SnsUser> implements
     private UserBillingHistoryMapper userBillingHistoryMapper;
     @Resource
     private InterviewerInfoService interviewerInfoService;
-
     @Override
     public SnsUser getUserById(Long id) {
         return userMapper.selectById(id);
@@ -75,53 +78,53 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, SnsUser> implements
     @Override
     @Transactional
     public SnsUser updateUser(Long creator, SnsUserVO userVO) {
-        SnsUser oldData = userMapper.selectById(userVO.getId());
 
-        QueryWrapper<SnsUser> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().eq(SnsUser::getUsername,userVO.getUsername());
-        queryWrapper.lambda().eq(SnsUser::getEnable,0);
-        queryWrapper.lambda().ne(SnsUser::getId,userVO.getId());
-        Integer integer = userMapper.selectCount(queryWrapper);
-        if(integer>0){
-            throw new ServiceException(ServiceCodeEnum.ERR_CONFLICT);
-        }
-        oldData.setUsername(userVO.getUsername());
-        oldData.setPassword(userVO.getPassword());
-        oldData.setContractor(userVO.getContractor());
-        if (!oldData.getCourseId().equals(userVO.getCourseId())) {
-            BillingCourse billingCourse = billingCourseMapper.selectById(userVO.getCourseId());
-            oldData.setCourseId(userVO.getCourseId());
-            if (oldData.getRemainNum() < billingCourse.getQuestionsNum()) {
-                oldData.setRemainNum(billingCourse.getQuestionsNum());
+
+            SnsUser oldData = userMapper.selectById(userVO.getId());
+            QueryWrapper<SnsUser> queryWrapper = new QueryWrapper<>();
+            queryWrapper.lambda().eq(SnsUser::getUsername, userVO.getUsername());
+            queryWrapper.lambda().eq(SnsUser::getEnable, 0);
+            queryWrapper.lambda().ne(SnsUser::getId, userVO.getId());
+            Integer integer = userMapper.selectCount(queryWrapper);
+            if (integer > 0) {
+                throw new ServiceException(ServiceCodeEnum.ERR_CONFLICT);
             }
-        }
-        if (!EmptyUtil.isNull(userVO.getUserBillingHistoryVO())) {
-            UserBillingHistoryVO userBillingHistoryVO = userVO.getUserBillingHistoryVO();
-            if (!EmptyUtil.isNull(userBillingHistoryVO.getAddMonth()) && userBillingHistoryVO.getAddMonth() > 0) {
-                LocalDateTime currentTime = LocalDateTime.now();
-                if (EmptyUtil.isNull(oldData.getEffectiveTime()) || oldData.getEffectiveTime().isBefore(currentTime)) {
-                    oldData.setEffectiveTime(currentTime.plus(userBillingHistoryVO.getAddMonth(), ChronoUnit.MONTHS));
-                } else {
-                    oldData.setEffectiveTime(oldData.getEffectiveTime().plus(userBillingHistoryVO.getAddMonth(), ChronoUnit.MONTHS));
+            oldData.setUsername(userVO.getUsername());
+            oldData.setPassword(userVO.getPassword());
+            oldData.setContractor(userVO.getContractor());
+            if (!oldData.getCourseId().equals(userVO.getCourseId())) {
+                BillingCourse billingCourse = billingCourseMapper.selectById(userVO.getCourseId());
+                oldData.setCourseId(userVO.getCourseId());
+                if (oldData.getRemainNum() < billingCourse.getQuestionsNum()) {
+                    oldData.setRemainNum(billingCourse.getQuestionsNum());
                 }
             }
-            if (!EmptyUtil.isNull(userBillingHistoryVO.getAddUsageCount()) && userBillingHistoryVO.getAddUsageCount() > 0) {
-                Integer usageCount = EmptyUtil.isNull(oldData.getRemainNum()) ? 0 : oldData.getRemainNum();
-                oldData.setRemainNum(usageCount + userBillingHistoryVO.getAddUsageCount());
+            if (!EmptyUtil.isNull(userVO.getUserBillingHistoryVO())) {
+                UserBillingHistoryVO userBillingHistoryVO = userVO.getUserBillingHistoryVO();
+                if (!EmptyUtil.isNull(userBillingHistoryVO.getAddMonth()) && userBillingHistoryVO.getAddMonth() > 0) {
+                    LocalDateTime currentTime = LocalDateTime.now();
+                    if (EmptyUtil.isNull(oldData.getEffectiveTime()) || oldData.getEffectiveTime().isBefore(currentTime)) {
+                        oldData.setEffectiveTime(currentTime.plus(userBillingHistoryVO.getAddMonth(), ChronoUnit.MONTHS));
+                    } else {
+                        oldData.setEffectiveTime(oldData.getEffectiveTime().plus(userBillingHistoryVO.getAddMonth(), ChronoUnit.MONTHS));
+                    }
+                }
+                if (!EmptyUtil.isNull(userBillingHistoryVO.getAddUsageCount()) && userBillingHistoryVO.getAddUsageCount() > 0) {
+                    Integer usageCount = EmptyUtil.isNull(oldData.getRemainNum()) ? 0 : oldData.getRemainNum();
+                    oldData.setRemainNum(usageCount + userBillingHistoryVO.getAddUsageCount());
+                }
+                UserBillingHistory userBillingHistory = new UserBillingHistory();
+                BeanUtils.copyProperties(userBillingHistoryVO, userBillingHistory);
+                userBillingHistory.setEffectiveTime(oldData.getEffectiveTime());
+                userBillingHistory.setRemainNum(oldData.getRemainNum());
+                userBillingHistory.setUserId(oldData.getId());
+                userBillingHistory.setCreator(creator);
+                userBillingHistory.setGmtCreate(LocalDateTime.now());
+                userBillingHistoryMapper.insert(userBillingHistory);
             }
-            UserBillingHistory userBillingHistory = new UserBillingHistory();
-            BeanUtils.copyProperties(userBillingHistoryVO, userBillingHistory);
-            userBillingHistory.setEffectiveTime(oldData.getEffectiveTime());
-            userBillingHistory.setRemainNum(oldData.getRemainNum());
-            userBillingHistory.setUserId(oldData.getId());
-            userBillingHistory.setCreator(creator);
-            userBillingHistory.setGmtCreate(LocalDateTime.now());
-            userBillingHistoryMapper.insert(userBillingHistory);
-        }
-
-        oldData.setGmtUpdate(LocalDateTime.now());
-        userMapper.updateById(oldData);
-        return oldData;
+            oldData.setGmtUpdate(LocalDateTime.now());
+            userMapper.updateById(oldData);
+            return oldData;
     }
 
     @Override

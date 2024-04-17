@@ -29,7 +29,7 @@
 
     <sql id="LoginInfoQueryFiled">
         <if test="true">
-            id,username,password,enable,role_id,user_num,description,usage_count,contractor,join_time,effective_time,course_id,balance
+            id,username,password,enable,role_id,user_num,description,usage_count,contractor,join_time,effective_time,course_id,balance,remain_num
         </if>
     </sql>
 </mapper>

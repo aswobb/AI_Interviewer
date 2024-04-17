@@ -7,6 +7,7 @@ public enum ServiceCodeEnum {
     ERR_PASSWORD_ERROR(40002, "パスワードが正しくないです。"),
     ERR_USER_NOT_FOUND(40003, "ユーザー名が見つかりません。"),
     ERR_USER_DISABLE(40004, "ユーザー名が無効です。"),
+    ERR_USER_EXPIRED(40005, "ユーザー有効期限切りました。"),
     ERR_NOT_FOUND(40400, "関連するリソースまたはデータが見つかりません。"),
     ERR_DISABLE(40401, "関連するリソースが無効です。"),
     ERR_NOT_ALLOWED(40402, "このリソースにアクセスする権限がありません。"),

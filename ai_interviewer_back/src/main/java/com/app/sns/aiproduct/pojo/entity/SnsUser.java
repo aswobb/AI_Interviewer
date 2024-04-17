@@ -38,4 +38,6 @@ public class SnsUser {
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime gmtUpdate;
+    @TableField(exist = false)
+    private String courseName;
 }

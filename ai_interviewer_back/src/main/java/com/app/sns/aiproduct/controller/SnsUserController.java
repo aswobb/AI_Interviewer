@@ -5,8 +5,11 @@ import com.app.sns.aiproduct.constant.ServiceCodeEnum;
 import com.app.sns.aiproduct.ex.ServiceException;
 import com.app.sns.aiproduct.lock.LockManager;
 import com.app.sns.aiproduct.pojo.dto.UserLoginInfoInDTO;
+import com.app.sns.aiproduct.pojo.entity.BillingCourse;
+import com.app.sns.aiproduct.pojo.entity.InterviewerInfo;
 import com.app.sns.aiproduct.pojo.entity.SnsUser;
 import com.app.sns.aiproduct.pojo.vo.SnsUserVO;
+import com.app.sns.aiproduct.service.BillingCourseService;
 import com.app.sns.aiproduct.service.UserService;
 import com.app.sns.aiproduct.web.JWTUtil;
 import com.app.sns.aiproduct.web.JsonResult;
@@ -17,7 +20,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.stream.Collectors;
 
 /**
  * 契約会社の管理員とSNSソフトの管理員
@@ -29,6 +35,8 @@ public class SnsUserController {
     private UserService userService;
     @Resource
     private LockManager lockManager;
+    @Resource
+    private BillingCourseService billingCourseService;
     @PostMapping("/updatePassword")
     public JsonResult updatePassword(@RequestBody UserLoginInfoInDTO userLoginInfoInDTO) {
         ReentrantLock lock = lockManager.getLock(SnsUser.class, userLoginInfoInDTO.getId());
@@ -66,7 +74,14 @@ public class SnsUserController {
             wrapper.lambda().between(SnsUser::getGmtCreate, snsUserVO.getGmtCreateStart(), snsUserVO.getGmtCreateEnd());
         }
         wrapper.lambda().eq(SnsUser::getRoleId, DataDictionary.ROLE_CONTRACT.getKey());
-        return JsonResult.ok(userService.page(page, wrapper));
+        List<BillingCourse> billingCourseList = billingCourseService.list();
+        Map<Long, String> billingCourseMap = billingCourseList.stream()
+                .collect(Collectors.toMap(BillingCourse::getId, BillingCourse::getCourseName));
+        Page<SnsUser> infoPage = userService.page(page, wrapper);
+        for (SnsUser snsUser : infoPage.getRecords()) {
+            snsUser.setCourseName(billingCourseMap.get(snsUser.getCourseId()));
+        }
+        return JsonResult.ok(infoPage);
     }
     @PostMapping("/create")
     public SnsUser createUser(@RequestBody SnsUserVO userVO,HttpServletRequest request) {

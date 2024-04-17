@@ -1,4 +1,3 @@
-import InterviewList from '@/views/InterviewList.vue'
 import Vue from 'vue'
 import Vuex from 'vuex'
 import createPersistedState from 'vuex-persistedstate';

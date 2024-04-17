@@ -36,6 +36,11 @@ const routes = [
 
     },
     {
+        path: '/company-list',
+        component: () => import('../views/CompanyList.vue')
+
+    },
+    {
         path: '/interview-list',
         component: () => import('../views/InterviewList.vue')
 

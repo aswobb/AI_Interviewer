@@ -1,5 +1,8 @@
 <template>
     <div>
+        <v-btn icon @click="back">
+            <v-icon>mdi-exit-to-app</v-icon>
+        </v-btn>
         <v-container>
             <v-row justify="center">
                 <v-col cols="12" md="auto">
@@ -52,6 +55,7 @@ export default {
         this.interviewerList = this.$store.state.interviewerInfo
         this.totalItems = this.$store.state.totalItems
         this.getCompanyInfo()
+        console.log(58, this.interviewerList);
     },
     data() {
         return {
@@ -90,13 +94,16 @@ export default {
                 { text: '面接id', value: 'interviewerId' },
                 { text: '面接者', value: 'interviewerName' },
                 { text: '実施日', value: 'executionDate' },
-                { text: '結果情報', value: 'actions', sortable: false }
+                { text: '操作', value: 'actions', sortable: false }
             ],
             //面试者信息
             interviewerList: {},
         };
     },
     methods: {
+        back() {
+            this.$router.push('/manage-info')
+        },
         //公司基本信息赋值
         getCompanyInfo() {
             const token = localStorage.getItem('token');
@@ -258,6 +265,7 @@ export default {
                     },
                 }).then((response) => {
                     if (response.data.state == 20000) {
+                        console.log(response);
                         //面试者信息赋值
                         this.$store.commit('initInterviewerInfo', response.data)
                         this.interviewerList = this.$store.state.interviewerInfo

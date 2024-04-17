@@ -25,9 +25,11 @@ export default new Vuex.Store({
       state.manageInfo = data
       console.log(26, state.manageInfo);
     },
-    cleanManageInfo(state) {
+    cleanCache(state) {
       state.manageInfo = {}
       localStorage.setItem('token', null);
+      state.interviewerInfo = {}
+      state.companyInfo = {}
     },
     initInterviewerInfo(state, data) {
       state.interviewerInfo = data.data.records

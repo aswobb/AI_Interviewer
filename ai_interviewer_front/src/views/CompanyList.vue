@@ -1,32 +1,80 @@
 <template>
     <div>
+        <v-btn icon @click="logout">
+            <v-icon>mdi-exit-to-app</v-icon>
+        </v-btn>
         <v-data-table :headers="headers" :items="companyInfo" item-key="id" class="elevation-1"
             :options.sync="tableOptions" :server-items-length="totalItems">
             <template v-slot:item.actions="{ item }">
                 <div class="d-flex">
-                    <v-btn color="primary" :disabled="!item.executionDate" class="mx-2" @click="download(item.id)">
-                        ダウンロード
+                    <v-btn color="primary" class="mx-2" @click="openDialog(item)">
+                        変更
                     </v-btn>
-                    <!-- 每一行的更改按钮 -->s
-                    <v-btn color="primary" class="mx-2" @click="openChangeInfo(item)">情報の変更</v-btn>
                 </div>
             </template>
         </v-data-table>
-
+        <v-card-actions class="justify-center">
+            <v-btn color="primary" dark @click="openDialog(1)">ユーザーの追加</v-btn>
+        </v-card-actions>
+        <v-dialog v-model="addUserDialog" max-width="400">
+            <v-card-title class="headline">ユーザーの追加</v-card-title>
+            <v-form ref="form" :model="userInfo" lazy-validation>
+                <v-text-field v-model="userInfo.username" label="ユーザー名" :rules="rules.username"></v-text-field>
+                課金コ-ス選択:
+                <div class="a">
+                    <v-radio-group v-model="userInfo.courseId" row :rules="rules.select">
+                        <v-radio v-for="n in [3, 4, 5]" :key="n" :label="lable[n - 1]" :value="n"></v-radio>
+                    </v-radio-group>
+                </div>
+                <v-text-field v-model="userInfo.contractor" label="会社名" :rules="rules.companyName"></v-text-field>
+                <v-text-field v-model="userInfo.password" label="パスワード" :rules="rules.password"></v-text-field>
+            </v-form>
+            <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="green darken-1" @click="sumbit()">{{ operation }}</v-btn>
+                <v-btn color="green darken-1" @click="close">キャンセル</v-btn>
+            </v-card-actions>
+        </v-dialog>
     </div>
 </template>
 
 <script>
 export default {
     created() {
-        this.getCompanyInfo()
+        this.getCompanyInfo(1, 5)
+        this.companyInfo = this.$store.state.companyInfo
+        this.totalItems = this.$store.state.companyTotalItems
     },
     data() {
         return {
-            //公司集合
-            companyInfo: {
+            operation: '',
+            lable: ['', '', 'ペ-シック', 'スタンダ-ド', 'プレミアム'],
+            rules: {
+                username: [
+                    v => !!v || 'ユーザー名を入力してください',
+                    v => (v && v.length <= 15) || '文字数は2から15文字まで',
+                    v => (v && v.length >= 2) || '文字数は2から15文字まで',
+                ],
+                password: [
+                    v => !!v || 'パスワードを入力してください',
+                    v => (v && v.length <= 15) || '文字数は4から15文字まで',
+                    v => (v && v.length >= 4) || '文字数は4から15文字まで',
+                ],
+                companyName: [
+                    v => !!v || '会社名を入力してください',
+                ]
             },
-            dialog: false,
+
+            userInfo: {
+                username: '',
+                courseId: 3,
+                contractor: '',
+                password: ''
+            },
+            //增加用户会话开关
+            addUserDialog: false,
+            //修改用户会话开关
+            updateUserDialog: false,
             //控制页数页码
             tableOptions: {
                 page: 1,
@@ -36,36 +84,73 @@ export default {
                 mustSort: false// ...
             },
             //总页数
-            totalItems: null,
-            //表头属性
+            totalItems: 0,
+            //公司集合
+            companyInfo: {
+            },
             headers: [
                 { text: '株式会社', value: 'contractor' },
-                // { text: 'ベ-シックコ-ス ', value: 'interviewerName' },
-                // { text: '加入月', value: 'joinTime' },
-                // { text: '当月利用数', value: 'actions' },
-                // { text: '残', value: 'remainNum' }
-            ],
-
+                { text: 'ユーザー名', value: 'username' },
+                { text: 'ベ-シックコ-ス ', value: 'courseName' },
+                { text: '加入時期', value: 'joinTime' },
+                { text: '使用回数', value: 'usageCount' },
+                { text: '残数', value: 'remainNum' },
+                { text: '操作', value: 'actions' },
+            ]
         };
     },
     methods: {
+        openDialog(flag) {
+            if (flag === 1) {
+                this.operation = '追加'
+            } else {
+                this.operation = '変更'
+                console.log(108, flag);
+                this.userInfo.username = flag.username
+                this.userInfo.contractor = flag.contractor
+                this.userInfo.courseId = flag.courseId
+                this.userInfo.password = flag.password
+            }
+            this.addUserDialog = true
+
+        },
+        logout() {
+            this.$router.push('/manage-login')
+            this.$store.commit('cleanCache')
+        },
+        close() {
+            this.addUserDialog = false
+            this.userInfo = {
+                username: '',
+                courseId: 3,
+                contractor: '',
+                password: ''
+            }
+        },
+        handleChange() {
+            if (this.selectedOption && this.selectedOption.length > 1) {
+                this.selectedOption = [this.selectedOption.pop()];
+            }
+            console.log(79, this.selectedOption);
+        },
         //公司基本信息赋值
-        getCompanyInfo() {
+        getCompanyInfo(pageNum1, pageSize1) {
             const token = localStorage.getItem('token');
             console.log(token);
             if (token) {
-                let url = 'api/snsUser/list '
+                let url = 'api/snsUser/list'
                 this.axios.get(url, {
+                    params: { pageNum: pageNum1, pageSize: pageSize1 },
                     headers: {
                         'token': token
                     },
 
                 }).then((response) => {
                     if (response.data.state == 20000) {
+                        console.log(response);
                         this.$store.commit('initCompanyInfo', response.data)
-                        console.log(66, this.$store.state.companyInfo);
                         this.companyInfo = this.$store.state.companyInfo
-                        console.log(68, this.companyInfo);
+                        this.totalItems = this.$store.state.companyTotalItems
                     } else {
                         this.$notify.error({
                             message: '情報の取得に失敗しました',
@@ -75,56 +160,101 @@ export default {
                 });
             }
         },
-        //修改页签
-        changePage(pageNum1, pageSize1) {
+        sumbit() {
             const token = localStorage.getItem('token');
             if (token) {
-                let url = 'api/interviewerInfo/list'
-                this.axios.get(url, {
-                    params: { pageNum: pageNum1, pageSize: pageSize1 },
-                    headers: {
-                        'token': token
-                    },
-                }).then((response) => {
-                    if (response.data.state == 20000) {
-                        //面试者信息赋值
-                        this.$store.commit('initInterviewerInfo', response.data)
-                        this.interviewerList = this.$store.state.interviewerInfo
-                        this.totalItems = this.$store.state.totalItems
+                if (this.$refs.form.validate()) {
+
+                    if (this.operation === '追加') {
+                        this.addUser(token)
                     } else {
-                        this.$notify.error({
-                            message: response.data.message,
-                            type: 'error'
-                        });
+                        this.updateUser(token)
                     }
-                });
-            } else {
-                this.$router.push('/manage-login');
-                this.$message({
-                    message: 'ログインが期限切れです。再度ログインしてください',
-                    type: 'warn'
-                });
+                }
+
             }
+        },
+        addUser(token) {
+            let url = 'api/snsUser/create'
+            let config = {
+                headers: {
+                    'token': token
+                },
+            };
+            this.axios.post(url, this.userInfo, config).then((response) => {
+                if (response.data.state == 20000) {
+                    this.$message({
+                        message: 'ユーザーの追加が成功しました.',
+                        type: 'success'
+                    });
+                    //回显
+                    this.getCompanyInfo(this.tableOptions.page, this.tableOptions.itemsPerPage)
+                    //关闭对话框
+                    this.close()
+                } else {
+                    this.$message({
+                        message: response.data.message,
+                        type: 'error'
+                    });
+                }
+
+            });
+        },
+        updateUser(token) {
+            let url = 'api/snsUser/update'
+            let config = {
+                headers: {
+                    'token': token
+                },
+            };
+            this.axios.post(url, this.userInfo, config).then((response) => {
+                if (response.data.state == 20000) {
+                    this.$message({
+                        message: 'ユーザーの変更が成功しました.',
+                        type: 'success'
+                    });
+                    //回显
+                    this.getCompanyInfo(this.tableOptions.page, this.tableOptions.itemsPerPage)
+                    //关闭对话框
+                    this.close()
+                } else {
+                    this.$message({
+                        message: response.data.message,
+                        type: 'error'
+                    });
+                }
+
+            });
         }
+
     },
     //监听器
     watch: {
         'tableOptions.page': function (newPage) {
             // 当前页数变化时的处理逻辑
             console.log('当前页签:', newPage, '最大容量:', this.tableOptions.itemsPerPage);
-            this.changePage(newPage, this.tableOptions.itemsPerPage)
+            this.getCompanyInfo(newPage, this.tableOptions.itemsPerPage)
         },
         'tableOptions.itemsPerPage': function (newRowsPerPage) {
             // 最大容量变化时的处理逻辑
             console.log('当前页签:', this.tableOptions.page, '最大容量:', newRowsPerPage,);
-            this.changePage(this.tableOptions.page, newRowsPerPage)
+            this.getCompanyInfo(this.tableOptions.page, newRowsPerPage)
         }
     }
-};
+}
 </script>
 <style>
 .v-dialog {
     background: #fff;
     height: 350px;
+}
+
+.mt-2 {
+    margin-top: 1px;
+    /* 上间距 */
+}
+
+.a {
+    padding-left: 25px;
 }
 </style>

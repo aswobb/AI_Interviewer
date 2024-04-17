@@ -102,12 +102,11 @@ export default {
     },
     created() {
         this.user = this.$store.state.manageInfo
-        console.log(this.user);
     },
     methods: {
         logout() {
             this.$router.push('/manage-login')
-            this.$store.commit('cleanManageInfo')
+            this.$store.commit('cleanCache')
         },
         editUser() {
             const token = localStorage.getItem('token');

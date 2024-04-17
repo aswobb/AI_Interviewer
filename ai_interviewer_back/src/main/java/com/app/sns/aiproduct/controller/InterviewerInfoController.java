@@ -66,7 +66,13 @@ public class InterviewerInfoController {
     public JsonResult list(@ModelAttribute   InterviewerInfoVO interviewerInfoVO,
                                        HttpServletRequest request
     ) {
-        Page<InterviewerInfo> page = new Page<>(interviewerInfoVO.getPageNum(), interviewerInfoVO.getPageSize());
+        int pageSize = interviewerInfoVO.getPageSize();
+        Page<InterviewerInfo> page;
+        if (pageSize == -1) {
+            page = new Page<>(0, Integer.MAX_VALUE);
+        }else{
+            page = new Page<>(interviewerInfoVO.getPageNum(), interviewerInfoVO.getPageSize());
+        }
         QueryWrapper<InterviewerInfo> wrapper = new QueryWrapper<>();
         if (interviewerInfoVO.getInterviewerId() != null) {
             wrapper.lambda().eq(InterviewerInfo::getInterviewerId, interviewerInfoVO.getInterviewerId());

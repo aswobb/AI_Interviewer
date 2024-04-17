@@ -1,6 +1,10 @@
 <template>
     <div>
+        <v-btn icon @click="logout">
+            <v-icon>mdi-exit-to-app</v-icon>
+        </v-btn>
         <v-container>
+
             <v-card>
                 <v-card-title class="headline">
                     管理者 情報
@@ -24,20 +28,16 @@
                                     <td>{{ user.contractor }}</td>
                                 </tr>
                                 <tr>
-                                    <td>課金コ—ス</td>
-                                    <td>{{ user.course_id }}</td>
+                                    <td>コース名</td>
+                                    <td>{{ user.courseName }}</td>
                                 </tr>
                                 <tr>
                                     <td>残数</td>
-                                    <td>{{ user.remain_num }}</td>
+                                    <td>{{ user.remainNum }}</td>
                                 </tr>
                                 <tr>
                                     <td>当月の利用実績</td>
-                                    <td>{{ user.usage_count }}</td>
-                                </tr>
-                                <tr>
-                                    <td>当月の利用実績</td>
-                                    <td>{{ user.usage_count }}</td>
+                                    <td>{{ user.usageCount }}</td>
                                 </tr>
                             </tbody>
                         </template>
@@ -74,7 +74,6 @@
 </template>
 
 <script>
-import { date } from 'quasar';
 
 export default {
     data() {
@@ -103,8 +102,13 @@ export default {
     },
     created() {
         this.user = this.$store.state.manageInfo
+        console.log(this.user);
     },
     methods: {
+        logout() {
+            this.$router.push('/manage-login')
+            this.$store.commit('cleanManageInfo')
+        },
         editUser() {
             const token = localStorage.getItem('token');
             console.log(token);
@@ -139,7 +143,6 @@ export default {
             }
         },
         changePw() {
-
             if (this.$refs.form.validate()) {
                 const token = localStorage.getItem('token');
                 let config = {
@@ -153,14 +156,12 @@ export default {
                     oldPassword: this.changePwForm.password,
                     newPassword: this.changePwForm.newPassword
                 }
-                console.log(124, data);
                 if (token) {
                     this.axios.post(url, data, {
                         headers: {
                             'token': `${token}`
                         }
                     }, config).then((response) => {
-                        console.log(126, response);
                         if (response.data.state == 20000) {
                             this.$message({
                                 message: 'パスワード変更に成功しました.',

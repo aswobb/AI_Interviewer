@@ -5,12 +5,7 @@
 <template>
     <div class="login" :style="{ backgroundImage: `url(${bgImg})` }">
         <!-- test用 -->
-        <div class="q-pa-md q-gutter-sm">
-            <q-btn color="primary" @click="goToOtherPage" label="開発者管理画面"
-                :style="{ width: '120px', height: '50px' }"></q-btn>
-        </div>
-        <!-- test用 -->
-        <div class="login-form" :style="textStyle">
+        <div :style="textStyle">
             <h1 style="text-align: center; margin: 20px 0;">管理者 ログイン</h1>
             <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
                 <el-form-item label="ユーザー" prop="username">
@@ -69,7 +64,6 @@ export default {
         submitForm(formName) {
             this.$refs[formName].validate((valid) => {
                 if (valid) {
-                    var localPath = this.GLOBAL.localSrc;
                     let url = '/api/users/login';
                     console.log('尝试登录')
                     console.log('请求路径为:' + url)
@@ -96,10 +90,11 @@ export default {
                             localStorage.setItem('token', token);
                             sessionStorage.setItem('username', this.ruleForm.username);
                             this.$gtm.sendLoginEvent(this.ruleForm.username);
-                            console.log(99, response); // ログインイベント送出
                             const type = response.data.data.roleId
                             if (type === '2') {
                                 this.$router.push('/manage-info')
+                            } else if (type === '0') {
+                                this.$router.push('/company-list')
                             }
 
                         } else {
@@ -139,7 +134,7 @@ body {
 </style>
 <style scoped>
 .login-form {
-    background-color: rgba(35, 33, 33, 0.5);
+    background-color: rgba(33, 110, 33, 0);
     width: 100%;
     /* 使用100%宽度，充满整个屏幕 */
     box-sizing: border-box;
@@ -148,8 +143,7 @@ body {
     /* 减小padding，以适应小屏幕 */
     margin: 0;
     /* 取消上下边距，以充分利用空间 */
-    border: none;
-    /* 去除边框 */
+
 }
 
 /* 如果需要保持在大屏幕上的一些样式，可以使用媒体查询 */
@@ -160,6 +154,7 @@ body {
         margin: 50px auto;
         /* 保持上下居中 */
         padding: 30px 50px;
+        padding-top: 100px;
     }
 }
 
@@ -170,6 +165,13 @@ h1 {
 }
 
 .login {
-    height: 700px;
+    display: flex;
+    justify-content: center;
+    /* 水平居中 */
+    align-items: center;
+    /* 垂直居中 */
+    width: 100vw;
+    height: 100vh;
+    /* 容器的高度 */
 }
 </style>

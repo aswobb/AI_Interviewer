@@ -1,4 +1,3 @@
-import InterviewList from '@/views/InterviewList.vue'
 import Vue from 'vue'
 import Vuex from 'vuex'
 import createPersistedState from 'vuex-persistedstate';
@@ -11,18 +10,33 @@ export default new Vuex.Store({
     //面试者信息
     interviewerInfo: {},
     //总页数
-    totalItems: null
+    totalItems: null,
+    //会社管理信息
+    companyInfo: {},
+    //公司总数
+    companyTotalItems: null
+
   },
   getters: {
   },
   mutations: {
     initManageInfo(state, data) {
+
       state.manageInfo = data
+      console.log(26, state.manageInfo);
+    },
+    cleanManageInfo(state) {
+      state.manageInfo = {}
+      localStorage.setItem('token', null);
     },
     initInterviewerInfo(state, data) {
       state.interviewerInfo = data.data.records
       state.totalItems = data.data.total
-    }
+    },
+    initCompanyInfo(state, data) {
+      state.companyInfo = data.data.records
+      state.companyTotalItems = data.data.total
+    },
   },
   actions: {
 

@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.List;
@@ -70,6 +71,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, SnsUser> implements
         LocalDateTime currentTime = LocalDateTime.now();
         snsUser.setEffectiveTime(currentTime.plus(1, ChronoUnit.MONTHS));
         snsUser.setGmtCreate(LocalDateTime.now());
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM");
+
+        String formattedDate = currentTime.format(formatter);
+        snsUser.setJoinTime(formattedDate);
         userMapper.insert(snsUser);
         interviewerInfoService.batchCreate(snsUser.getId(), 20);
         return snsUser;

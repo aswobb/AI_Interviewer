@@ -23,6 +23,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -54,6 +55,9 @@ public class LoginServiceImpl implements ILoginService {
             if (loginInfo.getPassword().equals(userLoginInfoInDTO.getPassword())) {
                 //契約会社の管理者の場合
                 if(DataDictionary.ROLE_CONTRACT.getValue().equals(userLoginInfoOutDTO.getRoleId())){
+                    if(EmptyUtil.isNull(userLoginInfoOutDTO.getEffectiveTime()) ||userLoginInfoOutDTO.getEffectiveTime().isBefore(LocalDateTime.now())){
+                        throw new ServiceException(ServiceCodeEnum.ERR_USER_EXPIRED);
+                    }
                     BillingCourse billingCourse = billingCourseMapper.selectById(userLoginInfoOutDTO.getCourseId());
                     if(!EmptyUtil.isNull(billingCourse)){
                         userLoginInfoOutDTO.setCourseName(billingCourse.getCourseName());

@@ -11,7 +11,7 @@ public class UserBillingHistoryVO {
     private Long id;
 
     private Long userId;
-
+    private Long courseId;
     private Integer addMoney;
 
     private Integer addMonth;
@@ -26,4 +26,5 @@ public class UserBillingHistoryVO {
     private LocalDateTime gmtUpdate;
 
     private LocalDateTime gmtCreate;
+    private Integer courseCustomNum;
 }

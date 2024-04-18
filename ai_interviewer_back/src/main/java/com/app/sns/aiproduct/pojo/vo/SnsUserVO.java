@@ -22,6 +22,7 @@ public class SnsUserVO {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime effectiveTime;
     private Long courseId;
+    private Integer courseCustomNum;
     private Integer balance;
     private Integer remainNum;
     @TableField("gmt_create")
@@ -40,5 +41,5 @@ public class SnsUserVO {
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime gmtCreateEnd;
-    private UserBillingHistoryVO userBillingHistoryVO;
+    private UserBillingHistoryVO userBillingHistoryVO = new UserBillingHistoryVO();
 }

@@ -18,6 +18,8 @@ public class UserBillingHistory {
 
     private Long userId;
 
+    private Long courseId;
+
     private Integer addMoney;
 
     private Integer addMonth;

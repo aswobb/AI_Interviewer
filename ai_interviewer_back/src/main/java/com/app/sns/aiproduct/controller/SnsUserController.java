@@ -68,7 +68,13 @@ public class SnsUserController {
 
     @GetMapping("/list")
     public JsonResult list(@ModelAttribute SnsUserVO snsUserVO) {
-        Page<SnsUser> page = new Page<>(snsUserVO.getPageNum(), snsUserVO.getPageSize());
+        Page<SnsUser> page ;
+        int pageSize = snsUserVO.getPageSize();
+        if (pageSize == -1) {
+            page = new Page<>(0, Integer.MAX_VALUE);
+        }else{
+            page = new Page<>(snsUserVO.getPageNum(), snsUserVO.getPageSize());
+        }
         QueryWrapper<SnsUser> wrapper = new QueryWrapper<>();
         if (snsUserVO.getGmtCreateStart() != null && snsUserVO.getGmtCreateEnd() != null) {
             wrapper.lambda().between(SnsUser::getGmtCreate, snsUserVO.getGmtCreateStart(), snsUserVO.getGmtCreateEnd());
@@ -84,19 +90,19 @@ public class SnsUserController {
         return JsonResult.ok(infoPage);
     }
     @PostMapping("/create")
-    public SnsUser createUser(@RequestBody SnsUserVO userVO,HttpServletRequest request) {
+    public JsonResult createUser(@RequestBody SnsUserVO userVO,HttpServletRequest request) {
         Long creator = JWTUtil.getUserIdFromToken(request);
-        return userService.createUser(creator,userVO);
+        return JsonResult.ok(userService.createUser(creator,userVO));
     }
 
     @PostMapping("/update")
-    public SnsUser updateUser( @RequestBody SnsUserVO userVO,HttpServletRequest request) {
+    public JsonResult updateUser( @RequestBody SnsUserVO userVO,HttpServletRequest request) {
         Long creator = JWTUtil.getUserIdFromToken(request);
         ReentrantLock lock = lockManager.getLock(SnsUser.class, userVO.getId());
 
         lock.lock();
         try {
-            return userService.updateUser(creator,userVO);
+            return JsonResult.ok(userService.updateUser(creator,userVO));
         }catch (Exception e){
             throw e;
         }finally {

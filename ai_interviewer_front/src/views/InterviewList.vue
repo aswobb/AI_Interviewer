@@ -129,6 +129,12 @@ export default {
                         });
                     }
                 });
+            } else {
+                this.$router.push('/manage-login');
+                this.$message({
+                    message: 'ログインが期限切れです。再度ログインしてください',
+                    type: 'warn'
+                });
             }
         },
         //增加条数
@@ -203,6 +209,12 @@ export default {
                             type: 'error'
                         });
                     }
+                });
+            } else {
+                this.$router.push('/manage-login');
+                this.$message({
+                    message: 'ログインが期限切れです。再度ログインしてください',
+                    type: 'warn'
                 });
             }
         },

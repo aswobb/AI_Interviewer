@@ -20,14 +20,24 @@
             <v-card-title class="headline">ユーザーの追加</v-card-title>
             <v-form ref="form" :model="userInfo" lazy-validation>
                 <v-text-field v-model="userInfo.username" label="ユーザー名" :rules="rules.username"></v-text-field>
+                <v-text-field v-model="remainDialog" v-if="operation === '変更'" readonly label="現在残数"></v-text-field>
                 課金コ-ス選択:
                 <div class="a">
-                    <v-radio-group v-model="userInfo.courseId" row :rules="rules.select">
-                        <v-radio v-for="n in [3, 4, 5]" :key="n" :label="lable[n - 1]" :value="n"></v-radio>
+                    <v-radio-group v-model="selection" row>
+
+                        <v-radio @click.native="a(n)" v-for="n in [3, 4, 5, 6]" :key="n" :label="lable[n - 1]"
+                            :value="n"></v-radio>
                     </v-radio-group>
                 </div>
+                <v-text-field v-model="userInfo.userBillingHistoryVO.courseCustomNum"
+                    v-if="userInfo.userBillingHistoryVO.courseId === 6" label="カスタム数量を入力してください"
+                    :rules="computedRules"></v-text-field>
+                <v-text-field v-model="userInfo.remainNum" :rules="rules.remainNum"
+                    v-if="operation === '変更' && (this.userInfo.userBillingHistoryVO.courseId === null)"
+                    label="残数を入力してください"></v-text-field>
                 <v-text-field v-model="userInfo.contractor" label="会社名" :rules="rules.companyName"></v-text-field>
                 <v-text-field v-model="userInfo.password" label="パスワード" :rules="rules.password"></v-text-field>
+
             </v-form>
             <v-card-actions>
                 <v-spacer></v-spacer>
@@ -47,9 +57,15 @@ export default {
     },
     data() {
         return {
+            selection: 0,
+            remainDialog: 0,
+            //对话框记录剩余次数
             operation: '',
-            lable: ['', '', 'ペ-シック', 'スタンダ-ド', 'プレミアム'],
+            lable: ['', '', 'ペ-シック', 'スタンダ-ド', 'プレミアム', 'その他'],
             rules: {
+                remainNum: [
+                    v => /^\d*$/.test(v) || '数値のみ入力可能'
+                ],
                 username: [
                     v => !!v || 'ユーザー名を入力してください',
                     v => (v && v.length <= 15) || '文字数は2から15文字まで',
@@ -62,14 +78,23 @@ export default {
                 ],
                 companyName: [
                     v => !!v || '会社名を入力してください',
+                ],
+                customRule: [
+                    v => !!v || '残りの回数を入力してください',
+                    v => /^\d*$/.test(v) || '数値のみ入力可能'
                 ]
             },
 
             userInfo: {
+                id: null,
                 username: '',
-                courseId: 3,
                 contractor: '',
-                password: ''
+                password: '',
+                userBillingHistoryVO: {
+                    courseId: null,
+                    courseCustomNum: 0
+                },
+                remainNum: 0
             },
             //增加用户会话开关
             addUserDialog: false,
@@ -100,16 +125,29 @@ export default {
         };
     },
     methods: {
+        a(n) {
+            if (n === this.userInfo.userBillingHistoryVO.courseId) {
+                this.selection = 0
+                this.userInfo.userBillingHistoryVO.courseId = null
+                this.userInfo.remainNum = null
+            } else {
+                this.userInfo.userBillingHistoryVO.courseId = n
+                this.selection = n
+                this.userInfo.remainNum = null
+            }
+        },
         openDialog(flag) {
             if (flag === 1) {
                 this.operation = '追加'
             } else {
                 this.operation = '変更'
                 console.log(108, flag);
+                this.userInfo.id = flag.id
                 this.userInfo.username = flag.username
                 this.userInfo.contractor = flag.contractor
-                this.userInfo.courseId = flag.courseId
+                this.userInfo.userBillingHistoryVO.courseId = null
                 this.userInfo.password = flag.password
+                this.remainDialog = flag.remainNum
             }
             this.addUserDialog = true
 
@@ -122,16 +160,13 @@ export default {
             this.addUserDialog = false
             this.userInfo = {
                 username: '',
-                courseId: 3,
                 contractor: '',
-                password: ''
+                password: '',
+                userBillingHistoryVO: {
+                    courseId: 3,
+                    courseCustomNum: 0
+                }
             }
-        },
-        handleChange() {
-            if (this.selectedOption && this.selectedOption.length > 1) {
-                this.selectedOption = [this.selectedOption.pop()];
-            }
-            console.log(79, this.selectedOption);
         },
         //公司基本信息赋值
         getCompanyInfo(pageNum1, pageSize1) {
@@ -172,6 +207,13 @@ export default {
                     }
                 }
 
+            } else {
+                this.$router.push('/manage-login');
+                this.$message({
+                    message: 'ログインが期限切れです。再度ログインしてください',
+                    type: 'warn'
+                });
+
             }
         },
         addUser(token) {
@@ -181,6 +223,7 @@ export default {
                     'token': token
                 },
             };
+            console.log("add", this.userInfo);
             this.axios.post(url, this.userInfo, config).then((response) => {
                 if (response.data.state == 20000) {
                     this.$message({
@@ -239,7 +282,18 @@ export default {
             // 最大容量变化时的处理逻辑
             console.log('当前页签:', this.tableOptions.page, '最大容量:', newRowsPerPage,);
             this.getCompanyInfo(this.tableOptions.page, newRowsPerPage)
+        },
+        'userInfo.userBillingHistoryVO.courseId': function (newCourseId) {
+            this.userInfo.userBillingHistoryVO.courseCustomNum = 0
+        },
+
+    },
+    computed: {
+        computedRules() {
+            // 当a等于1时，返回自定义规则，否则返回空数组，即不进行验证
+            return this.userInfo.userBillingHistoryVO.courseId === 6 ? this.rules.customRule : [];
         }
+
     }
 }
 </script>

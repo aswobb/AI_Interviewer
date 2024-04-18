@@ -76,4 +76,19 @@ const router = new VueRouter({
     routes
 })
 
+//定义白名单
+let writeList = ['manage-login', '/interview/user/login']
+router.beforeEach((to, from, next) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+        next()
+    } else {
+        if (writeList.includes(to.path)) {
+            next()
+        } else {
+            next('/interview/user/login')
+        }
+    }
+}
+)
 export default router

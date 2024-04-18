@@ -12,7 +12,7 @@
                     <el-input v-model="ruleForm.username"></el-input>
                 </el-form-item>
                 <el-form-item label="パスワード" prop="password">
-                    <el-input v-model="ruleForm.password"></el-input>
+                    <el-input v-model="ruleForm.password" type="password"></el-input>
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" @click="submitForm('ruleForm')">ログイン</el-button>

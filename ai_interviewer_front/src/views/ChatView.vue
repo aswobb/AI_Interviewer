@@ -450,6 +450,7 @@ export default {
           this.isInputDisabled = true; // 入力をさせない
           this.isLoading = false;
           this.isRequestingCSVData = false;
+          localStorage.removeItem("token");
         } else {
           console.error("API response error:", response.data);
           this.renderMessages.push({

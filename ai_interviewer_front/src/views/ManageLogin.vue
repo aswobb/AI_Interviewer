@@ -122,7 +122,7 @@ export default {
 
         goTouserLogin() {
             // 使用 $router.push() 方法进行页面导航
-            this.$router.push({ path: '/interview/user/login' })
+            window.location.href = '/interview/user/login';
         }
 
 

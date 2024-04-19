@@ -406,11 +406,11 @@ export default {
         // response = await this.sleep(500).then( () => {return {data: {state: 20000, data: "以下がCSVファイルです。\n```\n質問,回答\nほげ1,ふが1\n今日の朝ごはん,卵焼き\n```\n"}}}); // 0.5秒後にテストデータを返す.
         // デバッグ用ここまで
         if (response.data && response.data.state === 20000) {
-          console.log("response : " + response.data.data);
+          // console.log("response : " + response.data.data);
           // const csvData = response.data.data.match(/```([\s\S]*?)```/g).slice(-1)[0].replace(/(```.*\n*|^\n$|^[^,]+$)/g,""); 
           const csvData = response.data.data;
           const encodeData = new TextEncoder('utf-8').encode('\ufeff' + csvData); 
-          console.log("encodeData : " + encodeData);
+          // console.log("encodeData : " + encodeData);
           const blob = new Blob([encodeData], {type: "text/csv;charset=utf-8"}); // CSVデータ作成
 
           const formData = new FormData(); // csvファイルbackendへ送信 

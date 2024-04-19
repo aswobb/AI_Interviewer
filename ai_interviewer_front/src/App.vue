@@ -2,12 +2,10 @@
   <v-app>
     <v-app-bar app color="primary" dark>
       <div class="d-flex align-center">
-        <v-img alt="Vuetify Logo" class="shrink mr-2" contain :src="require('@/assets/SNS.jpg')"
-          transition="scale-transition" width="40" />
 
         <div class="box">
 
-          <h5 style="font-style: italic;color: black">SNS SOFT AI面接官</h5>
+          <h5 style="font-style: italic;color: black">AI面接官</h5>
 
         </div>
 

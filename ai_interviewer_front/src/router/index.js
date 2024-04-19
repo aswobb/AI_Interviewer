@@ -77,7 +77,7 @@ const router = new VueRouter({
 })
 
 //定义白名单
-let writeList = ['manage-login', '/interview/user/login']
+let writeList = ['/manage-login', '/interview/user/login']
 router.beforeEach((to, from, next) => {
     const token = localStorage.getItem('token');
     if (token) {

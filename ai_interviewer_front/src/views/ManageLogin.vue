@@ -1,7 +1,8 @@
 <head>
     <!-- 其他头部内容 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    </head>
+</head>
+
 <template>
     <div id="background" class="login">
         <!-- test用 -->
@@ -17,6 +18,7 @@
                 <el-form-item>
                     <el-button type="primary" @click="submitForm('ruleForm')">ログイン</el-button>
                     <el-button @click="resetForm('ruleForm')">リセット</el-button>
+                    <el-button type="primary" @click="goTouserLogin()">面接者登録へ</el-button>
                 </el-form-item>
             </el-form>
 
@@ -118,9 +120,9 @@ export default {
             this.$refs[formName].resetFields();
         },
 
-        goToOtherPage() {
+        goTouserLogin() {
             // 使用 $router.push() 方法进行页面导航
-            this.$router.push({ path: '/manage' })
+            this.$router.push({ path: '/interview/user/login' })
         }
 
 
@@ -141,6 +143,9 @@ body {
   color: rgb(249, 242, 49) !important; /* 设置标签文字颜色为红色 */
   font-weight: bold;
   font-size: 15px;
+}
+.my-button {
+  margin-top: 100px;
 }
 
 

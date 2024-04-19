@@ -14,6 +14,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @RestController
@@ -27,7 +31,30 @@ public class ChatController {
     public ChatController(ChatGPTService chatGPTService) {
         this.chatGPTService = chatGPTService;
     }
+    @PostMapping("/sendMessageCreateCSV")
+    public JsonResult<String> sendMessageCreateCSV(@Validated @RequestBody ChatVO chatVO) {
+        String content = chatGPTService.generateResponse(chatVO.getMessage());
+        String csvData = content.replaceAll("```(csv)?\\n|```", "").trim();
 
+        // 在 CSV 数据前添加 UTF-8 BOM
+        byte[] bom = "\uFEFF".getBytes(StandardCharsets.UTF_8);
+        byte[] csvDataBytes = csvData.getBytes(StandardCharsets.UTF_8);
+
+        // 将 BOM 和 CSV 数据合并
+        byte[] dataWithBom = new byte[bom.length + csvDataBytes.length];
+        System.arraycopy(bom, 0, dataWithBom, 0, bom.length);
+        System.arraycopy(csvDataBytes, 0, dataWithBom, bom.length, csvDataBytes.length);
+
+        // 将数据写入 CSV 文件
+        String filePath = "output11.csv";
+        try (PrintWriter writer = new PrintWriter(new FileWriter(filePath))) {
+            writer.write(new String(dataWithBom, StandardCharsets.UTF_8));
+            System.out.println("CSV ファイルが正常に保存されました: " + filePath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return JsonResult.ok(content);
+    }
     @PostMapping("/sendMessage")
     public JsonResult<String> generateResponse(@Validated @RequestBody ChatVO chatVO) {
         //        jsonResult.setData("请问有什么可以帮到您的吗？");

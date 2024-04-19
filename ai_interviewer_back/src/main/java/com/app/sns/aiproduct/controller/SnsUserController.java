@@ -38,12 +38,13 @@ public class SnsUserController {
     @Resource
     private BillingCourseService billingCourseService;
     @PostMapping("/updatePassword")
-    public JsonResult updatePassword(@RequestBody UserLoginInfoInDTO userLoginInfoInDTO) {
-        ReentrantLock lock = lockManager.getLock(SnsUser.class, userLoginInfoInDTO.getId());
+    public JsonResult updatePassword(HttpServletRequest request,@RequestBody UserLoginInfoInDTO userLoginInfoInDTO) {
+        Long userId = JWTUtil.getUserIdFromToken(request);
+        ReentrantLock lock = lockManager.getLock(SnsUser.class, userId);
 
         lock.lock();
         try {
-            boolean success = userService.updatePassword(userLoginInfoInDTO.getId(), userLoginInfoInDTO.getOldPassword(), userLoginInfoInDTO.getNewPassword());
+            boolean success = userService.updatePassword(userId, userLoginInfoInDTO.getOldPassword(), userLoginInfoInDTO.getNewPassword());
             if (success) {
                 return JsonResult.ok("パスワード更新成功");
             } else {

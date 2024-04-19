@@ -393,7 +393,7 @@ export default {
         const response = await axios.post(
         "/api/chat/sendMessage",
         {
-          message: chatBody + ",{\"role\":\"user\", \"content\":\"CSVインポートしたいので面接での質問と回答と評価を出力してください。必ず「質問」,「回答」,「各プログラム評価」,「総合評価」,「評価理由」,「改善点」の6列にしてください。評価理由は1行程度で出力してください。 改善点は1行程度で出力してください。CSV以外の出力はしないでください。CSVデータとそうではないところがわかるように、CSVデータは```で囲ってください。\" }"
+          message: chatBody + ",{\"role\":\"user\", \"content\":\"CSVインポートしたいので面接での質問と回答と評価を出力してください。必ず「質問」,「回答」,「各プログラム評価」,「総合評価」,「評価理由」,「改善点」の6列にしてください。各プログラム評価は面接全体まとめて一つの評価一回のみ出力してください。総合評価は面接全体まとめて一つの評価一回のみ出力してください。評価理由は面接全体に対してまとめて理由一回のみを出力してください。改善点は面接全体に対してまとめて改善点一回のみ出力してください。評価理由は2行程度で出力してください。 改善点は2行程度で出力してください。CSV以外の出力はしないでください。CSVデータとそうではないところがわかるように、CSVデータは```で囲ってください。\" }"
         },
         {
           headers: {
@@ -450,6 +450,7 @@ export default {
           this.isInputDisabled = true; // 入力をさせない
           this.isLoading = false;
           this.isRequestingCSVData = false;
+          localStorage.removeItem("token");
         } else {
           console.error("API response error:", response.data);
           this.renderMessages.push({

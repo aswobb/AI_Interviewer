@@ -43,7 +43,7 @@ export default {
   /* 文本垂直居中 */
   text-align: center;
   /* 文本水平居中 */
-  height: 400px;
+  height: 100px;
   padding-top: 2px;
 }
 </style>

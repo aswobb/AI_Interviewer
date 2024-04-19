@@ -35,8 +35,8 @@ public class ChatGPTServiceImpl implements ChatGPTService {
 
     private final String chatgpt_apiUrl = "https://api.openai.com/v1/chat/completions";
     private final RestTemplate restTemplate = new RestTemplateBuilder()
-            .setConnectTimeout(Duration.ofSeconds(200))
-            .setReadTimeout(Duration.ofSeconds(200))
+            .setConnectTimeout(Duration.ofSeconds(300))
+            .setReadTimeout(Duration.ofSeconds(300))
             .build();
 
     @Autowired

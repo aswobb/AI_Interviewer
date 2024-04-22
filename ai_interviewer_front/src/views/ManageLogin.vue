@@ -15,8 +15,13 @@
                     <el-input v-model="ruleForm.password" type="password"></el-input>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" @click="submitForm('ruleForm')">ログイン</el-button>
-                    <el-button @click="resetForm('ruleForm')">リセット</el-button>
+                    <el-button type="primary" @click="submitForm('ruleForm')" style="width: 200px;">ログイン</el-button>
+                    <br>
+                    <el-button type="warning" @click="resetForm('ruleForm')" style="width: 200px;">リセット</el-button>
+                    <br>
+                    <el-button type="success" @click="$router.push('/interview/user/login')"
+                        style="width: 200px;">面接者ログイン</el-button>
+                    <br>
                 </el-form-item>
             </el-form>
 
@@ -138,13 +143,11 @@ body {
 }
 
 .el-form-item__label {
-  color: rgb(249, 242, 49) !important; /* 设置标签文字颜色为红色 */
-  font-weight: bold;
-  font-size: 15px;
+    color: rgb(249, 242, 49) !important;
+    /* 设置标签文字颜色为红色 */
+    font-weight: bold;
+    font-size: 15px;
 }
-
-
-
 </style>
 <style scoped>
 .login-form {
@@ -160,25 +163,27 @@ body {
 
 }
 
-@media only screen and (min-width: 1025px){
-#background {
-  background-Image: url('../assets/image.png');
-  background-size: cover; /* 调整背景图片显示方式 */
+@media only screen and (min-width: 1025px) {
+    #background {
+        background-Image: url('../assets/image.png');
+        background-size: cover;
+        /* 调整背景图片显示方式 */
     }
 }
 
-@media only screen and (max-width: 600px){
-#background {
-  background-Image: url('../assets/image.png');
-  background-size: contain; /* 调整背景图片显示方式 */
+@media only screen and (max-width: 600px) {
+    #background {
+        background-Image: url('../assets/image.png');
+        background-size: contain;
+        /* 调整背景图片显示方式 */
     }
 }
 
 @media only screen and (min-width: 601px) and (max-width: 1024px) {
-  #background {
-    background-image: url('../assets/image.png');
-    background-size: contain;
-  }
+    #background {
+        background-image: url('../assets/image.png');
+        background-size: contain;
+    }
 }
 
 
@@ -215,6 +220,4 @@ h1 {
     height: 100vh;
     /* 容器的高度 */
 }
-
-
 </style>

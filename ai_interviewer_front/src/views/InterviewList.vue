@@ -137,6 +137,7 @@ export default {
                 });
             }
         },
+
         //增加条数
         addData() {
             const token = localStorage.getItem('token');
@@ -319,3 +320,4 @@ export default {
     height: 350px;
 }
 </style>
+<!-- 刷新同步 -->

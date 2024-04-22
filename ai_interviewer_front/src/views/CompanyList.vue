@@ -3,6 +3,7 @@
         <v-btn icon @click="logout">
             <v-icon>mdi-exit-to-app</v-icon>
         </v-btn>
+        //更改信息弹出框
         <v-data-table :headers="headers" :items="companyInfo" item-key="id" class="elevation-1"
             :options.sync="tableOptions" :server-items-length="totalItems">
             <template v-slot:item.actions="{ item }">

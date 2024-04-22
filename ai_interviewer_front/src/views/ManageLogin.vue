@@ -16,13 +16,9 @@
                     <el-input v-model="ruleForm.password" type="password"></el-input>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" @click="submitForm('ruleForm')" style="width: 200px;">ログイン</el-button>
-                    <br>
-                    <el-button type="warning" @click="resetForm('ruleForm')" style="width: 200px;">リセット</el-button>
-                    <br>
-                    <el-button type="success" @click="$router.push('/interview/user/login')"
-                        style="width: 200px;">面接者ログイン</el-button>
-                    <br>
+                    <el-button type="primary" @click="submitForm('ruleForm')">ログイン</el-button>
+                    <el-button @click="resetForm('ruleForm')">リセット</el-button>
+                    <el-button type="primary" @click="goTouserLogin()">面接者登録へ</el-button>
                 </el-form-item>
             </el-form>
 
@@ -148,6 +144,10 @@ body {
     /* 设置标签文字颜色为红色 */
     font-weight: bold;
     font-size: 15px;
+}
+
+.my-button {
+    margin-top: 100px;
 }
 </style>
 <style scoped>

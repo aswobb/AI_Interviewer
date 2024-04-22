@@ -44,7 +44,6 @@
                 <v-btn color="green darken-1" @click="dialog = false">キャンセル</v-btn>
             </v-card-actions>
         </v-dialog>
-
     </div>
 </template>
 

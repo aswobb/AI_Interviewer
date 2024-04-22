@@ -24,9 +24,6 @@
 
         </div>
     </div>
-
-
-
 </template>
 <script>
 import bgImg from '../assets/image.png'

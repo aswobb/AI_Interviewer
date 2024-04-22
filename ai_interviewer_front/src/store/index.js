@@ -8,9 +8,11 @@ export default new Vuex.Store({
     manageInfo: [],
     //面试者信息
     interviewerInfo: [],
+    interviewerInfo: [],
     //总页数
     totalItems: null,
     //会社管理信息
+    companyInfo: [],
     companyInfo: [],
     //公司总数
     companyTotalItems: null

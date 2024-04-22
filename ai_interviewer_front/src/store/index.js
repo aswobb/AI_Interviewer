@@ -27,7 +27,7 @@ export default new Vuex.Store({
     },
     cleanCache(state) {
       state.manageInfo = {}
-      localStorage.setItem('token', null);
+      localStorage.setItem('token', '');
       state.interviewerInfo = []
       state.companyInfo = []
     },

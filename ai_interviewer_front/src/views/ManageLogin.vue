@@ -1,7 +1,8 @@
 <head>
     <!-- 其他头部内容 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    </head>
+</head>
+
 <template>
     <div id="background" class="login">
         <!-- test用 -->
@@ -123,9 +124,9 @@ export default {
             this.$refs[formName].resetFields();
         },
 
-        goToOtherPage() {
+        goTouserLogin() {
             // 使用 $router.push() 方法进行页面导航
-            this.$router.push({ path: '/manage' })
+            window.location.href = '/interview/user/login';
         }
 
 

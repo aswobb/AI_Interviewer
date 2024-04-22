@@ -393,7 +393,7 @@ export default {
         const response = await axios.post(
         "/api/chat/sendMessage",
         {
-          message: chatBody + ",{\"role\":\"user\", \"content\":\"CSVインポートしたいので面接での質問と回答と評価を出力してください。必ず「質問」,「回答」,「各プログラム評価」,「総合評価」,「評価理由」,「改善点」の6列にしてください。評価理由は1行程度で出力してください。 改善点は1行程度で出力してください。CSV以外の出力はしないでください。CSVデータとそうではないところがわかるように、CSVデータは```で囲ってください。\" }"
+          message: chatBody + ",{\"role\":\"user\", \"content\":\"CSVインポートしたいので、表を2つ出力してください。１つ目は面接での質問と回答を出力してください。必ず「質問項番」,「質問内容」,「回答」の3列にしてください。質問項番は1～10で順番に出力してください。質問内容は要約せずにそのまま出力してください。回答内容は要約せずにそのまま出力してください。２つ目は面接での評価を出力してください。必ず、「技術的スキル（0～40点）」,「コミュニケーション能力 (0-30点)」,「問題解決能力 (0-20点)」,「適応性と学習意欲 (0-10点)」,「総合評価点」,「評価理由」，「改善点」の7列にしてください。10個の回答を評価し、技術的スキル、コミュニケーション能力、問題解決能力 、適応性と学習意欲ごとに採点してください。総合評価点は各プログラム評価点の値の和とします。評価理由は2行程度で出力してください。改善点は2行程度で出力してください。CSV以外の出力はしないでください。CSVデータとそうではないところがわかるように、CSVデータは```で囲ってください。\" }"
         },
         {
           headers: {
@@ -407,9 +407,10 @@ export default {
         // デバッグ用ここまで
         if (response.data && response.data.state === 20000) {
           // console.log("response : " + response.data.data);
-          const csvData = response.data.data.match(/```([\s\S]*?)```/g).slice(-1)[0].replace(/(```.*\n*|^\n$|^[^,]+$)/g,""); // ```もしくは、空行もしくは、，が含まれない行は空文字にリプレイス
-          // console.log("csvData : " + csvData);
+          // const csvData = response.data.data.match(/```([\s\S]*?)```/g).slice(-1)[0].replace(/(```.*\n*|^\n$|^[^,]+$)/g,""); 
+          const csvData = response.data.data;
           const encodeData = new TextEncoder('utf-8').encode('\ufeff' + csvData); 
+          // console.log("encodeData : " + encodeData);
           const blob = new Blob([encodeData], {type: "text/csv;charset=utf-8"}); // CSVデータ作成
 
           const formData = new FormData(); // csvファイルbackendへ送信 
@@ -450,6 +451,7 @@ export default {
           this.isInputDisabled = true; // 入力をさせない
           this.isLoading = false;
           this.isRequestingCSVData = false;
+          localStorage.removeItem("token");
         } else {
           console.error("API response error:", response.data);
           this.renderMessages.push({

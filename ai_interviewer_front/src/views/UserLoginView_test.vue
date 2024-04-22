@@ -14,6 +14,7 @@
             <div>
               <q-btn label="面接練習へ" type="submit" color="primary" class="full-width q-mb-sm"/>
               <q-btn label="リセット" type="reset" color="primary" class="full-width q-mb-sm"/>
+              <q-btn label="管理者登録へ" @click="gotoManagepage" color="primary" class="full-width q-mb-sm"/>
             </div>
           </q-form>
         </div>
@@ -86,6 +87,11 @@
         onReset() {
           this.ruleForm.interviewerId = '';
           this.ruleForm.interviewerName = '';
+        },
+
+        gotoManagepage() {
+            // 使用 $router.push() 方法进行页面导航
+            this.$router.push({ path: '/manage-login' })
         }
       }
     }

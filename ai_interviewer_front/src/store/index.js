@@ -47,3 +47,4 @@ export default new Vuex.Store({
   },
   plugins: [createPersistedState()]
 })
+// 刷新同步

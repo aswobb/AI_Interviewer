@@ -4,7 +4,7 @@
             <v-icon>mdi-exit-to-app</v-icon>
         </v-btn>
 
-        <v-data-table :headers="headers" :items="companyInfo" item-key="id" class="elevation-1"
+        <v-data-table disable-sort="false" :headers="headers" :items="companyInfo" item-key="id" class="elevation-1"
             :options.sync="tableOptions" :server-items-length="totalItems">
             <template v-slot:item.actions="{ item }">
                 <div class="d-flex">
@@ -195,6 +195,13 @@ export default {
                     }
                 });
             }
+            //  else {
+            //     this.$router.push("/manage-login")
+            //     this.$message({
+            //         message: 'ログインが期限切れです。再度ログインしてください',
+            //         type: 'warn'
+            //     });
+            // }
         },
         sumbit() {
             const token = localStorage.getItem('token');
@@ -295,7 +302,11 @@ export default {
             return this.userInfo.userBillingHistoryVO.courseId === 6 ? this.rules.customRule : [];
         }
 
-    }
+    },
+    beforeDestroy() {
+        // 清理逻辑，例如重置Vuex状态
+        this.$store.commit('cleanCache');
+    },
 }
 </script>
 <style>

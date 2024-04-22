@@ -6,7 +6,7 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     //管理者信息
-    manageInfo: {},
+    manageInfo: [],
     //面试者信息
     interviewerInfo: [],
     //总页数
@@ -26,7 +26,7 @@ export default new Vuex.Store({
       console.log(26, state.manageInfo);
     },
     cleanCache(state) {
-      state.manageInfo = {}
+      state.manageInfo = []
       localStorage.setItem('token', '');
       state.interviewerInfo = []
       state.companyInfo = []

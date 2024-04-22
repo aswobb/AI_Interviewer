@@ -2,7 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import LoginView from '../views/LoginView.vue'
 import ManageView from '../views/SNSsoftmanage.vue'
-
+import { Message } from 'element-ui'
 Vue.use(VueRouter)
 
 const routes = [
@@ -92,6 +92,10 @@ router.beforeEach((to, from, next) => {
             localStorage.setItem('token', token);
         } else {
             next('/interview/user/login')
+            Message.warning({
+                message: '先にログインしてください',
+                type: 'warn'
+            });
         }
     }
 }

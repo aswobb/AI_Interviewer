@@ -16,7 +16,7 @@
                 </v-col>
             </v-row>
         </v-container>
-        <v-data-table :headers="headers" :items="interviewerList" item-key="id" class="elevation-1"
+        <v-data-table disable-sort="false" :headers="headers" :items="interviewerList" item-key="id" class="elevation-1"
             :options.sync="tableOptions" :server-items-length="totalItems">
             <template v-slot:item.actions="{ item }">
                 <div class="d-flex">
@@ -311,7 +311,7 @@ export default {
             console.log('当前页签:', this.tableOptions.page, '最大容量:', newRowsPerPage,);
             this.changePage(this.tableOptions.page, newRowsPerPage)
         }
-    }
+    },
 };
 </script>
 <style>

@@ -80,10 +80,13 @@ const router = new VueRouter({
 let writeList = ['/manage-login', '/interview/user/login']
 router.beforeEach((to, from, next) => {
     const token = localStorage.getItem('token');
-    if (token) {
+    console.log(83, token);
+    if (token && token !== null) {
+        console.log(1);
         next()
         localStorage.setItem('token', token);
     } else {
+        console.log(2);
         if (writeList.includes(to.path)) {
             next()
             localStorage.setItem('token', token);

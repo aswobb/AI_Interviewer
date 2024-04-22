@@ -8,11 +8,11 @@ export default new Vuex.Store({
     //管理者信息
     manageInfo: {},
     //面试者信息
-    interviewerInfo: {},
+    interviewerInfo: [],
     //总页数
     totalItems: null,
     //会社管理信息
-    companyInfo: {},
+    companyInfo: [],
     //公司总数
     companyTotalItems: null
 
@@ -28,8 +28,8 @@ export default new Vuex.Store({
     cleanCache(state) {
       state.manageInfo = {}
       localStorage.setItem('token', null);
-      state.interviewerInfo = {}
-      state.companyInfo = {}
+      state.interviewerInfo = []
+      state.companyInfo = []
     },
     initInterviewerInfo(state, data) {
       state.interviewerInfo = data.data.records

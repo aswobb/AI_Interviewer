@@ -56,9 +56,9 @@
         <v-dialog v-model="dialog" max-width="400">
             <v-card-title class="headline">パスワードの変更</v-card-title>
             <v-form ref="form" :model="changePwForm" lazy-validation>
-                <v-text-field v-model="changePwForm.password" label="現PW" required></v-text-field>
+                <v-text-field v-model="changePwForm.password" label="現PW" :rules="[rules.required]"></v-text-field>
                 <v-text-field v-model="changePwForm.newPassword"
-                    :rules="[rules.required, rules.maxLengh, rules.minLengh, rules.isDifferent(changePwForm.reNewPassword)]"
+                    :rules="[rules.required, rules.maxLengh, rules.minLengh]"
                     label="新PW" required></v-text-field>
                 <v-text-field v-model="changePwForm.reNewPassword"
                     :rules="[rules.required, rules.maxLengh, rules.minLengh, rules.isDifferent(changePwForm.newPassword)]"

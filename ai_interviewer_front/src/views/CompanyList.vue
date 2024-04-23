@@ -94,7 +94,7 @@ export default {
                     courseId: null,
                     courseCustomNum: 0
                 },
-                remainNum: 0
+                remainNum: null
             },
             //增加用户会话开关
             addUserDialog: false,
@@ -139,6 +139,10 @@ export default {
         openDialog(flag) {
             if (flag === 1) {
                 this.operation = '追加'
+                this.selection = 0
+                this.userInfo.username = ''
+                this.userInfo.contractor = ''
+                this.userInfo.password = ''
             } else {
                 this.operation = '変更'
                 console.log(108, flag);
@@ -148,6 +152,7 @@ export default {
                 this.userInfo.userBillingHistoryVO.courseId = null
                 this.userInfo.password = flag.password
                 this.remainDialog = flag.remainNum
+                this.selection = 0
             }
             this.addUserDialog = true
 

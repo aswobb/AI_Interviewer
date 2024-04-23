@@ -78,7 +78,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, SnsUser> implements
             }
         }
         LocalDateTime currentTime = LocalDateTime.now();
-        snsUser.setEffectiveTime(currentTime.plus(1, ChronoUnit.MONTHS));
+        snsUser.setEffectiveTime(currentTime.plus(1, ChronoUnit.YEARS));
         snsUser.setGmtCreate(LocalDateTime.now());
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM");
 
@@ -118,6 +118,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, SnsUser> implements
         oldData.setUsername(userVO.getUsername());
         oldData.setPassword(userVO.getPassword());
         oldData.setContractor(userVO.getContractor());
+        boolean isChangeRemainNum = false;
         if (!EmptyUtil.isNull(userVO.getUserBillingHistoryVO().getCourseId())) {
             Integer remainNum = EmptyUtil.isNull(oldData.getRemainNum()) ? 0 : oldData.getRemainNum();
             UserBillingHistory userBillingHistory = new UserBillingHistory();
@@ -137,8 +138,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, SnsUser> implements
             userBillingHistory.setRemainNum(oldData.getRemainNum());
             userBillingHistory.setUserId(oldData.getId());
             userBillingHistory.setCreator(creator);
-            userBillingHistory.setGmtCreate(LocalDateTime.now());
+            userBillingHistory.setGmtUpdate(LocalDateTime.now());
             userBillingHistoryMapper.insert(userBillingHistory);
+            isChangeRemainNum = true;
         }
 //            if (!EmptyUtil.isNull(userVO.getUserBillingHistoryVO())) {
 //                UserBillingHistoryVO userBillingHistoryVO = userVO.getUserBillingHistoryVO();
@@ -165,6 +167,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, SnsUser> implements
 //            }
         if (!EmptyUtil.isNull(userVO.getRemainNum())) {
             oldData.setRemainNum(userVO.getRemainNum());
+            isChangeRemainNum = true;
+        }
+        if(isChangeRemainNum){
+            LocalDateTime currentTime = LocalDateTime.now();
+            oldData.setEffectiveTime(currentTime.plus(1, ChronoUnit.YEARS));
         }
         oldData.setGmtUpdate(LocalDateTime.now());
         userMapper.updateById(oldData);

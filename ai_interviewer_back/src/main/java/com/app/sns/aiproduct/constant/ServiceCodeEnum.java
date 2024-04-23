@@ -17,7 +17,7 @@ public enum ServiceCodeEnum {
     ERR_UPDATE(50002, "データの変更時にエラーが発生しました。"),
     ERR_DELETE(50003, "データの削除時にエラーが発生しました。"),
     INVALID_OLD_PASSWORD(60001, "古いパスワードが正しくありません。"),
-    INSUFFICIENT_BALANCE(70001, "残高が不足しています。");
+    INSUFFICIENT_BALANCE(70001, "残高が不足です。");
 
 
     private final Integer code;

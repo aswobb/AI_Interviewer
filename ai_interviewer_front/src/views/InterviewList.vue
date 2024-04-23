@@ -155,15 +155,22 @@ export default {
                         this.changePage(this.tableOptions.page, this.tableOptions.itemsPerPage)
                         this.getCompanyInfo()
                         this.$message({
-                            message: '面接者データ20件追加成功しました',
+                            message: '面接者データ20件追加成功しました。',
                             type: 'success'
                         })
-                    } else {
+                    } else if(response.data.state == 70001){
+                            this.$notify.error({
+                            message: '残高が不足です。',
+                            type: 'error'
+                            });  
+                    } else{
+                        
                         this.$notify.error({
-                            message: '面接者情報の取得に失敗しました',
+                            message: '面接者データ追加に失敗しました。',
                             type: 'error'
                         });
                     }
+                    
                 });
             } else {
                 this.$router.push('/manage-login');

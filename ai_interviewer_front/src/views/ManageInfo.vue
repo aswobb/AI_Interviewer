@@ -44,7 +44,7 @@
                     </v-simple-table>
                 </v-card-text>
                 <v-card-actions class="d-flex justify-center">
-                    <v-btn color="primary" @click="dialog = true">
+                    <v-btn color="primary" @click="dialog = true; changePwForm.password=''; changePwForm.newPassword=''; changePwForm.reNewPassword='' ">
                         PW再設定
                     </v-btn>
                     <v-btn color="primary" @click="editUser">

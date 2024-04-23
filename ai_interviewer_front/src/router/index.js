@@ -80,7 +80,7 @@ let writeList = ['/manage-login', '/interview/user/login']
 router.beforeEach((to, from, next) => {
     const token = localStorage.getItem('token');
     console.log(83, token);
-    if (token && token !== null) {
+    if (token && token !== null && token !== '') {
         console.log(1);
         next()
         localStorage.setItem('token', token);

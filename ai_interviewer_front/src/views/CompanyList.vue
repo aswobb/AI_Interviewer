@@ -143,6 +143,7 @@ export default {
                 this.userInfo.username = ''
                 this.userInfo.contractor = ''
                 this.userInfo.password = ''
+                this.userInfo.userBillingHistoryVO.courseId = null
             } else {
                 this.operation = '変更'
                 console.log(108, flag);

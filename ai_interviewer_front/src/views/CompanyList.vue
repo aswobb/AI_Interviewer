@@ -3,7 +3,7 @@
         <v-btn icon @click="logout">
             <v-icon>mdi-exit-to-app</v-icon>
         </v-btn>
-        <v-data-table disable-sort="false" :headers="headers" :items="companyInfo" item-key="id" class="elevation-1"
+        <v-data-table :disable-sort="false" :headers="headers" :items="companyInfo" item-key="id" class="elevation-1"
             :options.sync="tableOptions" :server-items-length="totalItems">
             <template v-slot:item.actions="{ item }">
                 <div class="d-flex">
@@ -64,7 +64,14 @@ export default {
             lable: ['', '', 'ペ-シック', 'スタンダ-ド', 'プレミアム', 'その他'],
             rules: {
                 remainNum: [
-                    v => /^\d*$/.test(v) || '数値のみ入力可能'
+                v => {
+                if (v === null || v === undefined) {
+                return true; // 输入为空或者 null，则验证通过
+
+            }
+            // 输入不为空，继续验证是否为数字
+            return /^\d*$/.test(v) || '数値のみ入力可能';
+        }
                 ],
                 username: [
                     v => !!v || 'ユーザー名を入力してください',

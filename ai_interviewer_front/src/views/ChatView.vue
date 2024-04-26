@@ -483,7 +483,7 @@ export default {
       this.stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const recognition = new webkitSpeechRecognition(); // 创建语音识别对象
       recognition.lang = 'ja-JP'; // 日本語に設定
-      recognition.interimResults = true;
+      recognition.interimResults = false;
       recognition.start(); // 开始语音识别
 
       recognition.onresult = (event) => { // 当识别完成时
@@ -638,7 +638,7 @@ html {
   border-radius: 18px;
   padding: 10px 20px;
   box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.15);
-  margin-bottom: 1rem;
+  margin-bottom: 5px;
   background-color: white;
   border: 1px solid #eaeaea;
 } 
@@ -702,9 +702,9 @@ html {
   border-radius: 30px;
   border-color: #d3bce2;
   color: #000000;
-  min-height: 36px;
-  height: 36px;
-  margin: 0;
+  min-height: 5px;
+  height: 5px;
+  margin: 15px 0 0;
   padding: 4px 10px; /* 调整内部填充以垂直居中文本 */
   overflow-y: hidden; /* 隐藏溢出的文本 */
   font-size: 16px; /* 根据需要调整字体大小 */

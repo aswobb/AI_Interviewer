@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-app-bar app color="primary" dark>
+    <v-app-bar app color="primary" dark style="height: 55px;">
       <div class="d-flex align-center">
 
         <div class="box">
@@ -41,7 +41,7 @@ export default {
   /* 文本垂直居中 */
   text-align: center;
   /* 文本水平居中 */
-  height: 100px;
+  height: 80px;
   padding-top: 2px;
 }
 </style>

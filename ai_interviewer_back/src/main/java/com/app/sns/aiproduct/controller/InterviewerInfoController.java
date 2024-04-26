@@ -19,13 +19,16 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.concurrent.locks.ReentrantLock;
 
 @RestController
 @RequestMapping("/interviewerInfo")
+@Api
 public class InterviewerInfoController {
 
     @Resource
@@ -39,6 +42,7 @@ public class InterviewerInfoController {
      * @return
      */
     @PostMapping("/batchCreate")
+    @ApiOperation(value = "hello world 接口")
     public JsonResult batchCreate(@RequestBody InterviewerInfoVO interviewerInfoVO, HttpServletRequest request) {
         Long userId = JWTUtil.getUserIdFromToken(request);
 

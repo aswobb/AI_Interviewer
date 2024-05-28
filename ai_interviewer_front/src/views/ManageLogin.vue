@@ -172,7 +172,8 @@ body {
 @media only screen and (max-width: 600px) {
     #background {
         background-Image: url('../assets/image.png');
-        background-size: contain;
+        background-size: cover;
+        background-size: (100% 100%);
         /* 调整背景图片显示方式 */
     }
 }
@@ -180,7 +181,8 @@ body {
 @media only screen and (min-width: 601px) and (max-width: 1024px) {
     #background {
         background-image: url('../assets/image.png');
-        background-size: contain;
+        background-size: (100% 100%);
+        background-size: cover;
     }
 }
 

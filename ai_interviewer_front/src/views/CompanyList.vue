@@ -64,14 +64,14 @@ export default {
             lable: ['', '', 'ペ-シック', 'スタンダ-ド', 'プレミアム', 'その他'],
             rules: {
                 remainNum: [
-                v => {
-                if (v === null || v === undefined) {
-                return true; // 输入为空或者 null，则验证通过
+                    v => {
+                        if (v === null || v === undefined) {
+                            return true; // 输入为空或者 null，则验证通过
 
-            }
-            // 输入不为空，继续验证是否为数字
-            return /^\d*$/.test(v) || '数値のみ入力可能';
-        }
+                        }
+                        // 输入不为空，继续验证是否为数字
+                        return /^\d*$/.test(v) || '数値のみ入力可能';
+                    }
                 ],
                 username: [
                     v => !!v || 'ユーザー名を入力してください',
@@ -199,6 +199,12 @@ export default {
                         this.$store.commit('initCompanyInfo', response.data)
                         this.companyInfo = this.$store.state.companyInfo
                         this.totalItems = this.$store.state.companyTotalItems
+                    } else if (response.data.state == 40400) {
+                        this.$router.push("/manage-login")
+                        this.$notify.warning({
+                            message: 'ログインが期限切れです,再度ログインしてください',
+                            type: 'warn'
+                        });
                     } else {
                         this.$notify.error({
                             message: '情報の取得に失敗しました',
@@ -254,6 +260,12 @@ export default {
                     this.getCompanyInfo(this.tableOptions.page, this.tableOptions.itemsPerPage)
                     //关闭对话框
                     this.close()
+                } else if (response.data.state == 40400) {
+                    this.$router.push("/manage-login")
+                    this.$notify.warning({
+                        message: 'ログインが期限切れです,再度ログインしてください',
+                        type: 'warn'
+                    });
                 } else {
                     this.$message({
                         message: response.data.message,
@@ -280,6 +292,12 @@ export default {
                     this.getCompanyInfo(this.tableOptions.page, this.tableOptions.itemsPerPage)
                     //关闭对话框
                     this.close()
+                } else if (response.data.state == 40400) {
+                    this.$router.push("/manage-login")
+                    this.$notify.warning({
+                        message: 'ログインが期限切れです,再度ログインしてください',
+                        type: 'warn'
+                    });
                 } else {
                     this.$message({
                         message: response.data.message,

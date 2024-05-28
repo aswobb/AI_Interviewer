@@ -121,6 +121,12 @@ export default {
                         this.companyInfo.remainNum = response.data.data.remainNum
                         this.companyInfo.usageCount = response.data.data.usageCount
 
+                    } else if (response.data.state == 40400) {
+                        this.$router.push("/manage-login")
+                        this.$notify.warning({
+                            message: 'ログインが期限切れです,再度ログインしてください',
+                            type: 'warn'
+                        });
                     } else {
                         this.$notify.error({
                             message: '面接者情報の取得に失敗しました',
@@ -131,7 +137,7 @@ export default {
             } else {
                 this.$router.push('/manage-login');
                 this.$message({
-                    message: 'ログインが期限切れです。再度ログインしてください',
+                    message: 'ログインが期限切れです,再度ログインしてください',
                     type: 'warn'
                 });
             }
@@ -142,6 +148,7 @@ export default {
             const token = localStorage.getItem('token');
             console.log(token);
             if (token) {
+
                 let data = {}
                 let url = 'api/interviewerInfo/batchCreate'
                 this.axios.post(url, data, {
@@ -157,20 +164,27 @@ export default {
                             message: '面接者データ20件追加成功しました。',
                             type: 'success'
                         })
-                    } else if(response.data.state == 70001){
-                            this.$notify.error({
+                    } else if (response.data.state == 40400) {
+                        this.$router.push("/manage-login")
+                        this.$notify.warning({
+                            message: 'ログインが期限切れです,再度ログインしてください',
+                            type: 'warn'
+                        });
+                    } else if (response.data.state == 70001) {
+                        this.$notify.error({
                             message: '残高が不足です。',
                             type: 'error'
-                            });  
-                    } else{
-                        
+                        });
+                    } else {
+
                         this.$notify.error({
                             message: '面接者データ追加に失敗しました。',
                             type: 'error'
                         });
                     }
-                    
+
                 });
+
             } else {
                 this.$router.push('/manage-login');
                 this.$message({
@@ -201,20 +215,28 @@ export default {
                     },
                     responseType: 'blob'
                 }).then((response) => {
-                    try {
-                        const blob = new Blob([response.data], { type: 'application/octet-stream' }); // ダウンロードリンクを作成 
-                        const url = window.URL.createObjectURL(blob);
-                        const link = document.createElement('a');
-                        link.href = url;
-                        link.setAttribute('download', 'output.csv'); // ダウンロードファイル名を設定 // リンクをクリックしてファイルをダウンロード 
-                        document.body.appendChild(link);
-                        link.click(); // リンクを削除 
-                        document.body.removeChild(link);
-                    } catch (error) {
-                        this.$message({
-                            message: error.message,
-                            type: 'error'
+                    if (response.data.state == 40400) {
+                        this.$router.push("/manage-login")
+                        this.$notify.warning({
+                            message: 'ログインが期限切れです,再度ログインしてください',
+                            type: 'warn'
                         });
+                    } else {
+                        try {
+                            const blob = new Blob([response.data], { type: 'application/octet-stream' }); // ダウンロードリンクを作成 
+                            const url = window.URL.createObjectURL(blob);
+                            const link = document.createElement('a');
+                            link.href = url;
+                            link.setAttribute('download', 'output.csv'); // ダウンロードファイル名を設定 // リンクをクリックしてファイルをダウンロード 
+                            document.body.appendChild(link);
+                            link.click(); // リンクを削除 
+                            document.body.removeChild(link);
+                        } catch (error) {
+                            this.$message({
+                                message: error.message,
+                                type: 'error'
+                            });
+                        }
                     }
                 });
             } else {
@@ -256,6 +278,12 @@ export default {
                                 });
                             }
                             this.dialog = false
+                        } else if (response.data.state == 40400) {
+                            this.$router.push("/manage-login")
+                            this.$notify.warning({
+                                message: 'ログインが期限切れです,再度ログインしてください',
+                                type: 'warn'
+                            });
                         } else {
                             this.$notify.error({
                                 message: '面接者情報の取得に失敗しました',

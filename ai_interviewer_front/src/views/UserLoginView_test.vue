@@ -3,42 +3,44 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 </head>
 <template>
-    <QLayout>
-      <QPageContainer>
-        <q-page id="background" class="flex flex-center">
+  <QLayout>
+    <QPageContainer>
+      <q-page id="background" class="flex flex-center">
         <div class="q-pa-md" style="width: 350px; max-width: 90vw;">
           <div class="text-h4 text-center q-mb-md" style="color: #00FFFF; font-weight: bold;">AI面接官ログイン</div>
           <q-form ref="form" @submit="onSubmit" @reset="onReset" class="q-gutter-md">
-            <q-input filled v-model="ruleForm.interviewerId" label="面接ID" lazy-rules :rules="[val => val && val.length > 0 || '面接IDを入力してください']"style="background-color: #fff;height: 54px;"/>
-            <q-input filled v-model="ruleForm.interviewerName" label="面接者氏名" lazy-rules :rules="[val => val && val.length > 0 || '面接者氏名を入力してください']"style="background-color: #fff;height: 54px;"/>
+            <q-input filled v-model="ruleForm.interviewerId" label="面接ID" lazy-rules
+              :rules="[val => val && val.length > 0 || '面接IDを入力してください']" style="background-color: #fff;height: 54px;" />
+            <q-input filled v-model="ruleForm.interviewerName" label="面接者氏名" lazy-rules
+              :rules="[val => val && val.length > 0 || '面接者氏名を入力してください']"
+              style="background-color: #fff;height: 54px;" />
             <div>
-              <q-btn label="面接練習へ" type="submit" color="primary" class="full-width q-mb-sm"/>
-              <q-btn label="リセット" type="reset" color="primary" class="full-width q-mb-sm"/>
-              <q-btn label="管理者登録へ" @click="gotoManagepage" color="primary" class="full-width q-mb-sm"/>
+              <q-btn label="面接練習へ" type="submit" color="primary" class="full-width q-mb-sm" />
+              <q-btn label="リセット" type="reset" color="primary" class="full-width q-mb-sm" />
             </div>
           </q-form>
         </div>
       </q-page>
     </QPageContainer>
-    </QLayout>
-  </template>
-     
-    <script>
-    import bgImg from './bot-avatar.png';
-    export default {
-      data() {
-        return {
-            ruleForm: {
+  </QLayout>
+</template>
+
+<script>
+import bgImg from './bot-avatar.png';
+export default {
+  data() {
+    return {
+      ruleForm: {
         interviewerId: '',
         interviewerName: ''
       },
-       bgImg:bgImg
+      bgImg: bgImg
 
-        }
-      },
-      methods: {
-        onSubmit(form) {
-        this.$refs.form.validate().then(success => {
+    }
+  },
+  methods: {
+    onSubmit(form) {
+      this.$refs.form.validate().then(success => {
         if (success) {
           var localPath = this.GLOBAL.localSrc;
           let url = '/api/users/interviewerLoginInfo';
@@ -69,7 +71,7 @@
 
               sessionStorage.setItem('username', this.ruleForm.interviewerId);
               this.$gtm.sendLoginEvent(this.ruleForm.interviewerId); // ログインイベント送出
-              this.$router.push({name: 'ChatApp'})
+              this.$router.push({ name: 'ChatApp' })
             } else {
               console.log('ログインに失敗しました。ユーザー名またはパスワードが正しくありません.')
               this.$notify.error({
@@ -84,20 +86,15 @@
         }
       });
     },
-        onReset() {
-          this.ruleForm.interviewerId = '';
-          this.ruleForm.interviewerName = '';
-        },
+    onReset() {
+      this.ruleForm.interviewerId = '';
+      this.ruleForm.interviewerName = '';
+    },
+  }
+}
+</script>
 
-        gotoManagepage() {
-            // 使用 $router.push() 方法进行页面导航
-            this.$router.push({ path: '/manage-login' })
-        }
-      }
-    }
-    </script>
-     
-    <style>
+<style>
 #background {
   background-image: url('./bot-avatar.png');
   background-size: cover;
@@ -106,8 +103,10 @@
 /* 小屏幕下的背景图片 */
 @media only screen and (max-width: 600px) {
   body {
-    overflow-y: hidden; /* 隐藏垂直滚动条 */
+    overflow-y: hidden;
+    /* 隐藏垂直滚动条 */
   }
+
   #background {
     background-image: url('./bot-avatar.png');
     background-size: contain;
@@ -130,23 +129,18 @@
   }
 }
 
-    .transparent-form {
-        background-color: rgba(255, 255, 255, 0.9);
-    }  
+.transparent-form {
+  background-color: rgba(255, 255, 255, 0.9);
+}
 
 
 
-    .q-page {
-      background-color: #f5f5f5;
-      min-height: 100vh;
-    }
+.q-page {
+  background-color: #f5f5f5;
+  min-height: 100vh;
+}
 
-    .login {
-        height: 700px;
-    }
-
-
-
-
-
-    </style>
+.login {
+  height: 700px;
+}
+</style>

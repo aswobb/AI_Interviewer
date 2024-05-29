@@ -17,7 +17,7 @@
             <v-btn color="primary" dark @click="openDialog(1)">ユーザーの追加</v-btn>
         </v-card-actions>
         <v-dialog v-model="addUserDialog" max-width="400">
-            <v-card-title class="headline">ユーザーの追加</v-card-title>
+            <v-card-title class="headline">ユーザーの{{ operation }}</v-card-title>
             <v-form ref="form" :model="userInfo" lazy-validation>
                 <v-text-field v-model="userInfo.username" label="ユーザー名" :rules="rules.username"></v-text-field>
                 <v-text-field v-model="remainDialog" v-if="operation === '変更'" readonly label="現在残数"></v-text-field>

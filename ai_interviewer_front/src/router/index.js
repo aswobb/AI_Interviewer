@@ -85,10 +85,11 @@ router.beforeEach((to, from, next) => {
         next()
         localStorage.setItem('token', token);
     } else {
-        console.log(2);
+        console.log(88, to.path);
         if (writeList.includes(to.path)) {
+            console.log("跳转登录");
             next()
-            localStorage.setItem('token', token);
+            localStorage.setItem('token', null);
         } else {
             next('/interview/user/login')
             Message.warning({

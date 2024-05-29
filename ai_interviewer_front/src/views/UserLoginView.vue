@@ -8,7 +8,7 @@
                     <el-input style="width: 250px;" v-model="ruleForm.interviewerId"></el-input>
                 </el-form-item>
                 <el-form-item label="面接者氏名" prop="interviewerName">
-                    <el-input v-model="ruleForm.interviewerName" type="password"></el-input>
+                    <el-input v-model="ruleForm.interviewerName" type="username"></el-input>
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" @click="onSubmit('ruleForm')">ログイン</el-button>

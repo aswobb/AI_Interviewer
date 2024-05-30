@@ -80,7 +80,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, "/snsUser/list").hasAnyRole(DataDictionary.ROLE_ADMINISTRATOR.getValue(),DataDictionary.ROLE_STAFF.getValue())
                 .antMatchers(HttpMethod.POST, "/snsUser/create").hasAnyRole(DataDictionary.ROLE_ADMINISTRATOR.getValue(),DataDictionary.ROLE_STAFF.getValue())
                 .antMatchers(HttpMethod.POST, "/snsUser/update").hasAnyRole(DataDictionary.ROLE_ADMINISTRATOR.getValue(),DataDictionary.ROLE_STAFF.getValue())
-                .antMatchers(HttpMethod.DELETE, "/snsUser/delete/{id}").hasAnyRole(DataDictionary.ROLE_ADMINISTRATOR.getValue(),DataDictionary.ROLE_STAFF.getValue())
+                .antMatchers(HttpMethod.DELETE, "/snsUser/delete/*").hasAnyRole(DataDictionary.ROLE_ADMINISTRATOR.getValue(),DataDictionary.ROLE_STAFF.getValue())
                 .antMatchers(HttpMethod.POST, "/interviewerInfo/batchCreate").hasAnyRole(DataDictionary.ROLE_CONTRACT.getValue())
                 .antMatchers(HttpMethod.POST, "/interviewerInfo/list").hasAnyRole(DataDictionary.ROLE_CONTRACT.getValue())
                 .antMatchers(HttpMethod.POST, "/interviewerInfo/updateInterviewerInfo").hasAnyRole(DataDictionary.ROLE_CONTRACT.getValue())

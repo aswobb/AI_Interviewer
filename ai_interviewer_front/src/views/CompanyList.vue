@@ -10,6 +10,9 @@
                     <v-btn color="primary" class="mx-2" @click="openDialog(item)">
                         変更
                     </v-btn>
+                    <v-btn color="primary" class="mx-2" @click="showDeleteConfirmation(item.id)">
+                        削除
+                    </v-btn>
                 </div>
             </template>
         </v-data-table>
@@ -45,6 +48,14 @@
                 <v-btn color="green darken-1" @click="close">キャンセル</v-btn>
             </v-card-actions>
         </v-dialog>
+
+        <div v-if="dialog" class="modal">
+            <div class="modal-content">
+                <p>本当にこのデータを削除してもよろしいですか？</p>
+                <button @click="deleteData" class="confirm-button">はい</button>
+                <button @click="closeDialog" class="cancel-button">いいえ</button>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -57,6 +68,8 @@ export default {
     },
     data() {
         return {
+            deleteId: null,
+            dialog: false,
             selection: 0,
             remainDialog: 0,
             //对话框记录剩余次数
@@ -132,6 +145,47 @@ export default {
         };
     },
     methods: {
+        showDeleteConfirmation(id) {
+            this.dialog = true;
+            this.deleteId = id
+
+        },
+        closeDialog() {
+            this.dialog = false;
+        },
+        deleteData() {
+            const token = localStorage.getItem('token');
+            console.log(token);
+            if (token) {
+                let url = 'api/snsUser/delete/' + this.deleteId
+                this.axios.delete(url, {
+                    headers: {
+                        'token': token
+                    },
+                }).then((response) => {
+                    console.log(166, response);
+                    if (response.data == 1) {
+                        this.dialog = false
+                        this.getCompanyInfo(this.tableOptions.page, this.tableOptions.itemsPerPage)
+                        this.$message({
+                            message: '削除に成功しました！',
+                            type: 'success'
+                        })
+                    } else if (response.data.state == 40400) {
+                        this.$router.push("/manage-login")
+                        this.$notify.warning({
+                            message: 'ログインが期限切れです,再度ログインしてください',
+                            type: 'warn'
+                        });
+                    } else {
+                        this.$notify.error({
+                            message: '情報の取得に失敗しました',
+                            type: 'error'
+                        });
+                    }
+                });
+            }
+        },
         a(n) {
             if (n === this.userInfo.userBillingHistoryVO.courseId) {
                 this.selection = 0
@@ -352,6 +406,45 @@ export default {
 
 .a {
     padding-left: 25px;
+}
+
+.modal {
+    display: block;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 50%;
+    /* 调整宽度 */
+    max-width: 300px;
+    /* 最大宽度 */
+}
+
+.confirm-button,
+.cancel-button {
+    background-color: #f44336;
+    color: white;
+    padding: 10px 20px;
+    margin: 5px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.confirm-button:hover,
+.cancel-button:hover {
+    background-color: #d32f2f;
 }
 </style>
 <!-- 刷新同步 -->

@@ -180,12 +180,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, SnsUser> implements
 
     @Override
     @Transactional
-    public void deleteUser(Long id) {
+    public int deleteUser(Long id) {
         SnsUser user = userMapper.selectById(id);
         if (user != null) {
-            user.setEnable(1);
-            user.setGmtUpdate(LocalDateTime.now());
-            userMapper.updateById(user);
+//            user.setEnable(1);
+//            user.setGmtUpdate(LocalDateTime.now());
+//            userMapper.updateById(user);
+            userMapper.deleteById(id);
+            return 1;
+        }else {
+            return 0;
         }
     }
 

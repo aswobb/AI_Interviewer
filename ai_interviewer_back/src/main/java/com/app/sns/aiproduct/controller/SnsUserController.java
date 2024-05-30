@@ -124,7 +124,8 @@ public class SnsUserController {
 
 
     @DeleteMapping("/delete/{id}")
-    public void deleteUser(@PathVariable Long id) {
-        userService.deleteUser(id);
+    public int deleteUser(@PathVariable Long id) {
+       int i = userService.deleteUser(id);
+       return i;
     }
 }

@@ -1,7 +1,7 @@
 # 激活Profile配置
 spring:
   profiles:
-    active: dev
+    active: test
 # 响应Json时不包含为Null的属性
   jackson:
     default-property-inclusion: always

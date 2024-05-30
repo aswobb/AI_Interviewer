@@ -16,7 +16,7 @@ public interface UserService extends IService<SnsUser> {
 
     SnsUser updateUser(Long creator,SnsUserVO userVO);
 
-    void deleteUser(Long id);
+    int deleteUser(Long id);
 
     boolean updatePassword(Long userId, String oldPassword, String newPassword);
 }

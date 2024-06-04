@@ -78,10 +78,10 @@ const router = new VueRouter({
 //定义白名单
 let writeList = ['/manage-login', '/interview/user/login']
 router.beforeEach((to, from, next) => {
+    console.log(81, to.path);
     const token = localStorage.getItem('token');
     console.log(83, token);
-    if (token && token !== null && token !== '') {
-        console.log(1);
+    if (token && token !== null && token !== '' && token !== 'null') {
         next()
         localStorage.setItem('token', token);
     } else {

@@ -1,7 +1,7 @@
 <template>
     <div id="background" class="login">
         <!-- test用 -->
-        <div :class="a">
+        <div>
             <h1 style="text-align: center; margin: 10px 0; color: #00FFFF; font-weight: bold;">面接者 ログイン</h1>
             <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
                 <el-form-item label="面接ID" prop="interviewerId">

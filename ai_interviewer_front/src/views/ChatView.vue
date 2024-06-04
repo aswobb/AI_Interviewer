@@ -2,33 +2,27 @@
   <div id="app">
     <audio ref="audioPlayer"></audio>
     <el-row class="title">
-      {{ pageTitle+'・AI面接官' }}
+      {{ pageTitle + '・AI面接官' }}
       <el-dropdown class="title-menu">
       </el-dropdown>
     </el-row>
     <el-row class="content">
-      <el-col class="bot-message" 
-      :xl="getBreakpointConfig('xl',false)"
-      :lg="getBreakpointConfig('lg',false)" 
-      :md="getBreakpointConfig('md',false)" 
-      :sm="getBreakpointConfig('sm',false)" 
-      :xs="getBreakpointConfig('xs',false)" >
- 
+      <el-col class="bot-message" :xl="getBreakpointConfig('xl', false)" :lg="getBreakpointConfig('lg', false)"
+        :md="getBreakpointConfig('md', false)" :sm="getBreakpointConfig('sm', false)"
+        :xs="getBreakpointConfig('xs', false)">
+
         <v-card-text>
           こんにちは、AI面接官です。<br>
           あなたの面接を担当させていただきます。よろしくお願いいたします。
-        </v-card-text> 
+        </v-card-text>
 
       </el-col>
-    
 
 
-      <el-col :span="24" class="bot-message"
-      :xl="getBreakpointConfig('xl',false)"
-      :lg="getBreakpointConfig('lg',false)" 
-      :md="getBreakpointConfig('md',false)" 
-      :sm="getBreakpointConfig('sm',false)" 
-      :xs="getBreakpointConfig('xs',false)" >
+
+      <el-col :span="24" class="bot-message" :xl="getBreakpointConfig('xl', false)"
+        :lg="getBreakpointConfig('lg', false)" :md="getBreakpointConfig('md', false)"
+        :sm="getBreakpointConfig('sm', false)" :xs="getBreakpointConfig('xs', false)">
         <v-card-text>
           ではまずは、面接で重視したいポイントを教えていただけますか？<br>
           <label v-for="(item, index) in checkBoxes" :key="index">
@@ -36,52 +30,35 @@
             {{ item.point }}<br>
           </label>
           <label key="checkAll">
-            <input type="checkbox" id="checkAll" v-model="checkboxAll" @change="checkAll" :disabled="isCheckboxDisabled">
+            <input type="checkbox" id="checkAll" v-model="checkboxAll" @change="checkAll"
+              :disabled="isCheckboxDisabled">
             全て<br>
           </label>
-          
+
           <br>チェックボックスで選択したら送信ボタンを押してください。
         </v-card-text>
       </el-col>
-      
-      
-      <el-col
-        v-for="(message, index) in renderMessages"
-        :key="index"
-        :xl="getBreakpointConfig('xl',message.isUser)"
-        :lg="getBreakpointConfig('lg',message.isUser)" 
-        :md="getBreakpointConfig('md',message.isUser)" 
-        :sm="getBreakpointConfig('sm',message.isUser)" 
-        :xs="getBreakpointConfig('xs',message.isUser)" 
-        :class="{
+
+
+      <el-col v-for="(message, index) in renderMessages" :key="index" :xl="getBreakpointConfig('xl', message.isUser)"
+        :lg="getBreakpointConfig('lg', message.isUser)" :md="getBreakpointConfig('md', message.isUser)"
+        :sm="getBreakpointConfig('sm', message.isUser)" :xs="getBreakpointConfig('xs', message.isUser)" :class="{
           'user-message': message.isUser,
           'bot-message': !message.isUser,
-        }"
-      >
-          <v-card-text v-html="parseHTML(message.text)"> </v-card-text>
+        }">
+        <v-card-text v-html="parseHTML(message.text)"> </v-card-text>
       </el-col>
     </el-row>
     <el-row class="footer footer-row">
       <el-col :span="16">
-        <el-input
-          type="textarea"
-          v-model="userMessage"
-          @keydown.enter.prevent="onEnterPress"
-          @compositionstart="handleCompositionStart"
-          @compositionend="handleCompositionEnd"
-          :placeholder="getPlaceholderText"
-          class="custom-input-style"
-          :disabled="isInputDisabled"
-        ></el-input>
+        <el-input type="textarea" v-model="userMessage" @keydown.enter.prevent="onEnterPress"
+          @compositionstart="handleCompositionStart" @compositionend="handleCompositionEnd"
+          :placeholder="getPlaceholderText" class="custom-input-style" :disabled="isInputDisabled"></el-input>
       </el-col>
       <el-col :span="2">
-        <el-button
-          :class="[
-            userMessage.trim() ? 'custom-purple-button' : 'light-purple-button',
-          ]"
-          @click="sendMessage"
-          :disabled="isButtonDisabled || isLoading"
-        >
+        <el-button :class="[
+          userMessage.trim() ? 'custom-purple-button' : 'light-purple-button',
+        ]" @click="sendMessage" :disabled="isButtonDisabled || isLoading || flag">
           <template v-if="isLoading">
             <!-- 这里可以使用Element UI的Loading组件或自定义等待图标 -->
             <i class="el-icon-loading"></i>
@@ -89,7 +66,9 @@
           <template v-else> 送信 </template>
         </el-button>
         <!-- 音声入力試験用-->
-        <q-btn @click="toggleSpeechRecognition"  :label="speechRecognitionActive ? '音声停止' : '音声入力'" color="purple-7" :style="{ width: '78px', height: '45px'}"class="btn-spacing"/>
+        <q-btn :disabled="!isCheckboxDisabled" @click="toggleSpeechRecognition"
+          :label="speechRecognitionActive ? '音声停止' : '音声入力'" color="purple-7" :style="{ width: '78px', height: '45px' }"
+          class="btn-spacing" />
         <!-- 音声入力試験用-->
       </el-col>
     </el-row>
@@ -113,34 +92,34 @@ export default {
       composing: false, // 跟踪输入法状态
       audioURL: '', // 存储音频的URL
       speechRecognitionActive: false, // 记录语音输入是否激活
-      recognition: null ,// 存储语音识别对象
+      recognition: null,// 存储语音识别对象
       checkboxAll: false,       // 「全て」のチェックボックスがチェックされているかどうか
       checkBoxes: [             // チェックボックス制御用の変数、この変数に格納されているオブジェクトを追加すればチェックボックス増やせるはずです。
-        {checked: false, point: "技術スキル"},
-        {checked: false, point: "コミュニケーション能力"},
-        {checked: false, point: "プロジェクト管理能力"},
-        {checked: false, point: "問題解決能力"},
-        {checked: false, point: "チームワーク"},
-        {checked: false, point: "セキュリティ意識と対策"},
-        {checked: false, point: "リーダーシップ"},
-        {checked: false, point: "継続的な学習と技術的成長への意欲"}
+        { checked: false, point: "技術スキル" },
+        { checked: false, point: "コミュニケーション能力" },
+        { checked: false, point: "プロジェクト管理能力" },
+        { checked: false, point: "問題解決能力" },
+        { checked: false, point: "チームワーク" },
+        { checked: false, point: "セキュリティ意識と対策" },
+        { checked: false, point: "リーダーシップ" },
+        { checked: false, point: "継続的な学習と技術的成長への意欲" }
         // {checked: false, point: "追加したい重視ポイント"},
-        ],
-      
+      ],
+
       responsiveDesignSettings: { // 画面の大きさに応じてメッセージボックスの大きさ・位置を変える
         botMessage: {
-          xl: {offset: 4, span:7},
-          lg: {offset: 3, span:8},
-          md: {offset: 3, span:10},
-          sm: {offset: 3, span:12},
-          xs: {offset: 2, span:17},
+          xl: { offset: 4, span: 7 },
+          lg: { offset: 3, span: 8 },
+          md: { offset: 3, span: 10 },
+          sm: { offset: 3, span: 12 },
+          xs: { offset: 2, span: 17 },
         },
         userMessage: {
-          xl: {offset: 13, span:7},
-          lg: {offset: 13, span:8},
-          md: {offset: 11, span:10},
-          sm: {offset: 9, span:12},
-          xs: {offset: 4, span:18},
+          xl: { offset: 13, span: 7 },
+          lg: { offset: 13, span: 8 },
+          md: { offset: 11, span: 10 },
+          sm: { offset: 9, span: 12 },
+          xs: { offset: 4, span: 18 },
         }
       },
 
@@ -150,10 +129,10 @@ export default {
     };
   },
   computed: {
-    getPlaceholderText(){
-      if (this.isCheckboxDisabled){
+    getPlaceholderText() {
+      if (this.isCheckboxDisabled) {
         // チェックボックスが入力できないとき
-        if (this.isInputDisabled && this.isRequestingCSVData){
+        if (this.isInputDisabled && this.isRequestingCSVData) {
           // Inputが無効になっている かつ CSVを生成中の時はCSVデータ生成中ですの文字列を出力
           return "CSVデータ生成中です。";
         } else if (this.isInputDisabled) {
@@ -193,28 +172,28 @@ export default {
         }
       }
     },
-    inputToUserMessageFromCheckbox(){
+    inputToUserMessageFromCheckbox() {
       let msg = "";
       // チェックされている項目を,区切りで結合(String)
       if (this.checkBoxes.filter((item) => item.checked).length == 0) {
         // 何もチェックされているものがなければ選択してもらうように促す -> pleaseholderで出力しているのでuserMessageには格納しない。
         msg = "";
       } else {
-        let checkedPoints = this.checkBoxes.filter((item) => item.checked).map((item)=>item.point).join(",");
+        let checkedPoints = this.checkBoxes.filter((item) => item.checked).map((item) => item.point).join(",");
         msg = "面接で重視するポイントは" + checkedPoints + "です。";
       }
       this.userMessage = msg;
     },
-    check(){
+    check() {
       // 「全て」のチェックボックスは
       // 全部チェックされている時にしかチェックできないようにする
       // this.checkBoxes.map((item)=>console.log("checked: " + item.checked + ", point: " + item.point));
-      this.checkboxAll = this.checkBoxes.filter((item)=>!item.checked).length == 0 ? true : false;
+      this.checkboxAll = this.checkBoxes.filter((item) => !item.checked).length == 0 ? true : false;
       this.inputToUserMessageFromCheckbox(); // チェックした内容をテキストボックスに転記
     },
-    checkAll(){
+    checkAll() {
       // 「全て」のチェックボックスが入力された時の、そのほかのチェックボックスの値切り替え処理
-      if (this.checkboxAll){
+      if (this.checkboxAll) {
         this.checkBoxes = this.checkBoxes.map((item) => {
           item.checked = true;
           return item;
@@ -230,7 +209,7 @@ export default {
     },
     async sendMessage() {
       if (this.userMessage.trim() !== "") {
-        if (!this.isCheckboxDisabled){
+        if (!this.isCheckboxDisabled) {
           this.isCheckboxDisabled = true;
         }
         // 开始加载时设置为true
@@ -255,7 +234,7 @@ export default {
           const token = localStorage.getItem("token");
           const chatBody = this.messages.map(rowData => { // {text: String, isUser: Boolean}の形
             const role = rowData.isUser ? "user" : "assistant";
-            return {role: role, content: rowData.text};
+            return { role: role, content: rowData.text };
           });
           // 发送 API 请求
           const response = await axios.post(
@@ -287,7 +266,7 @@ export default {
 
             // 创建一个 Blob 对象
             const blob = new Blob([this.base64ToArrayBuffer(audioContent)], { type: 'audio/wav' });
-            
+
             // 使用 URL.createObjectURL() 创建音频的 URL
             this.audioURL = URL.createObjectURL(blob);
 
@@ -309,6 +288,12 @@ export default {
             // 确保在DOM更新后执行滚动操作
             this.$nextTick(() => {
               this.scrollToBottom();
+            });
+          } else if (response.data.state == 40400) {
+            this.$router.push("/interview/user/login")
+            this.$notify.warning({
+              message: 'ログインが期限切れです,再度ログインしてください',
+              type: 'warn'
             });
           } else {
             console.error("API response error:", response.data);
@@ -362,13 +347,13 @@ export default {
     parseHTML: function (message) {
       return message.replace(/\n/g, "<br>"); // 将换行符替换为HTML的<br>标签
     },
-    async sleep(ms){
+    async sleep(ms) {
       return new Promise(resolve => setTimeout(resolve, ms));
     },
     padZero(num) {
       return num < 10 ? '0' + num : num;
     },
-    async generateDownloadLink(){
+    async generateDownloadLink() {
       this.isRequestingCSVData = true;
       // 开始加载时设置为true
       this.isLoading = true;
@@ -378,29 +363,29 @@ export default {
       console.log("csv要求");
       try {
         const currentDate = new Date();
-        const formattedDate = currentDate.getFullYear().toString() + 
-                              this.padZero(currentDate.getMonth() + 1) + 
-                              this.padZero(currentDate.getDate()) +
-                              this.padZero(currentDate.getHours()) +
-                              this.padZero(currentDate.getMinutes()) +
-                              this.padZero(currentDate.getSeconds());                                
+        const formattedDate = currentDate.getFullYear().toString() +
+          this.padZero(currentDate.getMonth() + 1) +
+          this.padZero(currentDate.getDate()) +
+          this.padZero(currentDate.getHours()) +
+          this.padZero(currentDate.getMinutes()) +
+          this.padZero(currentDate.getSeconds());
         const csvFileName = "QAData_" + formattedDate + ".csv"; // CSVファイル名
         const token = localStorage.getItem("token");
         const chatBody = this.messages.map(rowData => { // rowData={text: String, isUser: Boolean}の形
-            const role = rowData.isUser ? "user" : "assistant";
-            return JSON.stringify({role: role, content: rowData.text});
-          }).join(',');
+          const role = rowData.isUser ? "user" : "assistant";
+          return JSON.stringify({ role: role, content: rowData.text });
+        }).join(',');
         const response = await axios.post(
-        "/api/chat/sendMessage",
-        {
-          message: chatBody + ",{\"role\":\"user\", \"content\":\"CSVインポートしたいので、表を2つ出力してください。１つ目は面接での質問と回答を出力してください。必ず「質問項番」,「質問内容」,「回答」の3列にしてください。質問項番は1～10で順番に出力してください。質問内容は要約せずにそのまま出力してください。回答内容は要約せずにそのまま出力してください。２つ目は面接での評価を出力してください。必ず、「総合評価点」,「技術的スキル（0～40点）」,「コミュニケーション能力 (0-30点)」,「問題解決能力 (0-20点)」,「適応性と学習意欲 (0-10点)」,「評価理由」,「改善点」の7列にしてください。10個の回答を評価し、技術的スキル、コミュニケーション能力、問題解決能力 、適応性と学習意欲ごとに採点してください。総合評価点は各プログラム評価点の値の和とします。評価理由は4行程度で出力してください。改善点は4行程度で出力してください。CSV以外の出力はしないでください。CSVデータとそうではないところがわかるように、CSVデータは```で囲ってください。\" }"
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            token: token,
+          "/api/chat/sendMessage",
+          {
+            message: chatBody + ",{\"role\":\"user\", \"content\":\"CSVインポートしたいので、表を2つ出力してください。１つ目は面接での質問と回答を出力してください。必ず「質問項番」,「質問内容」,「回答」の3列にしてください。質問項番は1～10で順番に出力してください。質問内容は要約せずにそのまま出力してください。回答内容は要約せずにそのまま出力してください。２つ目は面接での評価を出力してください。必ず、「総合評価点」,「技術的スキル（0～40点）」,「コミュニケーション能力 (0-30点)」,「問題解決能力 (0-20点)」,「適応性と学習意欲 (0-10点)」,「評価理由」,「改善点」の7列にしてください。10個の回答を評価し、技術的スキル、コミュニケーション能力、問題解決能力 、適応性と学習意欲ごとに採点してください。総合評価点は各プログラム評価点の値の和とします。評価理由は4行程度で出力してください。改善点は4行程度で出力してください。CSV以外の出力はしないでください。CSVデータとそうではないところがわかるように、CSVデータは```で囲ってください。\" }"
           },
-        });
+          {
+            headers: {
+              "Content-Type": "application/json",
+              token: token,
+            },
+          });
         // デバッグ用
         // let response; 
         // response = await this.sleep(500).then( () => {return {data: {state: 20000, data: "以下がCSVファイルです。\n```\n質問,回答\nほげ1,ふが1\n今日の朝ごはん,卵焼き\n```\n"}}}); // 0.5秒後にテストデータを返す.
@@ -409,30 +394,30 @@ export default {
           // console.log("response : " + response.data.data);
           // const csvData = response.data.data.match(/```([\s\S]*?)```/g).slice(-1)[0].replace(/(```.*\n*|^\n$|^[^,]+$)/g,""); 
           const csvData = response.data.data;
-          const encodeData = new TextEncoder('utf-8').encode('\ufeff' + csvData); 
+          const encodeData = new TextEncoder('utf-8').encode('\ufeff' + csvData);
           // console.log("encodeData : " + encodeData);
-          const blob = new Blob([encodeData], {type: "text/csv;charset=utf-8"}); // CSVデータ作成
+          const blob = new Blob([encodeData], { type: "text/csv;charset=utf-8" }); // CSVデータ作成
 
           const formData = new FormData(); // csvファイルbackendへ送信 
           formData.append('file', blob, csvFileName);
           axios.post('/api/interviewerInfo/completeInterviewerInfo', formData, { // backendのapiに変更
-          headers: {
-          'Content-Type': 'multipart/form-data', // 指定请求头
-          'token' : token,
-          // 如果需要其他的请求头，可以在此添加
+            headers: {
+              'Content-Type': 'multipart/form-data', // 指定请求头
+              'token': token,
+              // 如果需要其他的请求头，可以在此添加
             },
           })
             .then(response => {
-            // ユーザーに見る必要ないから何もしない
-            console.log("csvアプロードしました。");
+              // ユーザーに見る必要ないから何もしない
+              console.log("csvアプロードしました。");
             })
-          .catch(error => {
-            console.error("API request error:", error);
-            this.$notify.error({
-            title: "DBへのCSVファイルアプロード失敗しました.",
-            message: error,
-          });
-          // 处理错误
+            .catch(error => {
+              console.error("API request error:", error);
+              this.$notify.error({
+                title: "DBへのCSVファイルアプロード失敗しました.",
+                message: error,
+              });
+              // 处理错误
             });
 
 
@@ -445,8 +430,8 @@ export default {
             isUser: false
           })
           this.$nextTick(() => {
-              this.scrollToBottom();
-            });
+            this.scrollToBottom();
+          });
           this.isButtonDisabled = true; // 送信ボタンOFF
           this.isInputDisabled = true; // 入力をさせない
           this.isLoading = false;
@@ -467,9 +452,9 @@ export default {
         });
       }
     },
-    getBreakpointConfig(breakpoint, isUserMessage){
+    getBreakpointConfig(breakpoint, isUserMessage) {
       // isUserMessageに応じて動的にspanとoffsetを変更するロジックを追加
-      if (isUserMessage){
+      if (isUserMessage) {
         // ユーザーメッセージの場合
         return this.responsiveDesignSettings.userMessage[breakpoint];
       } else {
@@ -479,21 +464,21 @@ export default {
     },
     // 音声入力試験用
     async startSpeechRecognition() {
-    try{  
-      this.stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const recognition = new webkitSpeechRecognition(); // 创建语音识别对象
-      recognition.lang = 'ja-JP'; // 日本語に設定
-      recognition.interimResults = false;
-      recognition.start(); // 开始语音识别
+      try {
+        this.stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        const recognition = new webkitSpeechRecognition(); // 创建语音识别对象
+        recognition.lang = 'ja-JP'; // 日本語に設定
+        recognition.interimResults = false;
+        recognition.start(); // 开始语音识别
 
-      recognition.onresult = (event) => { // 当识别完成时
-        this.userMessage = this.userMessage + event.results[0][0].transcript; // 将识别结果赋值给transcript变量
-      }
+        recognition.onresult = (event) => { // 当识别完成时
+          this.userMessage = this.userMessage + event.results[0][0].transcript; // 将识别结果赋值给transcript变量
+        }
 
-      recognition.onend = () => {
-        this.stopSpeechRecognition();
-      }
-    }catch (error) {
+        recognition.onend = () => {
+          this.stopSpeechRecognition();
+        }
+      } catch (error) {
         console.error('権限取得失敗しました：', error);
         // 处理获取媒体权限失败的情况
       }
@@ -519,7 +504,7 @@ export default {
         this.speechRecognitionActive = !this.speechRecognitionActive;
         this.stopSpeechRecognition();
       }
-    
+
     },
 
   },
@@ -529,9 +514,9 @@ export default {
     userMessage(newVal) {
       this.isInputNotEmpty = newVal.trim() !== "";
     },
-    messages(){
+    messages() {
       let addedMessage = this.messages.slice(-1)[0]; // 一番直近に追加されたメッセージ
-      if (addedMessage.text.match(/以上で.*面接[はを]終了します/g)){
+      if (addedMessage.text.match(/以上で.*面接[はを]終了します/g)) {
         // 面接終了の処理記載
         // csvデータ作成 → ダウンロードリンク作成 → これ以上の質問を受け付けないようにする
         // CSVデータもChatGPTに作成してもらう。
@@ -539,7 +524,17 @@ export default {
       }
     },
   },
-  mounted: function() {
+  computed: {
+    flag() {
+      this.checkBoxes.map((item) => {
+        this.flag = true
+        if (item.checked == true) {
+          return false;
+        }
+      })
+    }
+  },
+  mounted: function () {
 
 
     // 契約者の会社名表示
@@ -558,9 +553,9 @@ export default {
     })
 
     // 面接のポイント選択
-    let secondMessage = "ではまずは、面接で重視したいポイントを教えていただけますか？\n" + 
-                        "例えば、技術スキル、コミュニケーション能力、SE経験 などです。";
-    
+    let secondMessage = "ではまずは、面接で重視したいポイントを教えていただけますか？\n" +
+      "例えば、技術スキル、コミュニケーション能力、SE経験 などです。";
+
     // 2番目のメッセージもrenderMessagesには格納せずに<template>の中にべた書き
     // chatAPIにはこのメッセージも含めて投げたいのでmessagesには格納しておく
     this.messages.push({
@@ -572,13 +567,13 @@ export default {
   }
 };
 </script>
-<style >
+<style>
 body,
 html {
   background-color: #fae6f9 !important;
   font-family: "Arial", sans-serif;
   height: 100%;
-  margin:0;
+  margin: 0;
   padding: 0;
   box-sizing: border-box;
   overflow: hidden;
@@ -641,7 +636,7 @@ html {
   margin-bottom: 5px;
   background-color: white;
   border: 1px solid #eaeaea;
-} 
+}
 
 .user-message {
   background-color: #dddddd;
@@ -673,27 +668,27 @@ html {
   justify-content: center;
 }
 
-.footer > .el-col {
+.footer>.el-col {
   justify-content: center;
   align-items: center;
   margin: 0;
   padding: 0;
 }
 
-.footer > .el-col:nth-child(1) {
+.footer>.el-col:nth-child(1) {
   margin-right: 10px;
 }
 
-.footer > .el-col:nth-child(2) {
+.footer>.el-col:nth-child(2) {
   margin-right: 5px;
 }
 
-.footer > .el-col:nth-child(3) {
+.footer>.el-col:nth-child(3) {
   margin-left: 5px;
 }
 
-.footer > .el-col:nth-child(1),
-.footer > .el-col:nth-child(3) {
+.footer>.el-col:nth-child(1),
+.footer>.el-col:nth-child(3) {
   margin: 0 5px;
 }
 
@@ -705,10 +700,14 @@ html {
   min-height: 5px;
   height: 5px;
   margin: 15px 0 0;
-  padding: 4px 10px; /* 调整内部填充以垂直居中文本 */
-  overflow-y: hidden; /* 隐藏溢出的文本 */
-  font-size: 16px; /* 根据需要调整字体大小 */
-  line-height: 1.5; /* 根据需要调整行高 */
+  padding: 4px 10px;
+  /* 调整内部填充以垂直居中文本 */
+  overflow-y: hidden;
+  /* 隐藏溢出的文本 */
+  font-size: 16px;
+  /* 根据需要调整字体大小 */
+  line-height: 1.5;
+  /* 根据需要调整行高 */
 }
 
 .custom-input-style .el-input__inner::placeholder {
@@ -742,15 +741,16 @@ html {
 }
 
 /* 添加等待图标的样式 */
- /* .el-icon-loading { */
-  /* 这里可以自定义样式，例如旋转动画等 */
-/* } */ 
+/* .el-icon-loading { */
+/* 这里可以自定义样式，例如旋转动画等 */
+/* } */
 
 input[type="file"] {
   display: none;
 }
 
 @media (max-width: 767px) {
+
   body,
   html {
     font-size: 13px;
@@ -785,7 +785,7 @@ input[type="file"] {
     box-sizing: border-box;
   }
 
-  .footer > .el-col {
+  .footer>.el-col {
     padding: 0 5px;
   }
 
@@ -807,11 +807,13 @@ input[type="file"] {
     flex: 0 0 72px;
     padding: 0 20px;
   }
+
   /* 调整输入框和按钮的大小以适应小屏幕 */
   .custom-input-style .el-input__inner,
   .custom-purple-button,
   .light-purple-button {
-    min-height: 3rem; /* 增加高度以便于触摸 */
+    min-height: 3rem;
+    /* 增加高度以便于触摸 */
   }
 }
 
@@ -820,38 +822,43 @@ input[type="file"] {
   border-radius: 4px;
   min-height: 36px;
 }
+
 .bg-purple-dark {
   background: #99a9bf;
 }
+
 .bg-purple {
   background: #d3dce6;
 }
 
 @media only screen and (max-width: 600px) {
-.btn-spacing {
-  margin-bottom: 60px;
-  margin-top:8px;
-  white-space: nowrap;
-  margin-right: 30px;
-  padding-left: 0px;
-  border-radius: 999px;
-}
+  .btn-spacing {
+    margin-bottom: 60px;
+    margin-top: 8px;
+    white-space: nowrap;
+    margin-right: 30px;
+    padding-left: 0px;
+    border-radius: 999px;
+  }
 }
 
-@media only screen and (min-width: 601px){
+@media only screen and (min-width: 601px) {
   .btn-spacing {
-  margin-bottom: 10px;
-  margin-top:10px;
-  white-space: nowrap;
-  margin-right: 30px;
-  padding-left: 0px;
-  border-radius: 999px;
-}
+    margin-bottom: 10px;
+    margin-top: 10px;
+    white-space: nowrap;
+    margin-right: 30px;
+    padding-left: 0px;
+    border-radius: 999px;
+  }
 }
 
 .avatar {
-  width: 100px; /* 调整头像宽度 */
-  height: 100px; /* 调整头像高度 */
-  border-radius: 50%; /* 设置圆角 */
+  width: 100px;
+  /* 调整头像宽度 */
+  height: 100px;
+  /* 调整头像高度 */
+  border-radius: 50%;
+  /* 设置圆角 */
 }
 </style>

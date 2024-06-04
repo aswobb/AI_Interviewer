@@ -2,8 +2,11 @@ package com.app.sns.aiproduct.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.app.sns.aiproduct.ex.ServiceException;
+import com.app.sns.aiproduct.mapper.GptApiMapper;
+import com.app.sns.aiproduct.pojo.entity.GptKey;
 import com.app.sns.aiproduct.service.GoogleVoiceSerice;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
@@ -20,8 +23,10 @@ import java.time.Duration;
 @Service
 @Slf4j
 public class GoogleVoiceSericeImpl implements GoogleVoiceSerice {
-    @Value("${googleCloud.apiKey}")
-    private String googleCloud_apiKey;
+//    @Value("${googleCloud.apiKey}")
+//    private String googleCloud_apiKey;
+    @Autowired
+    private GptApiMapper gptApiMapper;
 
     private final String googleCloud_apiUrl = "https://texttospeech.googleapis.com/v1/text:synthesize?key=";
     private final RestTemplate restTemplate = new RestTemplateBuilder()
@@ -32,13 +37,13 @@ public class GoogleVoiceSericeImpl implements GoogleVoiceSerice {
 
     @Retryable(maxAttempts = 3, backoff = @Backoff(delay = 1000)) // 1秒間隔で最大3回再試行します
     private String sendGoogleVoicePost(String payload) throws ServiceException {
-
+        GptKey gptKey = gptApiMapper.selectById(1);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         HttpEntity<String> requestEntity = new HttpEntity<>(payload, headers);
 
-        ResponseEntity<String> responseEntity = restTemplate.postForEntity(googleCloud_apiUrl+ googleCloud_apiKey, requestEntity, String.class);
+        ResponseEntity<String> responseEntity = restTemplate.postForEntity(googleCloud_apiUrl+ gptKey.getGooleCloudApiKey(), requestEntity, String.class);
 
         return responseEntity.getBody();
     }

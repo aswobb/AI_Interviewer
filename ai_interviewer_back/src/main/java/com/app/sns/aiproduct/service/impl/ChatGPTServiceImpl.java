@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.app.sns.aiproduct.ex.ServiceException;
 import com.app.sns.aiproduct.service.ChatGPTService;
+import com.app.sns.aiproduct.service.ChatGptApiService;
 import com.app.sns.aiproduct.vo.ChatVO;
 import lombok.extern.slf4j.Slf4j;
 
@@ -29,9 +30,10 @@ import com.app.sns.aiproduct.pojo.vo.ChatGPTSettingVO;
 @Service
 @Slf4j
 public class ChatGPTServiceImpl implements ChatGPTService {
-
-    @Value("${chatgpt.apiKey}")
-    private String chatGpt_apiKey;
+    @Autowired
+    private ChatGptApiService chatGptApiService;
+//    @Value("${chatgpt.apiKey}")
+//    private String chatGpt_apiKey;
 
     private final String chatgpt_apiUrl = "https://api.openai.com/v1/chat/completions";
     private final RestTemplate restTemplate = new RestTemplateBuilder()
@@ -46,29 +48,29 @@ public class ChatGPTServiceImpl implements ChatGPTService {
         ChatGPTSettingVO settingInfo = getGPTSettingMapper.getGptSettingInfo("sns_interviewer");
         String prompt = escapeLineCode(settingInfo.getPromptcontent());
         String model = escapeLineCode(settingInfo.getModel());
-            try {
+        try {
             // log.debug(userMessage);
             //  payload
-                JSONObject payloadJson = new JSONObject();
-                payloadJson.put("model",model);
-                JSONArray messages = new JSONArray();
-                JSONObject message = new JSONObject();
-                JSONObject promptMessage = new JSONObject();
-                promptMessage.put("role","system");
-                promptMessage.put("content",prompt);
-                messages.add(promptMessage);
-                message.put("role","user");
-                message.put("content",userMessage);
-                messages.add(message);
-                payloadJson.put("messages",messages);
-                log.debug(payloadJson.toJSONString());
+            JSONObject payloadJson = new JSONObject();
+            payloadJson.put("model", model);
+            JSONArray messages = new JSONArray();
+            JSONObject message = new JSONObject();
+            JSONObject promptMessage = new JSONObject();
+            promptMessage.put("role", "system");
+            promptMessage.put("content", prompt);
+            messages.add(promptMessage);
+            message.put("role", "user");
+            message.put("content", userMessage);
+            messages.add(message);
+            payloadJson.put("messages", messages);
+            log.debug(payloadJson.toJSONString());
             String jsonResponse = sendChatGptPost(payloadJson.toJSONString());
 
             JSONObject jsonObject = JSONObject.parseObject(jsonResponse);
             // log.debug(jsonObject.toJSONString());
-            log.debug("completion_tokens: {}",jsonObject.getJSONObject("usage").getInteger("completion_tokens"));
-            log.debug("prompt_tokens: {}",jsonObject.getJSONObject("usage").getInteger("prompt_tokens"));
-            log.debug("total_tokens: {}",jsonObject.getJSONObject("usage").getInteger("total_tokens"));
+            log.debug("completion_tokens: {}", jsonObject.getJSONObject("usage").getInteger("completion_tokens"));
+            log.debug("prompt_tokens: {}", jsonObject.getJSONObject("usage").getInteger("prompt_tokens"));
+            log.debug("total_tokens: {}", jsonObject.getJSONObject("usage").getInteger("total_tokens"));
 
             String assistantMessage = jsonObject.getJSONArray("choices")
                     .getJSONObject(0)
@@ -93,27 +95,27 @@ public class ChatGPTServiceImpl implements ChatGPTService {
             // log.debug(userMessage);
             //  payload
             JSONObject payloadJson = new JSONObject();
-            payloadJson.put("model",model);
+            payloadJson.put("model", model);
             JSONArray messages = new JSONArray();
             JSONObject promptMessage = new JSONObject();
-            promptMessage.put("role","system");
-            promptMessage.put("content",prompt);
+            promptMessage.put("role", "system");
+            promptMessage.put("content", prompt);
             messages.add(promptMessage);
             for (ChatVO chatVO : chatVOList) {
                 JSONObject message = new JSONObject();
-                message.put("role",chatVO.getRole());
-                message.put("content",chatVO.getContent());
+                message.put("role", chatVO.getRole());
+                message.put("content", chatVO.getContent());
                 messages.add(message);
             }
-            payloadJson.put("messages",messages);
+            payloadJson.put("messages", messages);
             log.debug(payloadJson.toJSONString());
             String jsonResponse = sendChatGptPost(payloadJson.toJSONString());
 
             JSONObject jsonObject = JSONObject.parseObject(jsonResponse);
             // log.debug(jsonObject.toJSONString());
-            log.debug("completion_tokens: {}",jsonObject.getJSONObject("usage").getInteger("completion_tokens"));
-            log.debug("prompt_tokens: {}",jsonObject.getJSONObject("usage").getInteger("prompt_tokens"));
-            log.debug("total_tokens: {}",jsonObject.getJSONObject("usage").getInteger("total_tokens"));
+            log.debug("completion_tokens: {}", jsonObject.getJSONObject("usage").getInteger("completion_tokens"));
+            log.debug("prompt_tokens: {}", jsonObject.getJSONObject("usage").getInteger("prompt_tokens"));
+            log.debug("total_tokens: {}", jsonObject.getJSONObject("usage").getInteger("total_tokens"));
 
             String assistantMessage = jsonObject.getJSONArray("choices")
                     .getJSONObject(0)
@@ -135,8 +137,10 @@ public class ChatGPTServiceImpl implements ChatGPTService {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("Authorization", "Bearer " + chatGpt_apiKey);
+        String chatgptApiKey = chatGptApiService.getChatgptApiKey();
 
+//        headers.set("Authorization", "Bearer " + chatGpt_apiKey);
+        headers.set("Authorization", "Bearer " + chatgptApiKey);
         HttpEntity<String> requestEntity = new HttpEntity<>(payload, headers);
 
         ResponseEntity<String> responseEntity = restTemplate.postForEntity(chatgpt_apiUrl, requestEntity, String.class);

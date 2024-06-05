@@ -51,6 +51,7 @@
     </el-row>
     <el-row class="footer footer-row">
       <el-col :span="16">
+        <p style="font-size: 13px ;color: #ff0000;" v-if="!isCheckboxDisabled">*まずはチェックボックスで選択してください</p>
         <el-input type="textarea" v-model="userMessage" @keydown.enter.prevent="onEnterPress"
           @compositionstart="handleCompositionStart" @compositionend="handleCompositionEnd"
           :placeholder="getPlaceholderText" class="custom-input-style" :disabled="isInputDisabled"></el-input>

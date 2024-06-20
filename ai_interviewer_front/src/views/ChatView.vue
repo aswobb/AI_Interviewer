@@ -48,39 +48,62 @@
         }">
         <v-card-text v-html="parseHTML(message.text)"> </v-card-text>
       </el-col>
+
     </el-row>
     <el-row class="footer footer-row">
-      <el-col :span="16">
-        <p style="font-size: 13px ;color: #ff0000;" v-if="!isCheckboxDisabled">*まずはチェックボックスで選択してください</p>
-        <el-input type="textarea" v-model="userMessage" @keydown.enter.prevent="onEnterPress"
-          @compositionstart="handleCompositionStart" @compositionend="handleCompositionEnd"
-          :placeholder="getPlaceholderText" class="custom-input-style" :disabled="isInputDisabled"></el-input>
-      </el-col>
-      <el-col :span="2">
-        <el-button :class="[
-          userMessage.trim() ? 'custom-purple-button' : 'light-purple-button',
-        ]" @click="sendMessage" :disabled="isButtonDisabled || isLoading || flag">
-          <template v-if="isLoading">
-            <!-- 这里可以使用Element UI的Loading组件或自定义等待图标 -->
-            <i class="el-icon-loading"></i>
-          </template>
-          <template v-else> 送信 </template>
-        </el-button>
-        <!-- 音声入力試験用-->
-        <q-btn :disabled="!isCheckboxDisabled" @click="toggleSpeechRecognition"
-          :label="speechRecognitionActive ? '音声停止' : '音声入力'" color="purple-7" :style="{ width: '78px', height: '45px' }"
-          class="btn-spacing" />
-        <!-- 音声入力試験用-->
+      <el-col>
+        <p style="font-size: 13px ;color: #ff0000;margin-left: 180px;" v-if="!isCheckboxDisabled"
+          v-show="messages.length == 2">
+          *まずはチェックボックスで選択してください</p>
+        <div class="container">
+          <el-input @keydown.enter.prevent="onEnterPress" :disabled="isInputDisabled" :placeholder="getPlaceholderText"
+            @compositionstart="handleCompositionStart" @compositionend="handleCompositionEnd" v-model="userMessage"
+            type="textarea" class="long-input" />
+          <div class="button-group">
+            <el-button type="primary" @click="sendMessage" :disabled="isButtonDisabled || isLoading || flag" :icon="isLoading ? '' : 'el-icon-s-promotion'
+              " class="action-button" round>
+              <template v-if="isLoading">
+                <!-- 这里可以使用Element UI的Loading组件或自定义等待图标 -->
+                <i class="el-icon-loading"></i>
+              </template>
+              送信</el-button>
+            <el-button :type="!speechRecognitionActive ? 'primary' : 'danger'" class="action-button" round
+              :disabled="isInputDisabled" @click="toggleSpeechRecognition" color="purple-7">
+              {{ speechRecognitionActive ? '音声停止' : '音声入力' }}</el-button>
+            <el-button :disabled="renderMessages.length != 2" class="action-button" type="success"
+              @click="dialogVisible = true" round>
+              履歴書<br />読み取り
+            </el-button>
+          </div>
+          <el-dialog append-to-body title="履歴書アップロードしてください" :visible.sync="dialogVisible" width="30%">
+            <span>
+              <input type="file" @change="handleFileUpload" />
+
+            </span>
+            <span slot="footer" class="dialog-footer">
+              <el-button type="primary" @click="submitFile">アップロード</el-button>
+              <el-button @click="dialogVisible = false">キャンセル</el-button>
+            </span>
+          </el-dialog>
+        </div>
       </el-col>
     </el-row>
+    <div>
+
+
+    </div>
   </div>
 </template>
 
 <script>
 import axios from "axios";
+import { Message } from "element-ui";
 export default {
   data() {
     return {
+      dialogVisible: false,
+      uploadFlag: false,
+      selectedFile: null,
       pageTitle: '',
       userMessage: "",
       renderMessages: [], // 画面に表示させるメッセージを格納
@@ -150,6 +173,127 @@ export default {
     }
   },
   methods: {
+    handleFileUpload(event) {
+      this.selectedFile = event.target.files[0];
+    },
+    async submitFile() {
+
+      if (!this.selectedFile) {
+        Message.warning("先に、ご履歴書選択してください！")
+        return
+      }
+      this.isInputDisabled = !this.isInputDisabled
+      const formData = new FormData();
+      formData.append('file', this.selectedFile);
+
+      try {
+        const token = localStorage.getItem('token')
+        const response = await axios.post("/api/chat/receiveFile", formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            'token': token
+          }
+        });
+        this.messages.push({
+          text: response.data.data,
+          isUser: true,
+        })
+        Message.success("履歴書を解析しました！")
+        this.dialogVisible = false
+        this.renderMessages.push({
+          text: '履歴書アップロードが完了しました',
+          isUser: true,
+        });
+        this.$nextTick(() => {
+          this.scrollToBottom();
+        });
+        const chatBody = this.messages.map(rowData => { // {text: String, isUser: Boolean}の形
+          const role = rowData.isUser ? "user" : "assistant";
+          return { role: role, content: rowData.text };
+        });
+        // 发送 API 请求
+        const response1 = await axios.post(
+          "/api/chat/sendContentByGoogleCloud",
+          chatBody,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              token: token,
+            },
+          }
+        );
+        if (response1.data && response1.data.state === 20000) {
+          const botResponse = response1.data.data;
+          const content = botResponse.content;
+          const formattedContent = content.replace(/\\n/g, "\n");
+          const audioContent = botResponse.audioContent;
+
+          // 创建一个 Blob 对象
+          const blob = new Blob([this.base64ToArrayBuffer(audioContent)], { type: 'audio/wav' });
+
+          // 使用 URL.createObjectURL() 创建音频的 URL
+          this.audioURL = URL.createObjectURL(blob);
+
+          // 设置音频的源
+          this.$refs.audioPlayer.src = this.audioURL;
+
+          // 播放音频
+          this.$refs.audioPlayer.play();
+
+          // 将机器人的响应添加到 messages 数组中
+          this.renderMessages.push({
+            text: formattedContent,
+            isUser: false,
+          });
+          this.messages.push({
+            text: formattedContent,
+            isUser: false,
+          })
+          this.isInputDisabled = !this.isInputDisabled
+          // 确保在DOM更新后执行滚动操作
+          this.$nextTick(() => {
+            this.scrollToBottom();
+          });
+        } else if (response.data.state == 40400) {
+          this.$router.push("/interview/user/login")
+          this.$notify.warning({
+            message: 'ログインが期限切れです,再度ログインしてください',
+            type: 'warn'
+          });
+        } else {
+          console.error("API response error:", response.data);
+          this.renderMessages.push({
+            text: response.data.message,
+            isUser: false,
+          });
+        }
+      } catch (error) {
+        console.error('文件上传失败', error);
+        alert('文件上传失败');
+      }
+
+    },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     onEnterPress() {
       if (!this.composing) {
         this.sendMessage();
@@ -334,11 +478,9 @@ export default {
     },
     showPersonalInfo() {
       // 处理显示个人信息的逻辑
-      console.log("132");
       this.$gtm.sendCustomEvent("show_personal_info");
     },
     logout() {
-      console.log("132");
       // 清除本地存储中的 Token
       localStorage.removeItem("token"); // 或者使用 sessionStorage
       this.$gtm.sendCustomEvent("log_out");
@@ -536,8 +678,6 @@ export default {
     }
   },
   mounted: function () {
-
-
     // 契約者の会社名表示
     this.pageTitle = localStorage.getItem('contractor');
     // 読み込まれたらdatalayerにloginid書き出し
@@ -589,6 +729,43 @@ html {
   margin: 0 auto;
 }
 
+
+
+.container {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.long-input {
+  /* flex-grow: 1; */
+  padding: 0;
+  margin-right: 10px;
+  margin-left: 160px;
+  font-size: 16px;
+  width: 60%;
+  border-width: 2px;
+  border-style: solid;
+  border-color: #d3bce2;
+  /* 设置边框样式为实线 */
+}
+
+.button-group {
+  display: flex;
+  gap: 10px;
+}
+
+.action-button {
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  height: 60px;
+  width: 100px;
+}
+
 .title {
   max-width: 90%;
   height: 3rem;
@@ -634,9 +811,10 @@ html {
   border-radius: 18px;
   padding: 10px 20px;
   box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.15);
-  margin-bottom: 5px;
+  margin-bottom: 40px;
   background-color: white;
   border: 1px solid #eaeaea;
+
 }
 
 .user-message {
@@ -746,9 +924,9 @@ html {
 /* 这里可以自定义样式，例如旋转动画等 */
 /* } */
 
-input[type="file"] {
+/* input[type="file"] {
   display: none;
-}
+} */
 
 @media (max-width: 767px) {
 

@@ -5,6 +5,7 @@ import com.app.sns.aiproduct.constant.ServiceCodeEnum;
 import com.app.sns.aiproduct.ex.ServiceException;
 import com.app.sns.aiproduct.lock.LockManager;
 import com.app.sns.aiproduct.mapper.BillingCourseMapper;
+import com.app.sns.aiproduct.mapper.InterviewerInfoMapper;
 import com.app.sns.aiproduct.mapper.UserBillingHistoryMapper;
 import com.app.sns.aiproduct.mapper.UserMapper;
 import com.app.sns.aiproduct.pojo.entity.BillingCourse;
@@ -17,6 +18,7 @@ import com.app.sns.aiproduct.service.UserService;
 import com.app.sns.aiproduct.util.EmptyUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,6 +43,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, SnsUser> implements
     private UserBillingHistoryMapper userBillingHistoryMapper;
     @Resource
     private InterviewerInfoService interviewerInfoService;
+    @Autowired
+    private InterviewerInfoMapper interviewerInfoMapper;
 
     @Override
     public SnsUser getUserById(Long id) {
@@ -169,7 +173,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, SnsUser> implements
             oldData.setRemainNum(userVO.getRemainNum());
             isChangeRemainNum = true;
         }
-        if(isChangeRemainNum){
+        if (isChangeRemainNum) {
             LocalDateTime currentTime = LocalDateTime.now();
             oldData.setEffectiveTime(currentTime.plus(1, ChronoUnit.YEARS));
         }
@@ -180,15 +184,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, SnsUser> implements
 
     @Override
     @Transactional
-    public int deleteUser(Long id) {
+    public int deleteUser(@Param("ID") Long id) {
         SnsUser user = userMapper.selectById(id);
         if (user != null) {
 //            user.setEnable(1);
 //            user.setGmtUpdate(LocalDateTime.now());
 //            userMapper.updateById(user);
             userMapper.deleteById(id);
+            interviewerInfoMapper.deleteByUserId(id);
             return 1;
-        }else {
+        } else {
             return 0;
         }
     }

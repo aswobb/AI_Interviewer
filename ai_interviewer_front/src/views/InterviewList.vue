@@ -24,7 +24,8 @@
                         ダウンロード
                     </v-btn>
                     <!-- 每一行的更改按钮 -->
-                    <v-btn color="primary" class="mx-2" @click="openChangeInfo(item)">情報の変更</v-btn>
+                    <v-btn color="primary" :disabled="item.executionDate" class="mx-2"
+                        @click="openChangeInfo(item)">情報の変更</v-btn>
                 </div>
             </template>
         </v-data-table>

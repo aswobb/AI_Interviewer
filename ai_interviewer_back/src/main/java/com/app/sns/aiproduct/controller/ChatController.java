@@ -6,12 +6,14 @@ import com.app.sns.aiproduct.service.ChatGPTService;
 import com.app.sns.aiproduct.service.GoogleVoiceSerice;
 import com.app.sns.aiproduct.vo.ChatVO;
 import com.app.sns.aiproduct.web.JsonResult;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.io.FileWriter;
@@ -27,10 +29,12 @@ public class ChatController {
     private ChatGPTService chatGPTService;
     @Resource
     private GoogleVoiceSerice googleVoiceSerice;
+
     @Autowired
     public ChatController(ChatGPTService chatGPTService) {
         this.chatGPTService = chatGPTService;
     }
+
     @PostMapping("/sendMessageCreateCSV")
     public JsonResult<String> sendMessageCreateCSV(@Validated @RequestBody ChatVO chatVO) {
         String content = chatGPTService.generateResponse(chatVO.getMessage());
@@ -55,11 +59,38 @@ public class ChatController {
         }
         return JsonResult.ok(content);
     }
+
     @PostMapping("/sendMessage")
     public JsonResult<String> generateResponse(@Validated @RequestBody ChatVO chatVO) {
         //        jsonResult.setData("请问有什么可以帮到您的吗？");
 
         return JsonResult.ok(chatGPTService.generateResponse(chatVO.getMessage()));
+    }
+
+    @PostMapping("/receiveFile")
+    public JsonResult<String> receiveFile(@RequestParam("file") MultipartFile file) {
+        //        jsonResult.setData("请问有什么可以帮到您的吗？");
+
+        if (file.isEmpty()) {
+            return null;
+        }
+        try {
+
+            // 加载 PDF 文件
+            PDDocument document = PDDocument.load(file.getInputStream());
+
+            // 获取 PDF 文件的内容
+            PDFTextStripper pdfStripper = new PDFTextStripper();
+            String text = pdfStripper.getText(document);
+
+            // 关闭文档
+            document.close();
+
+            return  JsonResult.ok(text);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 
@@ -77,6 +108,7 @@ public class ChatController {
 
     /**
      * ユーザのコンテントをopenaiに送信して返事を音声化する
+     *
      * @param chatVOList
      * @return
      */

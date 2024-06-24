@@ -4,6 +4,7 @@ public enum ServiceCodeEnum {
     OK(20000, "成功"),
     ERR_BAN_REQUEST(40000, "リクエストパラメータのフォーマットが誤っています。"),
     ERR_PAR_EMPTY(40001, "リクエストパラメータが空です。"),
+    ERR_FILE_EMPTY(40009, "ファイルが空です。"),
     ERR_PASSWORD_ERROR(40002, "パスワードが正しくないです。"),
     ERR_USER_NOT_FOUND(40003, "ユーザー名が見つかりません。"),
     ERR_USER_DISABLE(40004, "ユーザー名が無効です。"),

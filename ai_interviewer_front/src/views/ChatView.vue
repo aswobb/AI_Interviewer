@@ -185,7 +185,7 @@ export default {
       this.isInputDisabled = !this.isInputDisabled
       const formData = new FormData();
       formData.append('file', this.selectedFile);
-
+      this.determineFileType(this.selectedFile)
       try {
         const token = localStorage.getItem('token')
         const response = await axios.post("/api/chat/receiveFile", formData, {
@@ -207,6 +207,7 @@ export default {
         this.$nextTick(() => {
           this.scrollToBottom();
         });
+        console.log(210, this.messages);
         const chatBody = this.messages.map(rowData => { // {text: String, isUser: Boolean}の形
           const role = rowData.isUser ? "user" : "assistant";
           return { role: role, content: rowData.text };
@@ -268,13 +269,36 @@ export default {
           });
         }
       } catch (error) {
-        console.error('文件上传失败', error);
-        alert('文件上传失败');
+        Message.error('履歴書アップロード失敗しました')
       }
 
     },
 
+    determineFileType(file) {
+      const fileName = file.name.toLowerCase();
+      const mimeType = file.type;
 
+      const allowedTypes = [
+        'application/pdf',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'application/vnd.ms-excel',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'application/msword'
+      ];
+
+      if (!allowedTypes.includes(mimeType)) {
+        Message.warning("WORD、EXCELまたはPDF形式の履歴書をアップロードしてください！")
+        throw new Error('条件不满足，请求终止');
+      }
+      // if (!(mimeType === 'application/pdf' || fileName.endsWith('.pdf')) && !(
+      //   mimeType === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
+      //   mimeType === 'application/vnd.ms-excel' ||
+      //   fileName.endsWith('.xls') ||
+      //   fileName.endsWith('.xlsx'))) {
+      //   Message.warning("EXCELまたはPDF形式の履歴書をアップロードしてください！")
+      //   throw new Error('条件不满足，请求终止');
+      // }
+    },
 
 
 

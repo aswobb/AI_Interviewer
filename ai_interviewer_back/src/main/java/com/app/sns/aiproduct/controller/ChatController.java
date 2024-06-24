@@ -1,16 +1,15 @@
 package com.app.sns.aiproduct.controller;
 
 
+import com.app.sns.aiproduct.constant.ServiceCodeEnum;
+import com.app.sns.aiproduct.ex.ServiceException;
 import com.app.sns.aiproduct.response.ChatResponse;
 import com.app.sns.aiproduct.service.ChatGPTService;
 import com.app.sns.aiproduct.service.GoogleVoiceSerice;
+import com.app.sns.aiproduct.service.UploadFileService;
 import com.app.sns.aiproduct.vo.ChatVO;
 import com.app.sns.aiproduct.web.JsonResult;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.text.PDFTextStripper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,6 +24,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/chat")
 public class ChatController {
+    @Resource
+    private UploadFileService uploadFileService;
     @Resource
     private ChatGPTService chatGPTService;
     @Resource
@@ -68,31 +69,16 @@ public class ChatController {
     }
 
     @PostMapping("/receiveFile")
-    public JsonResult<String> receiveFile(@RequestParam("file") MultipartFile file) {
+    public JsonResult<StringBuilder> receiveFile(@RequestParam("file") MultipartFile file) throws IOException {
         //        jsonResult.setData("请问有什么可以帮到您的吗？");
 
         if (file.isEmpty()) {
-            return null;
+            throw new ServiceException(ServiceCodeEnum.ERR_FILE_EMPTY);
         }
-        try {
+        JsonResult<StringBuilder> stringBuilderJsonResult = uploadFileService.uploadFile(file);
+        return stringBuilderJsonResult;
 
-            // 加载 PDF 文件
-            PDDocument document = PDDocument.load(file.getInputStream());
-
-            // 获取 PDF 文件的内容
-            PDFTextStripper pdfStripper = new PDFTextStripper();
-            String text = pdfStripper.getText(document);
-
-            // 关闭文档
-            document.close();
-
-            return  JsonResult.ok(text);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
     }
-
 
     @PostMapping("/sendMessageByGoogleCloud")
     public JsonResult<ChatResponse> sendMessageByGoogleCloud(@Validated @RequestBody ChatVO chatVO) {

@@ -21,7 +21,18 @@
     </properties>
     <!--当前项目使用的依赖项(框架,工具包)-->
     <dependencies>
-        <!--Spring Boot Validation:检查请求参数的基本格式-->
+        <!--判断文档格式-->
+        <dependency>
+            <groupId>org.apache.tika</groupId>
+            <artifactId>tika-core</artifactId>
+            <version>2.3.0</version>
+        </dependency>
+        <!--解析excle文档-->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>5.2.3</version>
+        </dependency>
         <dependency>
             <groupId>org.apache.pdfbox</groupId>
             <artifactId>pdfbox</artifactId>

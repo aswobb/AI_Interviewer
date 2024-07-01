@@ -10,5 +10,5 @@ public class ChatVO {
     private String message;
     private String role;
     private String content;
-
+    private int uploadStatus;
 }

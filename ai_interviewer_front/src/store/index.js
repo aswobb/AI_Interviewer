@@ -4,6 +4,7 @@ import createPersistedState from 'vuex-persistedstate';
 Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
+    companyMemberInfo: [],
     //管理者信息
     manageInfo: [],
     //面试者信息

@@ -23,6 +23,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
 @Slf4j
 @Service
 public class InterviewerInfoServiceImpl extends ServiceImpl<InterviewerInfoMapper, InterviewerInfo>
@@ -33,6 +34,7 @@ public class InterviewerInfoServiceImpl extends ServiceImpl<InterviewerInfoMappe
     private InterviewerInfoMapper interviewerInfoMapper;
     @Autowired
     private CsvFileMapper csvFileMapper;
+
     @Override
     @Transactional
     public List<InterviewerInfo> batchCreate(Long userId, Integer accountNum) {
@@ -49,21 +51,21 @@ public class InterviewerInfoServiceImpl extends ServiceImpl<InterviewerInfoMappe
         List<InterviewerInfo> interviewerInfoList = new ArrayList<>();
         for (int i = 0; i < createNum; i++) {
             InterviewerInfo interviewerInfo = new InterviewerInfo();
-            interviewerInfo.setInterviewerId(UUID.randomUUID().toString().replaceAll("-",""));
+            interviewerInfo.setInterviewerId(UUID.randomUUID().toString().replaceAll("-", ""));
             interviewerInfo.setEnable(0);
             interviewerInfo.setUserId(userId);
             interviewerInfo.setGmtCreate(LocalDateTime.now());
             interviewerInfoList.add(interviewerInfo);
         }
         Integer oldRemainNum = snsUser.getRemainNum();
-        snsUser.setRemainNum(snsUser.getRemainNum()-createNum);
+        snsUser.setRemainNum(snsUser.getRemainNum() - createNum);
         snsUser.setGmtUpdate(LocalDateTime.now());
         QueryWrapper<SnsUser> snsUserQueryWrapper = new QueryWrapper<>();
-        snsUserQueryWrapper.eq("id",snsUser.getId());
-        snsUserQueryWrapper.eq("remain_num",oldRemainNum);
+        snsUserQueryWrapper.eq("id", snsUser.getId());
+        snsUserQueryWrapper.eq("remain_num", oldRemainNum);
 
         snsUser.setGmtUpdate(LocalDateTime.now());
-        userMapper.update(snsUser,snsUserQueryWrapper);
+        userMapper.update(snsUser, snsUserQueryWrapper);
         this.saveBatch(interviewerInfoList);
         return null;
     }
@@ -89,6 +91,8 @@ public class InterviewerInfoServiceImpl extends ServiceImpl<InterviewerInfoMappe
         // interviewerInfo.setXXX(interviewerInfoVO.getXXX());
         interviewerInfo.setInterviewerName(interviewerInfoVO.getInterviewerName());
         interviewerInfo.setGmtUpdate(LocalDateTime.now());
+        interviewerInfo.setCompanyMemberId(interviewerInfoVO.getCompanyMemberId());
+        interviewerInfo.setUploadStatus(interviewerInfoVO.getUploadStatus());
         updateById(interviewerInfo);
         return interviewerInfo;
     }
@@ -120,7 +124,7 @@ public class InterviewerInfoServiceImpl extends ServiceImpl<InterviewerInfoMappe
 
     @Override
     @Transactional
-    public InterviewerInfo completeInterviewerInfo(Long userId, MultipartFile file){
+    public InterviewerInfo completeInterviewerInfo(Long userId, MultipartFile file) {
         InterviewerInfo interviewerInfo = getById(userId);
         if (interviewerInfo == null) {
             throw new ServiceException(ServiceCodeEnum.ERR_NOT_FOUND);
@@ -129,18 +133,18 @@ public class InterviewerInfoServiceImpl extends ServiceImpl<InterviewerInfoMappe
         interviewerInfo.setExecutionDate(LocalDateTime.now());
         interviewerInfo.setGmtUpdate(LocalDateTime.now());
         SnsUser snsUser = userMapper.selectById(interviewerInfo.getUserId());
-        snsUser.setUsageCount(EmptyUtil.isNull(snsUser.getUsageCount())?1:snsUser.getUsageCount()+1);
+        snsUser.setUsageCount(EmptyUtil.isNull(snsUser.getUsageCount()) ? 1 : snsUser.getUsageCount() + 1);
         snsUser.setGmtUpdate(LocalDateTime.now());
         userMapper.updateById(snsUser);
         updateById(interviewerInfo);
-        try{
+        try {
             CsvFile csvFile = new CsvFile();
             csvFile.setInterviewersInfoId(userId);
             csvFile.setGmtCreate(LocalDateTime.now());
             csvFile.setFileContent(file.getBytes());
             csvFileMapper.insert(csvFile);
-        }catch (Exception e){
-            log.error("save csv file error:{}",e);
+        } catch (Exception e) {
+            log.error("save csv file error:{}", e);
             throw new ServiceException(ServiceCodeEnum.ERR_INSERT);
 
         }
@@ -149,9 +153,9 @@ public class InterviewerInfoServiceImpl extends ServiceImpl<InterviewerInfoMappe
     }
 
     @Override
-    public CsvFile getCsvFile(Long interviewersInfoId){
+    public CsvFile getCsvFile(Long interviewersInfoId) {
         QueryWrapper<CsvFile> csvFileQueryWrapper = new QueryWrapper<>();
-        csvFileQueryWrapper.lambda().eq(CsvFile::getInterviewersInfoId,interviewersInfoId);
+        csvFileQueryWrapper.lambda().eq(CsvFile::getInterviewersInfoId, interviewersInfoId);
         CsvFile csvFile = csvFileMapper.selectOne(csvFileQueryWrapper);
         return csvFile;
     }

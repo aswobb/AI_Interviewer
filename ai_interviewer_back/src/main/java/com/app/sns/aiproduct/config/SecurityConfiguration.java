@@ -86,6 +86,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, "/interviewerInfo/updateInterviewerInfo").hasAnyRole(DataDictionary.ROLE_CONTRACT.getValue())
                 .antMatchers(HttpMethod.POST, "/interviewerInfo/completeInterviewerInfo").hasAnyRole(DataDictionary.ROLE_INTERVIEWERS.getValue())
                 .antMatchers(HttpMethod.GET, "/interviewerInfo/downLoadCsv/{fileId}").hasAnyRole(DataDictionary.ROLE_CONTRACT.getValue())
+                .antMatchers(HttpMethod.GET, "/companyMember/*").hasAnyRole(DataDictionary.ROLE_CONTRACT.getValue())
                 .antMatchers(HttpMethod.POST, "/chat/sendMessage").hasAnyRole(DataDictionary.ROLE_INTERVIEWERS.getValue())
                 .antMatchers(HttpMethod.POST, "/chat/sendMessageByGoogleCloud").hasAnyRole(DataDictionary.ROLE_INTERVIEWERS.getValue())
                 .antMatchers(HttpMethod.POST, "/chat/sendMessageCreateCSV").hasAnyRole(DataDictionary.ROLE_INTERVIEWERS.getValue())

@@ -44,11 +44,15 @@
                     </v-simple-table>
                 </v-card-text>
                 <v-card-actions class="d-flex justify-center">
-                    <v-btn color="primary" @click="dialog = true; changePwForm.password=''; changePwForm.newPassword=''; changePwForm.reNewPassword='' ">
+                    <v-btn color="primary"
+                        @click="dialog = true; changePwForm.password = ''; changePwForm.newPassword = ''; changePwForm.reNewPassword = ''">
                         PW再設定
                     </v-btn>
                     <v-btn color="primary" @click="editUser">
                         面接情報——
+                    </v-btn>
+                    <v-btn color="primary" @click="editCompanyMember">
+                        会社員情報
                     </v-btn>
                 </v-card-actions>
             </v-card>
@@ -58,8 +62,7 @@
             <v-form ref="form" :model="changePwForm" lazy-validation>
                 <v-text-field v-model="changePwForm.password" label="現PW" :rules="[rules.required]"></v-text-field>
                 <v-text-field v-model="changePwForm.newPassword"
-                    :rules="[rules.required, rules.maxLengh, rules.minLengh]"
-                    label="新PW" required></v-text-field>
+                    :rules="[rules.required, rules.maxLengh, rules.minLengh]" label="新PW" required></v-text-field>
                 <v-text-field v-model="changePwForm.reNewPassword"
                     :rules="[rules.required, rules.maxLengh, rules.minLengh, rules.isDifferent(changePwForm.newPassword)]"
                     label="確認新PW" required></v-text-field>
@@ -104,6 +107,14 @@ export default {
         this.user = this.$store.state.manageInfo
     },
     methods: {
+        editCompanyMember() {
+
+            this.$router.push({
+                path: '/companymember',
+                query: { id: this.user.id }
+            });
+
+        },
         logout() {
             this.$router.push('/manage-login')
             this.$store.commit('cleanCache')
@@ -131,7 +142,10 @@ export default {
                     }
                 });
                 // 导航到编辑用户信息的页面
-                this.$router.push('/interview-list');
+                this.$router.push({
+                    path: '/interview-list',
+                    query: { id: this.user.id }
+                });
 
             } else {
                 this.$router.push('/manage-login');

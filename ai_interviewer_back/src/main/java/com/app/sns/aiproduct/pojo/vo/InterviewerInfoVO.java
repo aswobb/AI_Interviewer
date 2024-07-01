@@ -20,6 +20,8 @@ public class InterviewerInfoVO {
     private LocalDateTime executionDate;
     private LocalDateTime gmtUpdate;
     private LocalDateTime gmtCreate;
+    private Integer companyMemberId;
+    private Integer uploadStatus;
 
     private Integer pageNum = 1;
     private Integer pageSize = 10;

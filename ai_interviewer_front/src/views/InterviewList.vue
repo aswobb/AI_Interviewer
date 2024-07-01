@@ -18,6 +18,9 @@
         </v-container>
         <v-data-table disable-sort="false" :headers="headers" :items="interviewerList" item-key="id" class="elevation-1"
             :options.sync="tableOptions" :server-items-length="totalItems">
+            <template v-slot:item.uploadStatus="{ item }">
+                {{ getUploadStatusText(item.uploadStatus) }}
+            </template>
             <template v-slot:item.actions="{ item }">
                 <div class="d-flex">
                     <v-btn color="primary" :disabled="!item.executionDate" class="mx-2" @click="download(item.id)">
@@ -26,6 +29,7 @@
                     <!-- 每一行的更改按钮 -->
                     <v-btn color="primary" :disabled="item.executionDate" class="mx-2"
                         @click="openChangeInfo(item)">情報の変更</v-btn>
+
                 </div>
             </template>
         </v-data-table>
@@ -37,20 +41,25 @@
             <v-card-title class="headline">情報の変更</v-card-title>
             <v-form ref="form" :model="changeInfo" lazy-validation>
                 <v-text-field v-model="changeInfo.interviewerId" label="面接id" readonly></v-text-field>
-                <v-text-field v-model="changeInfo.interviewerName" :rules="name" label="面接者" required></v-text-field>
+                <v-combobox v-model="companyMemberInfo" :items="memberList" label="Search" item-text="name"
+                    item-value="id" clearable :search-input.sync="search"></v-combobox>
             </v-form>
             <v-card-actions>
                 <v-spacer></v-spacer>
                 <v-btn color="green darken-1" @click="sumbit">変更</v-btn>
-                <v-btn color="green darken-1" @click="dialog = false">キャンセル</v-btn>
+                <v-btn color="green darken-1" @click="cancel">キャンセル</v-btn>
             </v-card-actions>
         </v-dialog>
     </div>
 </template>
 
 <script>
+import { Message } from 'element-ui';
+
 export default {
     created() {
+        this.userId = this.$route.query.id
+        this.getMember(this.userId)
         this.changePage(1, 5)
         this.interviewerList = this.$store.state.interviewerInfo
         this.totalItems = this.$store.state.totalItems
@@ -59,6 +68,11 @@ export default {
     },
     data() {
         return {
+            flag: false,
+            search: '',
+            companyMemberInfo: null,
+            memberList: [],
+            userId: 0,
             companyInfo: {
                 contractor: '',
                 remainNum: 0,
@@ -93,6 +107,7 @@ export default {
             headers: [
                 { text: '面接id', value: 'interviewerId' },
                 { text: '面接者', value: 'interviewerName' },
+                { text: '履歴書状態', value: 'uploadStatus' },
                 { text: '実施日', value: 'executionDate' },
                 { text: '操作', value: 'actions', sortable: false }
             ],
@@ -101,6 +116,39 @@ export default {
         };
     },
     methods: {
+        cancel() {
+            this.dialog = false
+            this.companyMemberInfo = null
+        },
+        getUploadStatusText(status) {
+            return status === 1 ? '済み' : 'ー';
+        },
+        getMember(id) {
+            const token = localStorage.getItem('token');
+            console.log(token);
+            if (token) {
+                let url = '/api/companyMember/getAllMebmer'
+                this.axios.get(url, {
+                    params: { userId: id },
+                    headers: {
+                        'token': token
+                    },
+
+                }).then((response) => {
+                    if (response.data.state == 20000) {
+                        this.$store.state.companyMemberInfo = response.data.data
+                        this.memberList = response.data.data
+                        console.log(129, this.memberList);
+                    } else if (response.data.state == 40400) {
+                        this.$router.push("/manage-login")
+                        this.$notify.warning({
+                            message: 'ログインが期限切れです,再度ログインしてください',
+                            type: 'warn'
+                        });
+                    }
+                })
+            }
+        },
         back() {
             this.$router.push('/manage-info')
         },
@@ -250,55 +298,67 @@ export default {
         },
         //修改面试者信息
         sumbit() {
-            if (this.$refs.form.validate()) {
-                const token = localStorage.getItem('token');
-                console.log(token);
-                if (token) {
-                    let data = {
-                        id: this.changeInfo.id,
-                        interviewerName: this.changeInfo.interviewerName
-                    }
-                    let url = 'api/interviewerInfo/updateInterviewerInfo'
-                    this.axios.post(url, data, {
-                        headers: {
-                            'token': token
-                        },
+            this.memberList.some(item => {
+                if (item.name === this.search) {
+                    this.flag = true
+                    return true; // 停止遍历
+                }
+                return false;
+            });
+            console.log(this.flag);
+            if (this.flag) {
+                this.flag = false
+                if (this.$refs.form.validate()) {
+                    const token = localStorage.getItem('token');
+                    console.log(token);
+                    if (token) {
+                        let data = {
+                            id: this.changeInfo.id,
+                            interviewerName: this.companyMemberInfo.name,
+                            companyMemberId: this.companyMemberInfo.id,
+                            uploadStatus: this.companyMemberInfo.uploadStatus
+                        }
+                        this.companyMemberInfo = null
+                        let url = 'api/interviewerInfo/updateInterviewerInfo'
+                        this.axios.post(url, data, {
+                            headers: {
+                                'token': token
+                            },
 
-                    }).then((response) => {
-                        if (response.data.state == 20000) {
-                            this.$message({
-                                message: '変更に成功しました',
-                                type: 'success'
-                            });
-                            //数据回显
-                            const itemIndex = this.interviewerList.findIndex(item => item.id === this.changeInfo.id);
-                            if (itemIndex !== -1) {
-                                this.interviewerList.splice(itemIndex, 1, {
-                                    ...this.interviewerList[itemIndex],
-                                    interviewerName: this.changeInfo.interviewerName,
+                        }).then((response) => {
+                            this.companyMemberInfo = null
+                            if (response.data.state == 20000) {
+                                this.$message({
+                                    message: '変更に成功しました',
+                                    type: 'success'
+                                });
+                                //数据回显
+                                this.changePage(this.tableOptions.page, this.tableOptions.itemsPerPage)
+                                this.dialog = false
+                            } else if (response.data.state == 40400) {
+                                this.$router.push("/manage-login")
+                                this.$notify.warning({
+                                    message: 'ログインが期限切れです,再度ログインしてください',
+                                    type: 'warn'
+                                });
+                            } else {
+                                this.$notify.error({
+                                    message: '面接者情報の取得に失敗しました',
+                                    type: 'error'
                                 });
                             }
-                            this.dialog = false
-                        } else if (response.data.state == 40400) {
-                            this.$router.push("/manage-login")
-                            this.$notify.warning({
-                                message: 'ログインが期限切れです,再度ログインしてください',
-                                type: 'warn'
-                            });
-                        } else {
-                            this.$notify.error({
-                                message: '面接者情報の取得に失敗しました',
-                                type: 'error'
-                            });
-                        }
-                    });
-                } else {
-                    this.$router.push('/manage-login');
-                    this.$message({
-                        message: 'ログインが期限切れです。再度ログインしてください',
-                        type: 'warn'
-                    });
+                        });
+                    } else {
+                        this.$router.push('/manage-login');
+                        this.$message({
+                            message: 'ログインが期限切れです。再度ログインしてください',
+                            type: 'warn'
+                        });
+                    }
+
                 }
+            } else {
+                Message.error("会社ではこの名前がありません")
             }
         },
         //修改页签
@@ -353,6 +413,14 @@ export default {
 .v-dialog {
     background: #fff;
     height: 350px;
+}
+
+.input {
+    margin-top: 30px;
+}
+
+.custom-text-field {
+    width: 150px;
 }
 </style>
 <!-- 刷新同步 -->

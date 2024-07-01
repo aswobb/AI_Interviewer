@@ -21,7 +21,7 @@ import java.util.List;
 @Service
 public class UploadFileServiceImpl implements UploadFileService {
     @Override
-    public JsonResult<StringBuilder> uploadFile(MultipartFile file) throws IOException {
+    public StringBuilder uploadFile(MultipartFile file) throws IOException {
 
         String fileName = file.getOriginalFilename();
         StringBuilder textContent = new StringBuilder();
@@ -59,7 +59,7 @@ public class UploadFileServiceImpl implements UploadFileService {
                     }
                     textContent.append("\n"); // New line for each row
                 }
-                return JsonResult.ok(textContent);
+                return textContent;
             }
         } else if (fileName.contains(".pdf")){
 
@@ -76,7 +76,7 @@ public class UploadFileServiceImpl implements UploadFileService {
                 // 关闭文档
                 document.close();
 
-                return JsonResult.ok(textContent);
+                return textContent;
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -96,7 +96,7 @@ public class UploadFileServiceImpl implements UploadFileService {
                         textContent.append("\n");
                     }
                 }
-                return JsonResult.ok(textContent);
+                return textContent;
             } catch (IOException e) {
                 e.printStackTrace();
             }

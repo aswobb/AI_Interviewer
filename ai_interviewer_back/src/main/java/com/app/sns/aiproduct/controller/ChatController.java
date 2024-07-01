@@ -75,8 +75,8 @@ public class ChatController {
         if (file.isEmpty()) {
             throw new ServiceException(ServiceCodeEnum.ERR_FILE_EMPTY);
         }
-        JsonResult<StringBuilder> stringBuilderJsonResult = uploadFileService.uploadFile(file);
-        return stringBuilderJsonResult;
+        StringBuilder stringBuilder = uploadFileService.uploadFile(file);
+        return JsonResult.ok(stringBuilder);
 
     }
 

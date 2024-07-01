@@ -21,6 +21,8 @@ public class InterviewerInfo {
     private Integer questionsNum;
     private Integer deepQuestionsNum;
     private Integer enable;
+    private Integer companyMemberId;
+    private Integer uploadStatus;
     @TableField("execution_date")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")

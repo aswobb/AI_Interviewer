@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.app.sns.aiproduct.mapper.CompanyMemberMapper">
+    <select id="getAllList" resultMap="MemberMap">
+        select id,name,upload_status
+        FROM company_member
+        WHERE user_id=#{USERID}
+    </select>
+    <resultMap id="MemberMap" type="com.app.sns.aiproduct.vo.MemberVo">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="uploadStatus" column="upload_status"/>
+    </resultMap>
+
+
+    <select id="getById" resultMap="MemberMap1">
+        select id,name,upload_status,resume
+        FROM company_member
+        WHERE id=#{ID}
+    </select>
+    <resultMap id="MemberMap1" type="com.app.sns.aiproduct.vo.MemberVo">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="uploadStatus" column="upload_status"/>
+        <result property="resume" column="resume"/>
+    </resultMap>
+    
+    <select id="getLastID" resultType="java.lang.Long">
+        SELECT id FROM company_member ORDER BY id DESC LIMIT 1
+    </select>
+</mapper>

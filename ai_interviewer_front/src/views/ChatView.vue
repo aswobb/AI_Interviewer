@@ -56,33 +56,43 @@
           v-show="messages.length == 2">
           *まずはチェックボックスで選択してください</p>
         <div class="container">
-          <el-input @keydown.enter.prevent="onEnterPress" :disabled="isInputDisabled" :placeholder="getPlaceholderText"
-            @compositionstart="handleCompositionStart" @compositionend="handleCompositionEnd" v-model="userMessage"
-            type="textarea" class="long-input" />
+          <el-input @keydown.enter.prevent="onEnterPress" :disabled="isInputDisabled || disabledByConfim"
+            :placeholder="getPlaceholderText" @compositionstart="handleCompositionStart"
+            @compositionend="handleCompositionEnd" v-model="userMessage" type="textarea" class="long-input" />
           <div class="button-group">
-            <el-button type="primary" @click="sendMessage" :disabled="isButtonDisabled || isLoading || flag" :icon="isLoading ? '' : 'el-icon-s-promotion'
-              " class="action-button" round>
+            <el-button type="primary" @click="sendMessage" :disabled="isButtonDisabled || isLoading || disabledByConfim"
+              :icon="isLoading ? '' : 'el-icon-s-promotion'
+                " class="action-button" round>
               <template v-if="isLoading">
                 <!-- 这里可以使用Element UI的Loading组件或自定义等待图标 -->
                 <i class="el-icon-loading"></i>
               </template>
               送信</el-button>
             <el-button :type="!speechRecognitionActive ? 'primary' : 'danger'" class="action-button" round
-              :disabled="isInputDisabled" @click="toggleSpeechRecognition" color="purple-7">
+              :disabled="isInputDisabled || disabledByConfim" @click="toggleSpeechRecognition" color="purple-7">
               {{ speechRecognitionActive ? '音声停止' : '音声入力' }}</el-button>
-            <el-button :disabled="renderMessages.length != 2" class="action-button" type="success"
-              @click="dialogVisible = true" round>
-              履歴書<br />読み取り
-            </el-button>
           </div>
-          <el-dialog append-to-body title="履歴書アップロードしてください" :visible.sync="dialogVisible" width="30%">
+          <el-dialog :show-close="false" :close-on-click-modal="false" append-to-body title="履歴書アップロードしてください"
+            :visible.sync="dialogVisible" width="30%">
             <span>
               <input type="file" @change="handleFileUpload" />
 
             </span>
             <span slot="footer" class="dialog-footer">
               <el-button type="primary" @click="submitFile">アップロード</el-button>
-              <el-button @click="dialogVisible = false">キャンセル</el-button>
+              <el-button @click="cancleUpload">キャンセル</el-button>
+            </span>
+          </el-dialog>
+
+          <el-dialog append-to-body title="選択してください" :visible.sync="flag" width="30%" :show-close="false"
+            :close-on-click-modal="false">
+            <p>{{ memberVo.uploadStatus == 1 ?
+              "システムはご履歴書を確認いたしましたが、新しい履歴書をアップロードしますか？それとも既存の履歴書で面接を続けますか？" :
+              "システムはあなたの履歴書を検出できませんでした。履歴書をアップロードしますか、テキスト形式の履歴書をアップロードしますか？" }}</p>
+            <span slot="footer" class="dialog-footer">
+              <el-button type="primary" @click="reUpload">アップロード</el-button>
+              <el-button v-show="memberVo.uploadStatus == 1" @click="original">既存の使う</el-button>
+              <el-button @click="goOn">テキスト入力</el-button>
             </span>
           </el-dialog>
         </div>
@@ -101,6 +111,10 @@ import { Message } from "element-ui";
 export default {
   data() {
     return {
+      selectedVoice: null,
+      disabledByConfim: false,
+      flag: false,//面接者に新しい履歴書をアップロードするかどうか選んでもらう
+      memberVo: {},
       dialogVisible: false,
       uploadFlag: false,
       selectedFile: null,
@@ -152,6 +166,9 @@ export default {
       tmp: 0, //デバッグ用
     };
   },
+  created() {
+    this.memberVo = this.$store.state.companyMemberInfo
+  },
   computed: {
     getPlaceholderText() {
       if (this.isCheckboxDisabled) {
@@ -173,6 +190,122 @@ export default {
     }
   },
   methods: {
+    cancleUpload() {
+      this.dialogVisible = false
+      this.flag = true
+    },
+    async original() {
+      this.flag = false
+      this.renderMessages.push({
+        text: "既存の履歴書を使いたい",
+        isUser: true,
+      });
+      const userMessage = "下記は私の履歴書です" + this.memberVo.resume
+      this.messages.push({
+        text: userMessage,
+        isUser: true,
+      })
+      // 使用 $nextTick 确保 DOM 更新后再滚动
+      this.$nextTick(() => {
+        this.scrollToBottom();
+      });
+      try {
+        var localPath = this.GLOBAL.localSrc;
+        const token = localStorage.getItem("token");
+        const chatBody = this.messages.map(rowData => { // {text: String, isUser: Boolean}の形
+          const role = rowData.isUser ? "user" : "assistant";
+          return { role: role, content: rowData.text };
+        });
+        // 发送 API 请求
+        const response = await axios.post(
+          "/api/chat/sendContentByGoogleCloud",
+          chatBody,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              token: token,
+            },
+          }
+        );
+        this.$gtm.sendCustomEvent("send_message");
+        // 处理 API 响应
+        if (response.data && response.data.state === 20000) {
+          const botResponse = response.data.data;
+          const content = botResponse.content;
+          const formattedContent = content.replace(/\\n/g, "\n");
+          const audioContent = botResponse.audioContent;
+
+          // 创建一个 Blob 对象
+          const blob = new Blob([this.base64ToArrayBuffer(audioContent)], { type: 'audio/wav' });
+
+          // 使用 URL.createObjectURL() 创建音频的 URL
+          this.audioURL = URL.createObjectURL(blob);
+
+          // 设置音频的源
+          this.$refs.audioPlayer.src = this.audioURL;
+
+          // 播放音频
+          this.$refs.audioPlayer.play();
+          // 将机器人的响应添加到 messages 数组中
+          this.renderMessages.push({
+            text: formattedContent,
+            isUser: false,
+          });
+          this.messages.push({
+            text: formattedContent,
+            isUser: false,
+          })
+          // 确保在DOM更新后执行滚动操作
+          this.$nextTick(() => {
+            this.scrollToBottom();
+          });
+        } else if (response.data.state == 40400) {
+          this.$router.push("/interview/user/login")
+          this.$notify.warning({
+            message: 'ログインが期限切れです,再度ログインしてください',
+            type: 'warn'
+          });
+        } else {
+          console.error("API response error:", response.data);
+          this.renderMessages.push({
+            text: response.data.message,
+            isUser: false,
+          });
+        }
+      } catch (error) {
+        console.error("API request error:", error);
+        this.$notify.error({
+          title: "失敗しました.",
+          message: error,
+        });
+      }
+      this.disabledByConfim = false
+    },
+    goOn() {
+      this.flag = false
+      this.renderMessages.push({
+        text: 'ご承知いたしました、ごスキルシートを入力しください',
+        isUser: false,
+      });
+      this.$nextTick(() => {
+        this.scrollToBottom();
+      });
+      this.disabledByConfim = false
+      // 创建一个新的 SpeechSynthesisUtterance 实例
+      const utterance = new SpeechSynthesisUtterance("ご承知いたしました、ごスキルシートを入力しください");
+      this.selectedVoice = window.speechSynthesis.getVoices().find(voice => voice.name === 'Google 日本語');
+      console.log(205, this.selectedVoice);
+      utterance.voice = this.selectedVoice;
+      // 设置语言
+      utterance.lang = 'ja-JP'; // 设置为日语，可以根据需要更改
+
+      // 使用 speechSynthesis 进行文本转语音
+      window.speechSynthesis.speak(utterance);
+    },
+    reUpload() {
+      this.flag = false
+      this.dialogVisible = true
+    },
     handleFileUpload(event) {
       this.selectedFile = event.target.files[0];
     },
@@ -251,6 +384,7 @@ export default {
             isUser: false,
           })
           this.isInputDisabled = !this.isInputDisabled
+          this.disabledByConfim = false
           // 确保在DOM更新后执行滚动操作
           this.$nextTick(() => {
             this.scrollToBottom();
@@ -299,25 +433,6 @@ export default {
       //   throw new Error('条件不满足，请求终止');
       // }
     },
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     onEnterPress() {
       if (!this.composing) {
         this.sendMessage();
@@ -425,6 +540,7 @@ export default {
           // }
           // this.tmp += 1;
           // デバッグ用ここまで
+          console.log(413, this.renderMessages);
           this.$gtm.sendCustomEvent("send_message");
           // 处理 API 响应
           if (response.data && response.data.state === 20000) {
@@ -444,7 +560,6 @@ export default {
 
             // 播放音频
             this.$refs.audioPlayer.play();
-
             // 将机器人的响应添加到 messages 数组中
             this.renderMessages.push({
               text: formattedContent,
@@ -458,6 +573,7 @@ export default {
             this.$nextTick(() => {
               this.scrollToBottom();
             });
+            this.confirm()
           } else if (response.data.state == 40400) {
             this.$router.push("/interview/user/login")
             this.$notify.warning({
@@ -483,6 +599,13 @@ export default {
         this.isInputDisabled = false;
         this.isButtonDisabled = false;
         this.userMessage = "";
+
+      }
+    },
+    confirm() {
+      if (this.renderMessages.length == 2) {
+        this.disabledByConfim = true
+        this.flag = true
       }
     },
     // 将 Base64 编码的字符串转换为 ArrayBuffer
@@ -678,6 +801,12 @@ export default {
 
 
   watch: {
+    renderMessages(newVal) {
+      console.log(663, newVal.length);
+      console.log(668, this.memberVo);
+
+    },
+
     userMessage(newVal) {
       this.isInputNotEmpty = newVal.trim() !== "";
     },

@@ -6,6 +6,7 @@ import com.app.sns.aiproduct.service.UploadFileService;
 import com.app.sns.aiproduct.web.JsonResult;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
@@ -25,7 +26,44 @@ public class UploadFileServiceImpl implements UploadFileService {
 
         String fileName = file.getOriginalFilename();
         StringBuilder textContent = new StringBuilder();
-        if (fileName.contains(".xlsx")) {
+        if (fileName.contains(".xls")) {
+//            try (Workbook workbook = new XSSFWorkbook(file.getInputStream())) {
+                try (Workbook workbook = new HSSFWorkbook(file.getInputStream())) {
+                // Assuming there is only one sheet
+                Sheet sheet = workbook.getSheetAt(0);
+
+                // Iterate through each row in the sheet
+                for (Row row : sheet) {
+                    for (Cell cell : row) {
+                        // Append cell value to textContent
+                        switch (cell.getCellType()) {
+                            case STRING:
+                                textContent.append(cell.getStringCellValue());
+                                break;
+                            case NUMERIC:
+                                if (DateUtil.isCellDateFormatted(cell)) {
+                                    textContent.append(cell.getDateCellValue());
+                                } else {
+                                    textContent.append(cell.getNumericCellValue());
+                                }
+                                break;
+                            case BOOLEAN:
+                                textContent.append(cell.getBooleanCellValue());
+                                break;
+                            case FORMULA:
+                                textContent.append(cell.getCellFormula());
+                                break;
+                            default:
+                                textContent.append("");
+                                break;
+                        }
+                        textContent.append("\t"); // Use tab as delimiter
+                    }
+                    textContent.append("\n"); // New line for each row
+                }
+                return textContent;
+            }
+        } else if(fileName.contains(".xlsx")){
             try (Workbook workbook = new XSSFWorkbook(file.getInputStream())) {
                 // Assuming there is only one sheet
                 Sheet sheet = workbook.getSheetAt(0);
@@ -61,7 +99,8 @@ public class UploadFileServiceImpl implements UploadFileService {
                 }
                 return textContent;
             }
-        } else if (fileName.contains(".pdf")){
+
+        }else if (fileName.contains(".pdf")){
 
             try {
 

@@ -77,7 +77,7 @@
 </template>
 
 <script>
-
+import {getInterviewMessageAPI,managerPwChange} from '@/api'
 export default {
     data() {
         return {
@@ -119,63 +119,73 @@ export default {
             this.$router.push('/manage-login')
             this.$store.commit('cleanCache')
         },
-        editUser() {
-            const token = localStorage.getItem('token');
-            console.log(token);
-            if (token) {
-                let url = 'api/interviewerInfo/list'
-                this.axios.get(url, {
-                    params: { pageNum: 1, pageSize: 5 },
-                    headers: {
-                        'token': token
-                    },
-
-                }).then((response) => {
-                    if (response.data.state == 20000) {
-                        //面试者信息赋值
-                        this.$store.commit('initInterviewerInfo', response.data)
-                    } else {
-                        this.$notify.error({
-                            message: '面接者情報の取得に失敗しました',
-                            type: 'error'
-                        });
-                    }
-                });
-                // 导航到编辑用户信息的页面
+      editUser () {
+        // const response = getInterviewMessageAPI(1, 5)
+        // if (response.data.state == 20000) {
+        //                 //面试者信息赋值
+        //                 this.$store.commit('initInterviewerInfo', response.data)
+        //             } else {
+        //                 this.$notify.error({
+        //                     message: '面接者情報の取得に失敗しました',
+        //                     type: 'error'
+        //                 });
+        // }
+                    // 导航到编辑用户信息的页面
                 this.$router.push({
                     path: '/interview-list',
                     query: { id: this.user.id }
                 });
+            // const token = localStorage.getItem('token');
+            // console.log(token);
+            // if (token) {
+            //     let url = 'api/interviewerInfo/list'
+            //     this.axios.get(url, {
+            //         params: { pageNum: 1, pageSize: 5 },
+            //         headers: {
+            //             'token': token
+            //         },
 
-            } else {
-                this.$router.push('/manage-login');
-                this.$message({
-                    message: 'ログインが期限切れです。再度ログインしてください',
-                    type: 'warn'
-                });
-            }
+            //     }).then((response) => {
+            //         if (response.data.state == 20000) {
+            //             //面试者信息赋值
+            //             this.$store.commit('initInterviewerInfo', response.data)
+            //         } else {
+            //             this.$notify.error({
+            //                 message: '面接者情報の取得に失敗しました',
+            //                 type: 'error'
+            //             });
+            //         }
+            //     });
+            //     // 导航到编辑用户信息的页面
+            //     this.$router.push({
+            //         path: '/interview-list',
+            //         query: { id: this.user.id }
+            //     });
+
+            // } else {
+            //     this.$router.push('/manage-login');
+            //     this.$message({
+            //         message: 'ログインが期限切れです。再度ログインしてください',
+            //         type: 'warn'
+            //     });
+            // }
         },
-        changePw() {
+       async changePw() {
             if (this.$refs.form.validate()) {
-                const token = localStorage.getItem('token');
-                let config = {
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                };
-                let url = 'api/snsUser/updatePassword'
+                // const token = localStorage.getItem('token');
+                // let config = {
+                //     headers: {
+                //         'Content-Type': 'application/json'
+                //     }
+                // };
+                // let url = 'api/snsUser/updatePassword'
                 let data = {
                     id: "3",
                     oldPassword: this.changePwForm.password,
                     newPassword: this.changePwForm.newPassword
                 }
-                if (token) {
-                    this.axios.post(url, data, {
-                        headers: {
-                            'token': `${token}`
-                        }
-                    }, config).then((response) => {
-                        if (response.data.state == 20000) {
+              const response = await managerPwChange(data)
+              if (response.data.state == 20000) {
                             this.$message({
                                 message: 'パスワード変更に成功しました.',
                                 type: 'success'
@@ -187,8 +197,26 @@ export default {
                                 type: 'error'
                             });
                         }
-                    });
-                }
+                // if (token) {
+                //     this.axios.post(url, data, {
+                //         headers: {
+                //             'token': `${token}`
+                //         }
+                //     }, config).then((response) => {
+                //         if (response.data.state == 20000) {
+                //             this.$message({
+                //                 message: 'パスワード変更に成功しました.',
+                //                 type: 'success'
+                //             });
+                //             this.dialog = false
+                //         } else {
+                //             this.$notify.error({
+                //                 message: 'パスワード変更に失敗しました.',
+                //                 type: 'error'
+                //             });
+                //         }
+                //     });
+                // }
             }
         }
     }

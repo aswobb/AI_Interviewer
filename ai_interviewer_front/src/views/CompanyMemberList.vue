@@ -57,6 +57,7 @@
 </template>
 <script>
 import { Message } from "element-ui";
+import {memberPlus,memberDelete,fileSend2,memberListGet} from '@/api'
 export default {
     created() {
         this.userId = this.$route.query.id
@@ -101,52 +102,62 @@ export default {
     },
     methods: {
         submitForm(formName) {
-            this.$refs[formName].validate((valid) => {
-                if (valid) {
-                    const token = localStorage.getItem('token')
-                    console.log(104, token);
-                    if (token) {
-                        let url = 'api/companyMember/insert'
-                        this.form.userId = this.userId
-                        let data = this.form
-                        this.axios.post(url, data, {
-                            headers: {
-                                'token': token
-                            },
-                        }).then((response) => {
-                            this.form.name = ''
-                            this.addDataFlag = false
-                            console.log(111, response);
-                            if (response.data == 1) {
+        this.$refs[formName].validate(async (valid) => {
+          this.form.userId = this.userId
+          let data = this.form
+          const response = await memberPlus(data)
+          this.form.name = ''
+          this.addDataFlag = false
+          if (response.data == 1) {
                                 Message.success("追加しました！")
                                 this.getMember(this.userId, this.tableOptions.page, this.tableOptions.itemsPerPage)
-                            }
-                            else if (response.data.state == 40400) {
+                            } else if (response.data.state == 40400) {
                                 this.$router.push("/manage-login")
                                 this.$notify.warning({
                                     message: 'ログインが期限切れです,再度ログインしてください',
                                     type: 'warn'
                                 });
                             }
-                        })
-                    }
-                }
+                // if (valid) {
+                //     const token = localStorage.getItem('token')
+                //     if (token) {
+                //         let url = 'api/companyMember/insert'
+                //         this.form.userId = this.userId
+                //         let data = this.form
+                //         this.axios.post(url, data, {
+                //             headers: {
+                //                 'token': token
+                //             },
+                //         }).then((response) => {
+                //             this.form.name = ''
+                //             this.addDataFlag = false
+                //             console.log(111, response);
+                //             if (response.data == 1) {
+                //                 Message.success("追加しました！")
+                //                 this.getMember(this.userId, this.tableOptions.page, this.tableOptions.itemsPerPage)
+                //             }
+                //             else if (response.data.state == 40400) {
+                //                 this.$router.push("/manage-login")
+                //                 this.$notify.warning({
+                //                     message: 'ログインが期限切れです,再度ログインしてください',
+                //                     type: 'warn'
+                //                 });
+                //             }
+                //         })
+                //     }
+                // }
             });
         },
         deleteButton(id) {
             this.deleteId = id
             this.deleteFlag = true
         },
-        deleteMember() {
-            const token = localStorage.getItem('token')
-            let url = 'api/companyMember/delete'
-            this.axios.delete(url, {
-                params: { memberId: this.deleteId },
-                headers: {
-                    'token': token
-                },
-            }).then((response) => {
-                this.deleteFlag = false
+      async deleteMember () {
+
+        let obj =  { memberId: this.deleteId }
+          
+          const response = await memberDelete(obj)
+          this.deleteFlag = false
                 if (response.data == 1) {
                     Message.success("削除しました！")
                     this.getMember(this.userId, this.tableOptions.page, this.tableOptions.itemsPerPage)
@@ -157,12 +168,32 @@ export default {
                         type: 'warn'
                     });
                 }
+          //   const token = localStorage.getItem('token')
+          // let url = 'api/companyMember/delete'
+            
+          //   this.axios.delete(url, {
+          //       params: { memberId: this.deleteId },
+          //       headers: {
+          //           'token': token
+          //       },
+          //   }).then((response) => {
+          //       this.deleteFlag = false
+          //       if (response.data == 1) {
+          //           Message.success("削除しました！")
+          //           this.getMember(this.userId, this.tableOptions.page, this.tableOptions.itemsPerPage)
+          //       } else if (response.data.state == 40400) {
+          //           this.$router.push("/manage-login")
+          //           this.$notify.warning({
+          //               message: 'ログインが期限切れです,再度ログインしてください',
+          //               type: 'warn'
+          //           });
+          //       }
 
-            })
+          //   })
         },
         back() {
             this.$router.push('/manage-info')
-        },
+      },
         async submitFile() {
             if (!this.selectedFile) {
                 Message.warning("先に、ご履歴書選択してください！")
@@ -174,14 +205,7 @@ export default {
             formData.append('id', this.memberId)
             this.determineFileType(this.selectedFile)
             try {
-                const token = localStorage.getItem('token')
-                console.log(77);
-                const response = await this.axios.post("/api/companyMember/receiveFile", formData, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data',
-                        'token': token
-                    }
-                });
+                const response = await fileSend2(formData)
                 if (response.data.state == 20000) {
                     Message.success("履歴書を解析しました！")
                     this.selectedFile = null
@@ -221,7 +245,6 @@ export default {
             }
         },
 
-
         handleFileUpload(event) {
             this.selectedFile = event.target.files[0];
         },
@@ -232,20 +255,9 @@ export default {
         getUploadStatusText(status) {
             return status === 1 ? '済み' : 'ー';
         },
-        getMember(id1, pageNum1, pageSize1) {
-            const token = localStorage.getItem('token');
-            console.log(token);
-            if (token) {
-                let url = 'api/companyMember/list'
-                this.axios.get(url, {
-                    params: { userId: id1, pageNum: pageNum1, pageSize: pageSize1 },
-                    headers: {
-                        'token': token
-                    },
-
-                }).then((response) => {
-                    console.log(52, response);
-                    if (response.data.state == 20000) {
+     async getMember (id1, pageNum1, pageSize1) {
+       const response = await memberListGet(id1, pageNum1, pageSize1)
+       if (response.data.state == 20000) {
                         this.$store.state.companyMemberInfo = response.data.data.records
                         this.memberList = response.data.data.records
                         this.totalItems = response.data.data.total
@@ -259,8 +271,34 @@ export default {
                             type: 'warn'
                         });
                     }
-                })
-            }
+            // const token = localStorage.getItem('token');
+            // console.log(token);
+            // if (token) {
+            //     let url = 'api/companyMember/list'
+            //     this.axios.get(url, {
+            //         params: { userId: id1, pageNum: pageNum1, pageSize: pageSize1 },
+            //         headers: {
+            //             'token': token
+            //         },
+
+            //     }).then((response) => {
+            //         console.log(52, response);
+            //         if (response.data.state == 20000) {
+            //             this.$store.state.companyMemberInfo = response.data.data.records
+            //             this.memberList = response.data.data.records
+            //             this.totalItems = response.data.data.total
+            //             if (response.data.data.size == -1) {
+            //                 this.totalItems = 1
+            //             }
+            //         } else if (response.data.state == 40400) {
+            //             this.$router.push("/manage-login")
+            //             this.$notify.warning({
+            //                 message: 'ログインが期限切れです,再度ログインしてください',
+            //                 type: 'warn'
+            //             });
+            //         }
+            //     })
+            // }
         }
     },
     //监听器

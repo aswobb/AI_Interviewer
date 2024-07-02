@@ -55,7 +55,7 @@
 
 <script>
 import { Message } from 'element-ui';
-
+import { memberGet,getCurrentUserAPI,interviewInfoDownload,interviewListAdd,interviewInfoUpdate,getInterviewMessageAPI} from '@/api'
 export default {
     created() {
         this.userId = this.$route.query.id
@@ -123,19 +123,12 @@ export default {
         getUploadStatusText(status) {
             return status === 1 ? '済み' : 'ー';
         },
-        getMember(id) {
-            const token = localStorage.getItem('token');
-            console.log(token);
-            if (token) {
-                let url = '/api/companyMember/getAllMebmer'
-                this.axios.get(url, {
-                    params: { userId: id },
-                    headers: {
-                        'token': token
-                    },
-
-                }).then((response) => {
-                    if (response.data.state == 20000) {
+      async getMember (id) {
+        let obj = {
+                    userId: id,
+                }
+        const response = await memberGet(obj)
+        if (response.data.state == 20000) {
                         this.$store.state.companyMemberInfo = response.data.data
                         this.memberList = response.data.data
                         console.log(129, this.memberList);
@@ -145,31 +138,43 @@ export default {
                             message: 'ログインが期限切れです,再度ログインしてください',
                             type: 'warn'
                         });
-                    }
-                })
-            }
+                    }  
+            // const token = localStorage.getItem('token');
+            // console.log(token);
+            // if (token) {
+            //     let url = '/api/companyMember/getAllMebmer'
+            //     this.axios.get(url, {
+            //         params: { userId: id },
+            //         headers: {
+            //             'token': token
+            //         },
+
+            //     }).then((response) => {
+            //         if (response.data.state == 20000) {
+            //             this.$store.state.companyMemberInfo = response.data.data
+            //             this.memberList = response.data.data
+            //             console.log(129, this.memberList);
+            //         } else if (response.data.state == 40400) {
+            //             this.$router.push("/manage-login")
+            //             this.$notify.warning({
+            //                 message: 'ログインが期限切れです,再度ログインしてください',
+            //                 type: 'warn'
+            //             });
+            //         }
+            //     })
+            // }
         },
         back() {
             this.$router.push('/manage-info')
         },
         //公司基本信息赋值
-        getCompanyInfo() {
-            const token = localStorage.getItem('token');
-            console.log(token);
-            if (token) {
-                let url = 'api/snsUser/getCurrentUser'
-                this.axios.get(url, {
-                    headers: {
-                        'token': token
-                    },
-
-                }).then((response) => {
-                    if (response.data.state == 20000) {
+      async getCompanyInfo () {
+        const response = await getCurrentUserAPI();
+        if (response.data.state == 20000) {
                         console.log(response);
                         this.companyInfo.contractor = response.data.data.contractor
                         this.companyInfo.remainNum = response.data.data.remainNum
                         this.companyInfo.usageCount = response.data.data.usageCount
-
                     } else if (response.data.state == 40400) {
                         this.$router.push("/manage-login")
                         this.$notify.warning({
@@ -182,68 +187,122 @@ export default {
                             type: 'error'
                         });
                     }
-                });
-            } else {
-                this.$router.push('/manage-login');
-                this.$message({
-                    message: 'ログインが期限切れです,再度ログインしてください',
-                    type: 'warn'
-                });
-            }
+            // const token = localStorage.getItem('token');
+            // console.log(token);
+            // if (token) {
+            //     let url = 'api/snsUser/getCurrentUser'
+            //     this.axios.get(url, {
+            //         headers: {
+            //             'token': token
+            //         },
+
+            //     }).then((response) => {
+            //         if (response.data.state == 20000) {
+            //             console.log(response);
+            //             this.companyInfo.contractor = response.data.data.contractor
+            //             this.companyInfo.remainNum = response.data.data.remainNum
+            //             this.companyInfo.usageCount = response.data.data.usageCount
+
+            //         } else if (response.data.state == 40400) {
+            //             this.$router.push("/manage-login")
+            //             this.$notify.warning({
+            //                 message: 'ログインが期限切れです,再度ログインしてください',
+            //                 type: 'warn'
+            //             });
+            //         } else {
+            //             this.$notify.error({
+            //                 message: '面接者情報の取得に失敗しました',
+            //                 type: 'error'
+            //             });
+            //         }
+            //     });
+            // } else {
+            //     this.$router.push('/manage-login');
+            //     this.$message({
+            //         message: 'ログインが期限切れです,再度ログインしてください',
+            //         type: 'warn'
+            //     });
+            // }
         },
 
         //增加条数
-        addData() {
-            const token = localStorage.getItem('token');
-            console.log(token);
-            if (token) {
-
-                let data = {}
-                let url = 'api/interviewerInfo/batchCreate'
-                this.axios.post(url, data, {
-                    headers: {
-                        'token': token
-                    },
-
-                }).then((response) => {
-                    if (response.data.state == 20000) {
+      async addData () {
+        let data = {}
+      const response = await interviewListAdd(data);
+      if (response.data.state == 20000) {
                         this.changePage(this.tableOptions.page, this.tableOptions.itemsPerPage)
                         this.getCompanyInfo()
                         this.$message({
                             message: '面接者データ20件追加成功しました。',
                             type: 'success'
                         })
-                    } else if (response.data.state == 40400) {
+                    }else if (response.data.state == 40400) {
                         this.$router.push("/manage-login")
                         this.$notify.warning({
                             message: 'ログインが期限切れです,再度ログインしてください',
                             type: 'warn'
                         });
-                    } else if (response.data.state == 70001) {
+                    }else if (response.data.state == 70001) {
                         this.$notify.error({
                             message: '残高が不足です。',
                             type: 'error'
                         });
                     } else {
-
                         this.$notify.error({
                             message: '面接者データ追加に失敗しました。',
                             type: 'error'
                         });
                     }
+            // const token = localStorage.getItem('token');
+            // console.log(token);
+            // if (token) {
 
-                });
+            //     let data = {}
+            //     let url = 'api/interviewerInfo/batchCreate'
+            //     this.axios.post(url, data, {
+            //         headers: {
+            //             'token': token
+            //         },
 
-            } else {
-                this.$router.push('/manage-login');
-                this.$message({
-                    message: 'ログインが期限切れです。再度ログインしてください',
-                    type: 'warn'
-                });
-            }
+            //     }).then((response) => {
+            //         if (response.data.state == 20000) {
+            //             this.changePage(this.tableOptions.page, this.tableOptions.itemsPerPage)
+            //             this.getCompanyInfo()
+            //             this.$message({
+            //                 message: '面接者データ20件追加成功しました。',
+            //                 type: 'success'
+            //             })
+            //         } else if (response.data.state == 40400) {
+            //             this.$router.push("/manage-login")
+            //             this.$notify.warning({
+            //                 message: 'ログインが期限切れです,再度ログインしてください',
+            //                 type: 'warn'
+            //             });
+            //         } else if (response.data.state == 70001) {
+            //             this.$notify.error({
+            //                 message: '残高が不足です。',
+            //                 type: 'error'
+            //             });
+            //         } else {
+
+            //             this.$notify.error({
+            //                 message: '面接者データ追加に失敗しました。',
+            //                 type: 'error'
+            //             });
+            //         }
+
+            //     });
+
+            // } else {
+            //     this.$router.push('/manage-login');
+            //     this.$message({
+            //         message: 'ログインが期限切れです。再度ログインしてください',
+            //         type: 'warn'
+            //     });
+            // }
         },
         //打开修改面板
-        openChangeInfo(item) {
+     async openChangeInfo (item) {
             this.dialog = true
             console.log(item);
             this.oldName = item.interviewerName
@@ -251,26 +310,16 @@ export default {
             this.changeInfo.interviewerName = item.interviewerName
             this.changeInfo.interviewerId = item.interviewerId
         },
-        //下载结果信息
-        download(Id) {
-            console.log(124, this.interviewerList);
-            const token = localStorage.getItem('token');
-            console.log(token);
-            if (token) {
-                let url = 'api/interviewerInfo/downLoadCsv/' + Id
-                this.axios.get(url, {
-                    headers: {
-                        'token': token
-                    },
-                    responseType: 'blob'
-                }).then((response) => {
-                    if (response.data.state == 40400) {
+        // //下载结果信息
+       async download(Id) {
+         const response = await interviewInfoDownload(Id);
+         if (response.data.state == 40400) {
                         this.$router.push("/manage-login")
                         this.$notify.warning({
                             message: 'ログインが期限切れです,再度ログインしてください',
                             type: 'warn'
                         });
-                    } else {
+                    }else {
                         try {
                             const blob = new Blob([response.data], { type: 'application/octet-stream' }); // ダウンロードリンクを作成 
                             const url = window.URL.createObjectURL(blob);
@@ -287,17 +336,48 @@ export default {
                             });
                         }
                     }
-                });
-            } else {
-                this.$router.push('/manage-login');
-                this.$message({
-                    message: 'ログインが期限切れです。再度ログインしてください',
-                    type: 'warn'
-                });
-            }
+        //     if (token) {
+        //         let url = 'api/interviewerInfo/downLoadCsv/' + Id
+        //         this.axios.get(url, {
+        //             headers: {
+        //                 'token': token
+        //             },
+        //             responseType: 'blob'
+        //         }).then((response) => {
+        //             if (response.data.state == 40400) {
+        //                 this.$router.push("/manage-login")
+        //                 this.$notify.warning({
+        //                     message: 'ログインが期限切れです,再度ログインしてください',
+        //                     type: 'warn'
+        //                 });
+        //             } else {
+        //                 try {
+        //                     const blob = new Blob([response.data], { type: 'application/octet-stream' }); // ダウンロードリンクを作成 
+        //                     const url = window.URL.createObjectURL(blob);
+        //                     const link = document.createElement('a');
+        //                     link.href = url;
+        //                     link.setAttribute('download', 'output.csv'); // ダウンロードファイル名を設定 // リンクをクリックしてファイルをダウンロード 
+        //                     document.body.appendChild(link);
+        //                     link.click(); // リンクを削除 
+        //                     document.body.removeChild(link);
+        //                 } catch (error) {
+        //                     this.$message({
+        //                         message: error.message,
+        //                         type: 'error'
+        //                     });
+        //                 }
+        //             }
+        //         });
+        //     } else {
+        //         this.$router.push('/manage-login');
+        //         this.$message({
+        //             message: 'ログインが期限切れです。再度ログインしてください',
+        //             type: 'warn'
+        //         });
+        //     }
         },
         //修改面试者信息
-        sumbit() {
+       async sumbit() {
             this.memberList.some(item => {
                 if (item.name === this.search) {
                     this.flag = true
@@ -308,26 +388,16 @@ export default {
             console.log(this.flag);
             if (this.flag) {
                 this.flag = false
-                if (this.$refs.form.validate()) {
-                    const token = localStorage.getItem('token');
-                    console.log(token);
-                    if (token) {
-                        let data = {
+              if (this.$refs.form.validate()) {
+                let data = {
                             id: this.changeInfo.id,
                             interviewerName: this.companyMemberInfo.name,
                             companyMemberId: this.companyMemberInfo.id,
                             uploadStatus: this.companyMemberInfo.uploadStatus
-                        }
-                        this.companyMemberInfo = null
-                        let url = 'api/interviewerInfo/updateInterviewerInfo'
-                        this.axios.post(url, data, {
-                            headers: {
-                                'token': token
-                            },
-
-                        }).then((response) => {
-                            this.companyMemberInfo = null
-                            if (response.data.state == 20000) {
+                }
+                this.companyMemberInfo = null
+                const response = await interviewInfoUpdate(data)
+                if (response.data.state == 20000) {
                                 this.$message({
                                     message: '変更に成功しました',
                                     type: 'success'
@@ -335,7 +405,7 @@ export default {
                                 //数据回显
                                 this.changePage(this.tableOptions.page, this.tableOptions.itemsPerPage)
                                 this.dialog = false
-                            } else if (response.data.state == 40400) {
+                            }else if (response.data.state == 40400) {
                                 this.$router.push("/manage-login")
                                 this.$notify.warning({
                                     message: 'ログインが期限切れです,再度ログインしてください',
@@ -347,14 +417,51 @@ export default {
                                     type: 'error'
                                 });
                             }
-                        });
-                    } else {
-                        this.$router.push('/manage-login');
-                        this.$message({
-                            message: 'ログインが期限切れです。再度ログインしてください',
-                            type: 'warn'
-                        });
-                    }
+                    // const token = localStorage.getItem('token');
+                    // console.log(token);
+                    // if (token) {
+                    //     let data = {
+                    //         id: this.changeInfo.id,
+                    //         interviewerName: this.companyMemberInfo.name,
+                    //         companyMemberId: this.companyMemberInfo.id,
+                    //         uploadStatus: this.companyMemberInfo.uploadStatus
+                    //     }
+                    //     this.companyMemberInfo = null
+                    //     let url = 'api/interviewerInfo/updateInterviewerInfo'
+                    //     this.axios.post(url, data, {
+                    //         headers: {
+                    //             'token': token
+                    //         },
+
+                    //     }).then((response) => {
+                    //         if (response.data.state == 20000) {
+                    //             this.$message({
+                    //                 message: '変更に成功しました',
+                    //                 type: 'success'
+                    //             });
+                    //             //数据回显
+                    //             this.changePage(this.tableOptions.page, this.tableOptions.itemsPerPage)
+                    //             this.dialog = false
+                    //         } else if (response.data.state == 40400) {
+                    //             this.$router.push("/manage-login")
+                    //             this.$notify.warning({
+                    //                 message: 'ログインが期限切れです,再度ログインしてください',
+                    //                 type: 'warn'
+                    //             });
+                    //         } else {
+                    //             this.$notify.error({
+                    //                 message: '面接者情報の取得に失敗しました',
+                    //                 type: 'error'
+                    //             });
+                    //         }
+                    //     });
+                    // } else {
+                    //     this.$router.push('/manage-login');
+                    //     this.$message({
+                    //         message: 'ログインが期限切れです。再度ログインしてください',
+                    //         type: 'warn'
+                    //     });
+                    // }
 
                 }
             } else {
@@ -362,36 +469,49 @@ export default {
             }
         },
         //修改页签
-        changePage(pageNum1, pageSize1) {
-            const token = localStorage.getItem('token');
-            if (token) {
-                let url = 'api/interviewerInfo/list'
-                this.axios.get(url, {
-                    params: { pageNum: pageNum1, pageSize: pageSize1 },
-                    headers: {
-                        'token': token
-                    },
-                }).then((response) => {
-                    if (response.data.state == 20000) {
+     async changePage (pageNum1, pageSize1) {
+      const response = await getInterviewMessageAPI(pageNum1, pageSize1);
+           if (response.data.state == 20000) {
                         console.log(response);
                         //面试者信息赋值
                         this.$store.commit('initInterviewerInfo', response.data)
                         this.interviewerList = this.$store.state.interviewerInfo
                         this.totalItems = this.$store.state.totalItems
-                    } else {
+                    }else {
                         this.$notify.error({
                             message: response.data.message,
                             type: 'error'
                         });
                     }
-                });
-            } else {
-                this.$router.push('/manage-login');
-                this.$message({
-                    message: 'ログインが期限切れです。再度ログインしてください',
-                    type: 'warn'
-                });
-            }
+            // const token = localStorage.getItem('token');
+            // if (token) {
+            //     let url = 'api/interviewerInfo/list'
+            //     this.axios.get(url, {
+            //         params: { pageNum: pageNum1, pageSize: pageSize1 },
+            //         headers: {
+            //             'token': token
+            //         },
+            //     }).then((response) => {
+            //         if (response.data.state == 20000) {
+            //             console.log(response);
+            //             //面试者信息赋值
+            //             this.$store.commit('initInterviewerInfo', response.data)
+            //             this.interviewerList = this.$store.state.interviewerInfo
+            //             this.totalItems = this.$store.state.totalItems
+            //         } else {
+            //             this.$notify.error({
+            //                 message: response.data.message,
+            //                 type: 'error'
+            //             });
+            //         }
+            //     });
+            // } else {
+            //     this.$router.push('/manage-login');
+            //     this.$message({
+            //         message: 'ログインが期限切れです。再度ログインしてください',
+            //         type: 'warn'
+            //     });
+            // }
         }
     },
     //监听器

@@ -21,6 +21,7 @@
 </template>
 <script>
 import bgImg from './bot-avatar.png';
+import {interviewerLogin} from '@/api'
 export default {
     data() {
         return {
@@ -49,23 +50,24 @@ export default {
     },
     methods: {
         onSubmit(form) {
-            this.$refs.ruleForm.validate().then(success => {
+            this.$refs.ruleForm.validate().then(async success => {
                 if (success) {
                     var localPath = this.GLOBAL.localSrc;
-                    let url = '/api/users/interviewerLoginInfo';
-                    console.log('尝试登录')
-                    console.log('请求路径为:' + url)
-                    console.log('请求参数为:' + this.ruleForm)
-                    console.log(this.ruleForm)
+                    // let url = '/api/users/interviewerLoginInfo';
+                    // console.log('尝试登录')
+                    // console.log('请求路径为:' + url)
+                    // console.log('请求参数为:' + this.ruleForm)
+                    // console.log(this.ruleForm)
                     // let dateFrom = this.qs.stringify(this.ruleForm)
                     // 设置请求头为 application/json
-                    let config = {
-                        headers: {
-                            'Content-Type': 'application/json'
-                        }
-                    };
-                    this.axios.post(url, this.ruleForm, config).then((response) => {
-                        console.log(68, response);
+                    // let config = {
+                    //     headers: {
+                    //         'Content-Type': 'application/json'
+                    //     }
+                    // };
+                    // this.axios.post(url, this.ruleForm, config).then((response) => {
+                  //     console.log(68, response);
+                    const response = await interviewerLogin(this.ruleForm)
                         if (response.data.state == 20000) {
                             console.log('ログインが成功しました.');
                             this.$message({
@@ -88,7 +90,6 @@ export default {
                                 message: 'ログインに失敗しました。ユーザー名またはパスワードが正しくありません.'
                             });
                         }
-                    });
                 } else {
                     console.log('error submit!!')
                     return false;

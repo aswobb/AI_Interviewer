@@ -4,7 +4,7 @@ import router from "@/router";
 import { Message } from "element-ui";
 const myAxios = axios.create({
     // baseURL: 'http://localhost:9999'
-    baseURL: 'http://57.180.251.211:80/api'
+    baseURL: 'http://57.180.251.211:80'
 })
 // 定义请求拦截器
 myAxios.interceptors.request.use(function (config) {
@@ -20,14 +20,17 @@ myAxios.interceptors.request.use(function (config) {
 
 // 定义响应拦截器
 myAxios.interceptors.response.use(function (response) {
-    // 响应状态码为 2xx 时触发成功的回调，形参中的 response 是“成功的结果”
     console.log(23, response);
+    if (response.data.state != 20000) { Message.error(response.data.message) }
+
     return response
 }, function (error) {
-
-    console.log(26, error);
- 
-  return Promise.reject(error)
+    console.log(28, error);
+    Message.error("ログインが期限切れです,再度ログインしてください!")
+    if (error.message == 'Network Error') {
+        router.push('/manage-login')
+    }
+    return Promise.reject(error)
 
 })
 

@@ -21,7 +21,7 @@
 </template>
 <script>
 import bgImg from './bot-avatar.png';
-import {interviewerLogin} from '@/api'
+import { interviewerLogin } from '@/api'
 export default {
     data() {
         return {
@@ -66,33 +66,31 @@ export default {
                     //     }
                     // };
                     // this.axios.post(url, this.ruleForm, config).then((response) => {
-                  //     console.log(68, response);
+                    //     console.log(68, response);
                     const response = await interviewerLogin(this.ruleForm)
-                        if (response.data.state == 20000) {
-                            console.log('ログインが成功しました.');
-                            this.$message({
-                                message: 'ログインが成功しました.',
-                                type: 'success'
-                            });
-                            console.log(75, response.data.data.InterviewInfo.contractor);
-                            const token = response.data.data.InterviewInfo.token;
-                            const contractor = response.data.data.InterviewInfo.contractor;
-                            localStorage.setItem('token', token);
-                            localStorage.setItem('contractor', contractor);
-                            this.$store.state.companyMemberInfo = response.data.data.memberInfo
-                            sessionStorage.setItem('username', this.ruleForm.interviewerId);
-                            this.$gtm.sendLoginEvent(this.ruleForm.interviewerId); // ログインイベント送出
-                            this.$router.push({ name: 'ChatApp' })
-                        } else {
-                            console.log('ログインに失敗しました。ユーザー名またはパスワードが正しくありません.')
-                            this.$notify.error({
-                                title: 'ログインに失敗しました.',
-                                message: 'ログインに失敗しました。ユーザー名またはパスワードが正しくありません.'
-                            });
-                        }
-                } else {
-                    console.log('error submit!!')
-                    return false;
+                    if (response.data.state == 20000) {
+                        console.log('ログインが成功しました.');
+                        this.$message({
+                            message: 'ログインが成功しました.',
+                            type: 'success'
+                        });
+                        console.log(75, response.data.data.InterviewInfo.contractor);
+                        const token = response.data.data.InterviewInfo.token;
+                        const contractor = response.data.data.InterviewInfo.contractor;
+                        localStorage.setItem('token', token);
+                        localStorage.setItem('contractor', contractor);
+                        this.$store.state.companyMemberInfo = response.data.data.memberInfo
+                        sessionStorage.setItem('username', this.ruleForm.interviewerId);
+                        this.$gtm.sendLoginEvent(this.ruleForm.interviewerId); // ログインイベント送出
+                        this.$router.push({ name: 'ChatApp' })
+                    }
+                    // else {
+                    //     console.log('ログインに失敗しました。ユーザー名またはパスワードが正しくありません.')
+                    //     this.$notify.error({
+                    //         title: 'ログインに失敗しました.',
+                    //         message: 'ログインに失敗しました。ユーザー名またはパスワードが正しくありません.'
+                    //     });
+                    // }
                 }
             });
         },

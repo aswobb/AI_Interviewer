@@ -60,7 +60,7 @@
 </template>
 
 <script>
-import { companyDelAPI, getCompanyAPI,managerPlus,managerUpdate } from '@/api'
+import { companyDelAPI, getCompanyAPI, managerPlus, managerUpdate } from '@/api'
 export default {
     created() {
         this.getCompanyInfo(1, 5)
@@ -153,8 +153,8 @@ export default {
         },
         closeDialog() {
             this.dialog = false;
-      },
-        
+        },
+
         async deleteData() {
             const response = await companyDelAPI(this.deleteId)
 
@@ -165,18 +165,19 @@ export default {
                     message: '削除に成功しました！',
                     type: 'success'
                 })
-            }else if (response.data.state == 40400) {
-                        this.$router.push("/manage-login")
-                        this.$notify.warning({
-                            message: 'ログインが期限切れです,再度ログインしてください',
-                            type: 'warn'
-                        });
-                    }else {
-                        this.$notify.error({
-                            message: '情報の取得に失敗しました',
-                            type: 'error'
-                        });
-                    }
+            }
+            // else if (response.data.state == 40400) {
+            //             this.$router.push("/manage-login")
+            //             this.$notify.warning({
+            //                 message: 'ログインが期限切れです,再度ログインしてください',
+            //                 type: 'warn'
+            //             });
+            //         }else {
+            //             this.$notify.error({
+            //                 message: '情報の取得に失敗しました',
+            //                 type: 'error'
+            //             });
+            //         }
 
             // const token = localStorage.getItem('token');
             // console.log(token);
@@ -262,54 +263,55 @@ export default {
         //公司基本信息赋值
         async getCompanyInfo(pageNum1, pageSize1) {
             const response = await getCompanyAPI(pageNum1, pageSize1)
-      
+
             if (response.data.state == 20000) {
                 console.log(response);
                 this.$store.commit('initCompanyInfo', response.data)
                 this.companyInfo = this.$store.state.companyInfo
                 this.totalItems = this.$store.state.companyTotalItems
-            }else if (response.data.state == 40400) {
-                        this.$router.push("/manage-login")
-                        this.$notify.warning({
-                            message: 'ログインが期限切れです,再度ログインしてください',
-                            type: 'warn'
-                        });
-                    } else {
-                        this.$notify.error({
-                            message: '情報の取得に失敗しました',
-                            type: 'error'
-                        });
-                    }
+            }
+            // else if (response.data.state == 40400) {
+            //     this.$router.push("/manage-login")
+            //     this.$notify.warning({
+            //         message: 'ログインが期限切れです,再度ログインしてください',
+            //         type: 'warn'
+            //     });
+            // } else {
+            //     this.$notify.error({
+            //         message: '情報の取得に失敗しました',
+            //         type: 'error'
+            //     });
+            // }
 
             // const token = localStorage.getItem('token');
             // console.log(token);
             // if (token) {
-                // let url = 'api/snsUser/list'
-                // this.axios.get(url, {
-                //     params: { pageNum: pageNum1, pageSize: pageSize1 },
-                //     headers: {
-                //         'token': token
-                //     },
+            // let url = 'api/snsUser/list'
+            // this.axios.get(url, {
+            //     params: { pageNum: pageNum1, pageSize: pageSize1 },
+            //     headers: {
+            //         'token': token
+            //     },
 
-                // }).then((response) => {
-                //     if (response.data.state == 20000) {
-                //         console.log(response);
-                //         this.$store.commit('initCompanyInfo', response.data)
-                //         this.companyInfo = this.$store.state.companyInfo
-                //         this.totalItems = this.$store.state.companyTotalItems
-                //     } else if (response.data.state == 40400) {
-                //         this.$router.push("/manage-login")
-                //         this.$notify.warning({
-                //             message: 'ログインが期限切れです,再度ログインしてください',
-                //             type: 'warn'
-                //         });
-                //     } else {
-                //         this.$notify.error({
-                //             message: '情報の取得に失敗しました',
-                //             type: 'error'
-                //         });
-                //     }
-                // });
+            // }).then((response) => {
+            //     if (response.data.state == 20000) {
+            //         console.log(response);
+            //         this.$store.commit('initCompanyInfo', response.data)
+            //         this.companyInfo = this.$store.state.companyInfo
+            //         this.totalItems = this.$store.state.companyTotalItems
+            //     } else if (response.data.state == 40400) {
+            //         this.$router.push("/manage-login")
+            //         this.$notify.warning({
+            //             message: 'ログインが期限切れです,再度ログインしてください',
+            //             type: 'warn'
+            //         });
+            //     } else {
+            //         this.$notify.error({
+            //             message: '情報の取得に失敗しました',
+            //             type: 'error'
+            //         });
+            //     }
+            // });
             // }
             //  else {
             //     this.$router.push("/manage-login")
@@ -320,19 +322,19 @@ export default {
             // }
         },
         sumbit() {
-                if (this.$refs.form.validate()) {
+            if (this.$refs.form.validate()) {
 
-                    if (this.operation === '追加') {
-                        this.addUser()
-                    } else {
-                        this.updateUser()
-                    }
+                if (this.operation === '追加') {
+                    this.addUser()
+                } else {
+                    this.updateUser()
                 }
-           
-      },
+            }
 
-      
-       async addUser() {
+        },
+
+
+        async addUser() {
             // let url = 'api/snsUser/create'
             // let config = {
             //     headers: {
@@ -341,29 +343,30 @@ export default {
             // };
             // console.log("add", this.userInfo);
 
-         const response = await managerPlus(this.userInfo);
-         if (response.data.state == 20000) {
-                    this.$message({
-                        message: 'ユーザーの追加が成功しました.',
-                        type: 'success'
-                    });
-                    //回显
-                    this.getCompanyInfo(this.tableOptions.page, this.tableOptions.itemsPerPage)
-                    //关闭对话框
-                    this.close()
-                }else if (response.data.state == 40400) {
-                    this.$router.push("/manage-login")
-                    this.$notify.warning({
-                        message: 'ログインが期限切れです,再度ログインしてください',
-                        type: 'warn'
-                    });
-                }else {
-                    this.$message({
-                        message: response.data.message,
-                        type: 'error'
-                    });
-                }
-            
+            const response = await managerPlus(this.userInfo);
+            if (response.data.state == 20000) {
+                this.$message({
+                    message: 'ユーザーの追加が成功しました.',
+                    type: 'success'
+                });
+                //回显
+                this.getCompanyInfo(this.tableOptions.page, this.tableOptions.itemsPerPage)
+                //关闭对话框
+                this.close()
+            }
+            // else if (response.data.state == 40400) {
+            //     this.$router.push("/manage-login")
+            //     this.$notify.warning({
+            //         message: 'ログインが期限切れです,再度ログインしてください',
+            //         type: 'warn'
+            //     });
+            // } else {
+            //     this.$message({
+            //         message: response.data.message,
+            //         type: 'error'
+            //     });
+            // }
+
             // this.axios.post(url, this.userInfo, config).then((response) => {
             //     if (response.data.state == 20000) {
             //         this.$message({
@@ -391,32 +394,33 @@ export default {
         },
 
 
-     async updateUser () {
+        async updateUser() {
 
-       const response = await managerUpdate(this.userInfo);
-       if (response.data.state == 20000) {
-                    this.$message({
-                        message: 'ユーザーの変更が成功しました.',
-                        type: 'success'
-                    });
-                    // 回显
-                    this.getCompanyInfo(this.tableOptions.page, this.tableOptions.itemsPerPage)
-                    //关闭对话框
-                    this.close()
-             }else if (response.data.state == 40400) {
-                    this.$router.push("/manage-login")
-                    this.$notify.warning({
-                        message: 'ログインが期限切れです,再度ログインしてください',
-                        type: 'warn'
-                    });
-                } else {
-                    this.$message({
-                        message: response.data.message,
-                        type: 'error'
-                    });
-                }
+            const response = await managerUpdate(this.userInfo);
+            if (response.data.state == 20000) {
+                this.$message({
+                    message: 'ユーザーの変更が成功しました.',
+                    type: 'success'
+                });
+                // 回显
+                this.getCompanyInfo(this.tableOptions.page, this.tableOptions.itemsPerPage)
+                //关闭对话框
+                this.close()
+            }
+            //  else if (response.data.state == 40400) {
+            //     this.$router.push("/manage-login")
+            //     this.$notify.warning({
+            //         message: 'ログインが期限切れです,再度ログインしてください',
+            //         type: 'warn'
+            //     });
+            // } else {
+            //     this.$message({
+            //         message: response.data.message,
+            //         type: 'error'
+            //     });
+            // }
 
-         
+
             // let url = 'api/snsUser/update'
             // let config = {
             //     headers: {
@@ -429,7 +433,7 @@ export default {
             //             message: 'ユーザーの変更が成功しました.',
             //             type: 'success'
             //         });
-                    //回显
+            //回显
             //         this.getCompanyInfo(this.tableOptions.page, this.tableOptions.itemsPerPage)
             //         //关闭对话框
             //         this.close()

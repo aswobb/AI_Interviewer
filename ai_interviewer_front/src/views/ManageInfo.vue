@@ -77,7 +77,7 @@
 </template>
 
 <script>
-import {getInterviewMessageAPI,managerPwChange} from '@/api'
+import { getInterviewMessageAPI, managerPwChange } from '@/api'
 export default {
     data() {
         return {
@@ -119,22 +119,22 @@ export default {
             this.$router.push('/manage-login')
             this.$store.commit('cleanCache')
         },
-      editUser () {
-        // const response = getInterviewMessageAPI(1, 5)
-        // if (response.data.state == 20000) {
-        //                 //面试者信息赋值
-        //                 this.$store.commit('initInterviewerInfo', response.data)
-        //             } else {
-        //                 this.$notify.error({
-        //                     message: '面接者情報の取得に失敗しました',
-        //                     type: 'error'
-        //                 });
-        // }
-                    // 导航到编辑用户信息的页面
-                this.$router.push({
-                    path: '/interview-list',
-                    query: { id: this.user.id }
-                });
+        editUser() {
+            // const response = getInterviewMessageAPI(1, 5)
+            // if (response.data.state == 20000) {
+            //                 //面试者信息赋值
+            //                 this.$store.commit('initInterviewerInfo', response.data)
+            //             } else {
+            //                 this.$notify.error({
+            //                     message: '面接者情報の取得に失敗しました',
+            //                     type: 'error'
+            //                 });
+            // }
+            // 导航到编辑用户信息的页面
+            this.$router.push({
+                path: '/interview-list',
+                query: { id: this.user.id }
+            });
             // const token = localStorage.getItem('token');
             // console.log(token);
             // if (token) {
@@ -170,7 +170,7 @@ export default {
             //     });
             // }
         },
-       async changePw() {
+        async changePw() {
             if (this.$refs.form.validate()) {
                 // const token = localStorage.getItem('token');
                 // let config = {
@@ -184,19 +184,20 @@ export default {
                     oldPassword: this.changePwForm.password,
                     newPassword: this.changePwForm.newPassword
                 }
-              const response = await managerPwChange(data)
-              if (response.data.state == 20000) {
-                            this.$message({
-                                message: 'パスワード変更に成功しました.',
-                                type: 'success'
-                            });
-                            this.dialog = false
-                        } else {
-                            this.$notify.error({
-                                message: 'パスワード変更に失敗しました.',
-                                type: 'error'
-                            });
-                        }
+                const response = await managerPwChange(data)
+                if (response.data.state == 20000) {
+                    this.$message({
+                        message: 'パスワード変更に成功しました.',
+                        type: 'success'
+                    });
+                    this.dialog = false
+                }
+                // else {
+                //     this.$notify.error({
+                //         message: 'パスワード変更に失敗しました.',
+                //         type: 'error'
+                //     });
+                // }
                 // if (token) {
                 //     this.axios.post(url, data, {
                 //         headers: {

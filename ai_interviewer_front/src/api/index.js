@@ -3,25 +3,24 @@ import request from '@/utils/request'
  * 管理者ログイン画面
  */
 export const loginAPI = ({ username, password }) => {
-    return request({
-        url: '/users/login',
-        method: 'POST',
-        data: {
-            username,
-            password
-        }
-    })
+  return request({
+    url: '/api/users/login',
+    method: 'POST',
+    data: {
+      username,
+      password
+    }
+  })
 }
-
 
 /**
  * chatpageの履歴書をバックに転送
  */
 export const fileSend = (fd) => {
   return request({
-      url: '/chat/receiveFile',
-      method: 'POST',
-      data: fd
+    url: '/api/chat/receiveFile',
+    method: 'POST',
+    data: fd
   })
 }
 
@@ -30,9 +29,9 @@ export const fileSend = (fd) => {
  */
 export const fileSend2 = (fd) => {
   return request({
-      url: '/companyMember/receiveFile',
-      method: 'POST',
-      data: fd
+    url: '/api/companyMember/receiveFile',
+    method: 'POST',
+    data: fd
   })
 }
 
@@ -42,48 +41,47 @@ export const fileSend2 = (fd) => {
 
 export const chatMessageSend1 = (chatmessage) => {
   return request({
-      url: '/chat/sendContentByGoogleCloud',
-      method: 'POST',
-      data: chatmessage
+    url: '/api/chat/sendContentByGoogleCloud',
+    method: 'POST',
+    data: chatmessage
   })
 }
 
 /**
  * チャット内容をバックに転送２
  */
-export const MessageSend2 = ( message ) => {
+export const MessageSend2 = (message) => {
   return request({
-      url: '/chat/sendMessage',
-      method: 'POST',
-      data: 
-        message
+    url: '/api/chat/sendMessage',
+    method: 'POST',
+    data:
+      message
   })
 }
 
 /**
  * 面接完了
  */
-export const MessageSend3 = ( message ) => {
+export const MessageSend3 = (message) => {
   return request({
-      url: '/interviewerInfo/completeInterviewerInfo',
-      method: 'POST',
-      data: 
-        message
-      
+    url: '/api/interviewerInfo/completeInterviewerInfo',
+    method: 'POST',
+    data:
+      message
+
   })
 }
-
 
 /**
  * 新社員名追加
  */
-export const memberPlus = ( form ) => {
+export const memberPlus = (form) => {
   return request({
-      url: '/companyMember/insert',
-      method: 'POST',
-      data: 
-        form
-      
+    url: '/api/companyMember/insert',
+    method: 'POST',
+    data:
+      form
+
   })
 }
 
@@ -92,36 +90,35 @@ export const memberPlus = ( form ) => {
  */
 export const interviewerLogin = ({ interviewerId, interviewerName }) => {
   return request({
-      url: '/users/interviewerLoginInfo',
-      method: 'POST',
-      data: {
-        interviewerId,
-        interviewerName
-      }
+    url: '/api/users/interviewerLoginInfo',
+    method: 'POST',
+    data: {
+      interviewerId,
+      interviewerName
+    }
   })
 }
-
 
 /**
  *  面接listに新たな面接追加API
  */
 export const interviewListAdd = (idid) => {
   return request({
-      url: '/interviewerInfo/batchCreate',
-      method: 'POST',
+    url: '/api/interviewerInfo/batchCreate',
+    method: 'POST',
     data: {
-        idid
-      }
+      idid
+    }
   })
 }
 
 /**
  * 管理者パースワード変更
  */
-export const managerPwChange = ( dada ) => {
+export const managerPwChange = (dada) => {
   return request({
-      url: '/snsUser/updatePassword',
-      method: 'POST',
+    url: '/api/snsUser/updatePassword',
+    method: 'POST',
     data: dada
   })
 }
@@ -132,11 +129,11 @@ export const managerPwChange = ( dada ) => {
 
 export const interviewInfoDownload = (ID) => {
   return request({
-      url: '/interviewerInfo/downLoadCsv/' + ID,
-      method: 'GET',
-      params: {
-        
-      }
+    url: '/api/interviewerInfo/downLoadCsv/' + ID,
+    method: 'GET',
+    params: {
+
+    }
   })
 }
 
@@ -146,9 +143,9 @@ export const interviewInfoDownload = (ID) => {
 
 export const memberGet = (obj) => {
   return request({
-      url: '/companyMember/getAllMebmer',
-      method: 'GET',
-      params: obj
+    url: '/api/companyMember/getAllMebmer',
+    method: 'GET',
+    params: obj
   })
 }
 
@@ -158,44 +155,44 @@ export const memberGet = (obj) => {
 
 export const memberListGet = (id1, pageNum1, pageSize1) => {
   return request({
-      url: '/companyMember/list',
-      method: 'GET',
-      params: {
-        userId: id1,
-        pageNum: pageNum1,
-        pageSize: pageSize1
-      }
+    url: '/api/companyMember/list',
+    method: 'GET',
+    params: {
+      userId: id1,
+      pageNum: pageNum1,
+      pageSize: pageSize1
+    }
   })
 }
 /**
  * 面接情報変更 
  */
-export const interviewInfoUpdate = ( paramter ) => {
+export const interviewInfoUpdate = (paramter) => {
   return request({
-      url: '/interviewerInfo/updateInterviewerInfo',
-      method: 'POST',
-      data: paramter
+    url: '/api/interviewerInfo/updateInterviewerInfo',
+    method: 'POST',
+    data: paramter
   })
 }
 
 /**
  * 管理者情報変更
  */
-export const managerUpdate = ( {id,username,contractor,password,userBillingHistoryVO: {courseId,courseCustomNum},remainNum} ) => {
+export const managerUpdate = ({ id, username, contractor, password, userBillingHistoryVO: { courseId, courseCustomNum }, remainNum }) => {
   return request({
-      url: '/snsUser/update',
-      method: 'POST',
+    url: '/api/snsUser/update',
+    method: 'POST',
     data: {
       id,
       username,
       contractor,
       password,
       userBillingHistoryVO: {
-          courseId,
-          courseCustomNum
+        courseId,
+        courseCustomNum
       },
       remainNum
-  }
+    }
   })
 }
 
@@ -203,21 +200,21 @@ export const managerUpdate = ( {id,username,contractor,password,userBillingHisto
  * 管理者追加
  */
 
-export const managerPlus = ( {id,username,contractor,password,userBillingHistoryVO: {courseId,courseCustomNum},remainNum} ) => {
+export const managerPlus = ({ id, username, contractor, password, userBillingHistoryVO: { courseId, courseCustomNum }, remainNum }) => {
   return request({
-      url: '/snsUser/create',
-      method: 'POST',
+    url: '/api/snsUser/create',
+    method: 'POST',
     data: {
       id,
       username,
       contractor,
       password,
       userBillingHistoryVO: {
-          courseId,
-          courseCustomNum
+        courseId,
+        courseCustomNum
       },
       remainNum
-  }
+    }
   })
 }
 
@@ -227,12 +224,12 @@ export const managerPlus = ( {id,username,contractor,password,userBillingHistory
 
 export const getInterviewMessageAPI = (pageNum, pageSize) => {
   return request({
-      url: '/interviewerInfo/list',
-      method: 'GET',
-      params: {
-          pageNum,
-          pageSize
-      }
+    url: '/api/interviewerInfo/list',
+    method: 'GET',
+    params: {
+      pageNum,
+      pageSize
+    }
   })
 }
 
@@ -242,8 +239,8 @@ export const getInterviewMessageAPI = (pageNum, pageSize) => {
 
 export const getCurrentUserAPI = () => {
   return request({
-      url: '/snsUser/getCurrentUser',
-      method: 'GET'
+    url: '/api/snsUser/getCurrentUser',
+    method: 'GET'
   })
 }
 
@@ -252,10 +249,10 @@ export const getCurrentUserAPI = () => {
  */
 export const memberDelete = (memberId) => {
   return request({
-    url: '/companyMember/delete',
+    url: '/api/companyMember/delete',
     method: 'DELETE',
     params: memberId
-      
+
   })
 }
 
@@ -263,13 +260,13 @@ export const memberDelete = (memberId) => {
  * 会社情報削除
  */
 export const companyDelAPI = (id) => {
-    return request({
-      url: '/snsUser/delete/' + id,
-      method: 'DELETE',
-      params: {
-          
-        }
-    })
+  return request({
+    url: '/api/snsUser/delete/' + id,
+    method: 'DELETE',
+    params: {
+
+    }
+  })
 }
 
 /**
@@ -278,12 +275,13 @@ export const companyDelAPI = (id) => {
  * @returns Promise对象
  */
 export const getCompanyAPI = (pageNum, pageSize) => {
-    return request({
-        url: '/snsUser/list',
-        method: 'GET',
-        params: {
-            pageNum,
-            pageSize
-        }
-    })
+  return request({
+    url: '/api/snsUser/list',
+    method: 'GET',
+    params: {
+      pageNum,
+      pageSize
+    }
+  })
 }
+

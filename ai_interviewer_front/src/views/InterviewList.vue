@@ -55,7 +55,7 @@
 
 <script>
 import { Message } from 'element-ui';
-import { memberGet,getCurrentUserAPI,interviewInfoDownload,interviewListAdd,interviewInfoUpdate,getInterviewMessageAPI} from '@/api'
+import { memberGet, getCurrentUserAPI, interviewInfoDownload, interviewListAdd, interviewInfoUpdate, getInterviewMessageAPI } from '@/api'
 export default {
     created() {
         this.userId = this.$route.query.id
@@ -123,22 +123,23 @@ export default {
         getUploadStatusText(status) {
             return status === 1 ? '済み' : 'ー';
         },
-      async getMember (id) {
-        let obj = {
-                    userId: id,
-                }
-        const response = await memberGet(obj)
-        if (response.data.state == 20000) {
-                        this.$store.state.companyMemberInfo = response.data.data
-                        this.memberList = response.data.data
-                        console.log(129, this.memberList);
-                    } else if (response.data.state == 40400) {
-                        this.$router.push("/manage-login")
-                        this.$notify.warning({
-                            message: 'ログインが期限切れです,再度ログインしてください',
-                            type: 'warn'
-                        });
-                    }  
+        async getMember(id) {
+            let obj = {
+                userId: id,
+            }
+            const response = await memberGet(obj)
+            if (response.data.state == 20000) {
+                this.$store.state.companyMemberInfo = response.data.data
+                this.memberList = response.data.data
+                console.log(129, this.memberList);
+            }
+            // else if (response.data.state == 40400) {
+            //     this.$router.push("/manage-login")
+            //     this.$notify.warning({
+            //         message: 'ログインが期限切れです,再度ログインしてください',
+            //         type: 'warn'
+            //     });
+            // }  
             // const token = localStorage.getItem('token');
             // console.log(token);
             // if (token) {
@@ -168,25 +169,26 @@ export default {
             this.$router.push('/manage-info')
         },
         //公司基本信息赋值
-      async getCompanyInfo () {
-        const response = await getCurrentUserAPI();
-        if (response.data.state == 20000) {
-                        console.log(response);
-                        this.companyInfo.contractor = response.data.data.contractor
-                        this.companyInfo.remainNum = response.data.data.remainNum
-                        this.companyInfo.usageCount = response.data.data.usageCount
-                    } else if (response.data.state == 40400) {
-                        this.$router.push("/manage-login")
-                        this.$notify.warning({
-                            message: 'ログインが期限切れです,再度ログインしてください',
-                            type: 'warn'
-                        });
-                    } else {
-                        this.$notify.error({
-                            message: '面接者情報の取得に失敗しました',
-                            type: 'error'
-                        });
-                    }
+        async getCompanyInfo() {
+            const response = await getCurrentUserAPI();
+            if (response.data.state == 20000) {
+                console.log(response);
+                this.companyInfo.contractor = response.data.data.contractor
+                this.companyInfo.remainNum = response.data.data.remainNum
+                this.companyInfo.usageCount = response.data.data.usageCount
+            }
+            //  else if (response.data.state == 40400) {
+            //     this.$router.push("/manage-login")
+            //     this.$notify.warning({
+            //         message: 'ログインが期限切れです,再度ログインしてください',
+            //         type: 'warn'
+            //     });
+            // } else {
+            //     this.$notify.error({
+            //         message: '面接者情報の取得に失敗しました',
+            //         type: 'error'
+            //     });
+            // }
             // const token = localStorage.getItem('token');
             // console.log(token);
             // if (token) {
@@ -226,33 +228,34 @@ export default {
         },
 
         //增加条数
-      async addData () {
-        let data = {}
-      const response = await interviewListAdd(data);
-      if (response.data.state == 20000) {
-                        this.changePage(this.tableOptions.page, this.tableOptions.itemsPerPage)
-                        this.getCompanyInfo()
-                        this.$message({
-                            message: '面接者データ20件追加成功しました。',
-                            type: 'success'
-                        })
-                    }else if (response.data.state == 40400) {
-                        this.$router.push("/manage-login")
-                        this.$notify.warning({
-                            message: 'ログインが期限切れです,再度ログインしてください',
-                            type: 'warn'
-                        });
-                    }else if (response.data.state == 70001) {
-                        this.$notify.error({
-                            message: '残高が不足です。',
-                            type: 'error'
-                        });
-                    } else {
-                        this.$notify.error({
-                            message: '面接者データ追加に失敗しました。',
-                            type: 'error'
-                        });
-                    }
+        async addData() {
+            let data = {}
+            const response = await interviewListAdd(data);
+            if (response.data.state == 20000) {
+                this.changePage(this.tableOptions.page, this.tableOptions.itemsPerPage)
+                this.getCompanyInfo()
+                this.$message({
+                    message: '面接者データ20件追加成功しました。',
+                    type: 'success'
+                })
+            }
+            // else if (response.data.state == 40400) {
+            //     this.$router.push("/manage-login")
+            //     this.$notify.warning({
+            //         message: 'ログインが期限切れです,再度ログインしてください',
+            //         type: 'warn'
+            //     });
+            // }else if (response.data.state == 70001) {
+            //     this.$notify.error({
+            //         message: '残高が不足です。',
+            //         type: 'error'
+            //     });
+            // } else {
+            //     this.$notify.error({
+            //         message: '面接者データ追加に失敗しました。',
+            //         type: 'error'
+            //     });
+            // }
             // const token = localStorage.getItem('token');
             // console.log(token);
             // if (token) {
@@ -302,7 +305,7 @@ export default {
             // }
         },
         //打开修改面板
-     async openChangeInfo (item) {
+        async openChangeInfo(item) {
             this.dialog = true
             console.log(item);
             this.oldName = item.interviewerName
@@ -311,73 +314,73 @@ export default {
             this.changeInfo.interviewerId = item.interviewerId
         },
         // //下载结果信息
-       async download(Id) {
-         const response = await interviewInfoDownload(Id);
-         if (response.data.state == 40400) {
-                        this.$router.push("/manage-login")
-                        this.$notify.warning({
-                            message: 'ログインが期限切れです,再度ログインしてください',
-                            type: 'warn'
-                        });
-                    }else {
-                        try {
-                            const blob = new Blob([response.data], { type: 'application/octet-stream' }); // ダウンロードリンクを作成 
-                            const url = window.URL.createObjectURL(blob);
-                            const link = document.createElement('a');
-                            link.href = url;
-                            link.setAttribute('download', 'output.csv'); // ダウンロードファイル名を設定 // リンクをクリックしてファイルをダウンロード 
-                            document.body.appendChild(link);
-                            link.click(); // リンクを削除 
-                            document.body.removeChild(link);
-                        } catch (error) {
-                            this.$message({
-                                message: error.message,
-                                type: 'error'
-                            });
-                        }
-                    }
-        //     if (token) {
-        //         let url = 'api/interviewerInfo/downLoadCsv/' + Id
-        //         this.axios.get(url, {
-        //             headers: {
-        //                 'token': token
-        //             },
-        //             responseType: 'blob'
-        //         }).then((response) => {
-        //             if (response.data.state == 40400) {
-        //                 this.$router.push("/manage-login")
-        //                 this.$notify.warning({
-        //                     message: 'ログインが期限切れです,再度ログインしてください',
-        //                     type: 'warn'
-        //                 });
-        //             } else {
-        //                 try {
-        //                     const blob = new Blob([response.data], { type: 'application/octet-stream' }); // ダウンロードリンクを作成 
-        //                     const url = window.URL.createObjectURL(blob);
-        //                     const link = document.createElement('a');
-        //                     link.href = url;
-        //                     link.setAttribute('download', 'output.csv'); // ダウンロードファイル名を設定 // リンクをクリックしてファイルをダウンロード 
-        //                     document.body.appendChild(link);
-        //                     link.click(); // リンクを削除 
-        //                     document.body.removeChild(link);
-        //                 } catch (error) {
-        //                     this.$message({
-        //                         message: error.message,
-        //                         type: 'error'
-        //                     });
-        //                 }
-        //             }
-        //         });
-        //     } else {
-        //         this.$router.push('/manage-login');
-        //         this.$message({
-        //             message: 'ログインが期限切れです。再度ログインしてください',
-        //             type: 'warn'
-        //         });
-        //     }
+        async download(Id) {
+            const response = await interviewInfoDownload(Id);
+            if (response.data.state == 40400) {
+                this.$router.push("/manage-login")
+                this.$notify.warning({
+                    message: 'ログインが期限切れです,再度ログインしてください',
+                    type: 'warn'
+                });
+            } else {
+                try {
+                    const blob = new Blob([response.data], { type: 'application/octet-stream' }); // ダウンロードリンクを作成 
+                    const url = window.URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.setAttribute('download', 'output.csv'); // ダウンロードファイル名を設定 // リンクをクリックしてファイルをダウンロード 
+                    document.body.appendChild(link);
+                    link.click(); // リンクを削除 
+                    document.body.removeChild(link);
+                } catch (error) {
+                    this.$message({
+                        message: error.message,
+                        type: 'error'
+                    });
+                }
+            }
+            //     if (token) {
+            //         let url = 'api/interviewerInfo/downLoadCsv/' + Id
+            //         this.axios.get(url, {
+            //             headers: {
+            //                 'token': token
+            //             },
+            //             responseType: 'blob'
+            //         }).then((response) => {
+            //             if (response.data.state == 40400) {
+            //                 this.$router.push("/manage-login")
+            //                 this.$notify.warning({
+            //                     message: 'ログインが期限切れです,再度ログインしてください',
+            //                     type: 'warn'
+            //                 });
+            //             } else {
+            //                 try {
+            //                     const blob = new Blob([response.data], { type: 'application/octet-stream' }); // ダウンロードリンクを作成 
+            //                     const url = window.URL.createObjectURL(blob);
+            //                     const link = document.createElement('a');
+            //                     link.href = url;
+            //                     link.setAttribute('download', 'output.csv'); // ダウンロードファイル名を設定 // リンクをクリックしてファイルをダウンロード 
+            //                     document.body.appendChild(link);
+            //                     link.click(); // リンクを削除 
+            //                     document.body.removeChild(link);
+            //                 } catch (error) {
+            //                     this.$message({
+            //                         message: error.message,
+            //                         type: 'error'
+            //                     });
+            //                 }
+            //             }
+            //         });
+            //     } else {
+            //         this.$router.push('/manage-login');
+            //         this.$message({
+            //             message: 'ログインが期限切れです。再度ログインしてください',
+            //             type: 'warn'
+            //         });
+            //     }
         },
         //修改面试者信息
-       async sumbit() {
+        async sumbit() {
             this.memberList.some(item => {
                 if (item.name === this.search) {
                     this.flag = true
@@ -388,35 +391,36 @@ export default {
             console.log(this.flag);
             if (this.flag) {
                 this.flag = false
-              if (this.$refs.form.validate()) {
-                let data = {
-                            id: this.changeInfo.id,
-                            interviewerName: this.companyMemberInfo.name,
-                            companyMemberId: this.companyMemberInfo.id,
-                            uploadStatus: this.companyMemberInfo.uploadStatus
-                }
-                this.companyMemberInfo = null
-                const response = await interviewInfoUpdate(data)
-                if (response.data.state == 20000) {
-                                this.$message({
-                                    message: '変更に成功しました',
-                                    type: 'success'
-                                });
-                                //数据回显
-                                this.changePage(this.tableOptions.page, this.tableOptions.itemsPerPage)
-                                this.dialog = false
-                            }else if (response.data.state == 40400) {
-                                this.$router.push("/manage-login")
-                                this.$notify.warning({
-                                    message: 'ログインが期限切れです,再度ログインしてください',
-                                    type: 'warn'
-                                });
-                            } else {
-                                this.$notify.error({
-                                    message: '面接者情報の取得に失敗しました',
-                                    type: 'error'
-                                });
-                            }
+                if (this.$refs.form.validate()) {
+                    let data = {
+                        id: this.changeInfo.id,
+                        interviewerName: this.companyMemberInfo.name,
+                        companyMemberId: this.companyMemberInfo.id,
+                        uploadStatus: this.companyMemberInfo.uploadStatus
+                    }
+                    this.companyMemberInfo = null
+                    const response = await interviewInfoUpdate(data)
+                    if (response.data.state == 20000) {
+                        this.$message({
+                            message: '変更に成功しました',
+                            type: 'success'
+                        });
+                        //数据回显
+                        this.changePage(this.tableOptions.page, this.tableOptions.itemsPerPage)
+                        this.dialog = false
+                    }
+                    //  else if (response.data.state == 40400) {
+                    //     this.$router.push("/manage-login")
+                    //     this.$notify.warning({
+                    //         message: 'ログインが期限切れです,再度ログインしてください',
+                    //         type: 'warn'
+                    //     });
+                    // } else {
+                    //     this.$notify.error({
+                    //         message: '面接者情報の取得に失敗しました',
+                    //         type: 'error'
+                    //     });
+                    // }
                     // const token = localStorage.getItem('token');
                     // console.log(token);
                     // if (token) {
@@ -469,20 +473,21 @@ export default {
             }
         },
         //修改页签
-     async changePage (pageNum1, pageSize1) {
-      const response = await getInterviewMessageAPI(pageNum1, pageSize1);
-           if (response.data.state == 20000) {
-                        console.log(response);
-                        //面试者信息赋值
-                        this.$store.commit('initInterviewerInfo', response.data)
-                        this.interviewerList = this.$store.state.interviewerInfo
-                        this.totalItems = this.$store.state.totalItems
-                    }else {
-                        this.$notify.error({
-                            message: response.data.message,
-                            type: 'error'
-                        });
-                    }
+        async changePage(pageNum1, pageSize1) {
+            const response = await getInterviewMessageAPI(pageNum1, pageSize1);
+            if (response.data.state == 20000) {
+                console.log(response);
+                //面试者信息赋值
+                this.$store.commit('initInterviewerInfo', response.data)
+                this.interviewerList = this.$store.state.interviewerInfo
+                this.totalItems = this.$store.state.totalItems
+            }
+            //  else {
+            //     this.$notify.error({
+            //         message: response.data.message,
+            //         type: 'error'
+            //     });
+            // }
             // const token = localStorage.getItem('token');
             // if (token) {
             //     let url = 'api/interviewerInfo/list'

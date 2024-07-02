@@ -61,14 +61,14 @@ export default {
     mounted() {
         window.addEventListener('resize', this.updateIsDesktop);
     },
-  methods: {
+    methods: {
         updateIsDesktop() {
             this.isDesktop = window.innerWidth > 600;
         },
         submitForm(formName) {
             this.$refs[formName].validate(async (valid) => {
-              if (valid) {
-                  //////////
+                if (valid) {
+                    //////////
                     const response = await loginAPI(this.ruleForm)
                     if (response.data.state == 20000) {
                         this.$message({
@@ -84,13 +84,14 @@ export default {
                         } else if (type === '0') {
                             this.$router.push('/company-list')
                         }
-                    } else if (response.data.state == 40002) {
-                        Message({
-                            message: 'ログインに失敗しました。ユーザー名またはパスワードが正しくありません!',
-                            type: 'error',
-                            customClass: 'custom-message'  // 添加自定义类名
-                        });
                     }
+                    // else if (response.data.state == 40002) {
+                    //     Message({
+                    //         message: 'ログインに失敗しました。ユーザー名またはパスワードが正しくありません!',
+                    //         type: 'error',
+                    //         customClass: 'custom-message'  // 添加自定义类名
+                    //     });
+                    // }
                 }
             });
         },
@@ -98,11 +99,11 @@ export default {
             this.$refs[formName].resetFields();
         },
 
-    goTouserLogin () {
-    
-      // 使用 $router.push() 方法进行页面导航
-      // window.location.href = '/interview/user/login';
-        this.$router.replace({ path: '/interview/user/login' });
+        goTouserLogin() {
+
+            // 使用 $router.push() 方法进行页面导航
+            // window.location.href = '/interview/user/login';
+            this.$router.replace({ path: '/interview/user/login' });
 
         }
 

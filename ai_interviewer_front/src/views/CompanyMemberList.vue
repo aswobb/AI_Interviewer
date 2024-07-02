@@ -57,7 +57,7 @@
 </template>
 <script>
 import { Message } from "element-ui";
-import {memberPlus,memberDelete,fileSend2,memberListGet} from '@/api'
+import { memberPlus, memberDelete, fileSend2, memberListGet } from '@/api'
 export default {
     created() {
         this.userId = this.$route.query.id
@@ -102,22 +102,23 @@ export default {
     },
     methods: {
         submitForm(formName) {
-        this.$refs[formName].validate(async (valid) => {
-          this.form.userId = this.userId
-          let data = this.form
-          const response = await memberPlus(data)
-          this.form.name = ''
-          this.addDataFlag = false
-          if (response.data == 1) {
-                                Message.success("追加しました！")
-                                this.getMember(this.userId, this.tableOptions.page, this.tableOptions.itemsPerPage)
-                            } else if (response.data.state == 40400) {
-                                this.$router.push("/manage-login")
-                                this.$notify.warning({
-                                    message: 'ログインが期限切れです,再度ログインしてください',
-                                    type: 'warn'
-                                });
-                            }
+            this.$refs[formName].validate(async (valid) => {
+                this.form.userId = this.userId
+                let data = this.form
+                const response = await memberPlus(data)
+                this.form.name = ''
+                this.addDataFlag = false
+                if (response.data == 1) {
+                    Message.success("追加しました！")
+                    this.getMember(this.userId, this.tableOptions.page, this.tableOptions.itemsPerPage)
+                }
+                // else if (response.data.state == 40400) {
+                //     this.$router.push("/manage-login")
+                //     this.$notify.warning({
+                //         message: 'ログインが期限切れです,再度ログインしてください',
+                //         type: 'warn'
+                //     });
+                // }
                 // if (valid) {
                 //     const token = localStorage.getItem('token')
                 //     if (token) {
@@ -152,48 +153,49 @@ export default {
             this.deleteId = id
             this.deleteFlag = true
         },
-      async deleteMember () {
+        async deleteMember() {
 
-        let obj =  { memberId: this.deleteId }
-          
-          const response = await memberDelete(obj)
-          this.deleteFlag = false
-                if (response.data == 1) {
-                    Message.success("削除しました！")
-                    this.getMember(this.userId, this.tableOptions.page, this.tableOptions.itemsPerPage)
-                } else if (response.data.state == 40400) {
-                    this.$router.push("/manage-login")
-                    this.$notify.warning({
-                        message: 'ログインが期限切れです,再度ログインしてください',
-                        type: 'warn'
-                    });
-                }
-          //   const token = localStorage.getItem('token')
-          // let url = 'api/companyMember/delete'
-            
-          //   this.axios.delete(url, {
-          //       params: { memberId: this.deleteId },
-          //       headers: {
-          //           'token': token
-          //       },
-          //   }).then((response) => {
-          //       this.deleteFlag = false
-          //       if (response.data == 1) {
-          //           Message.success("削除しました！")
-          //           this.getMember(this.userId, this.tableOptions.page, this.tableOptions.itemsPerPage)
-          //       } else if (response.data.state == 40400) {
-          //           this.$router.push("/manage-login")
-          //           this.$notify.warning({
-          //               message: 'ログインが期限切れです,再度ログインしてください',
-          //               type: 'warn'
-          //           });
-          //       }
+            let obj = { memberId: this.deleteId }
 
-          //   })
+            const response = await memberDelete(obj)
+            this.deleteFlag = false
+            if (response.data == 1) {
+                Message.success("削除しました！")
+                this.getMember(this.userId, this.tableOptions.page, this.tableOptions.itemsPerPage)
+            }
+            //  else if (response.data.state == 40400) {
+            //     this.$router.push("/manage-login")
+            //     this.$notify.warning({
+            //         message: 'ログインが期限切れです,再度ログインしてください',
+            //         type: 'warn'
+            //     });
+            // }
+            //   const token = localStorage.getItem('token')
+            // let url = 'api/companyMember/delete'
+
+            //   this.axios.delete(url, {
+            //       params: { memberId: this.deleteId },
+            //       headers: {
+            //           'token': token
+            //       },
+            //   }).then((response) => {
+            //       this.deleteFlag = false
+            //       if (response.data == 1) {
+            //           Message.success("削除しました！")
+            //           this.getMember(this.userId, this.tableOptions.page, this.tableOptions.itemsPerPage)
+            //       } else if (response.data.state == 40400) {
+            //           this.$router.push("/manage-login")
+            //           this.$notify.warning({
+            //               message: 'ログインが期限切れです,再度ログインしてください',
+            //               type: 'warn'
+            //           });
+            //       }
+
+            //   })
         },
         back() {
             this.$router.push('/manage-info')
-      },
+        },
         async submitFile() {
             if (!this.selectedFile) {
                 Message.warning("先に、ご履歴書選択してください！")
@@ -210,15 +212,14 @@ export default {
                     Message.success("履歴書を解析しました！")
                     this.selectedFile = null
                     this.dialogVisible = false
-                } else if (response.data.state == 40400) {
-                    this.$router.push("/manage-login")
-                    this.$notify.warning({
-                        message: 'ログインが期限切れです,再度ログインしてください',
-                        type: 'warn'
-                    });
-                } else {
-
                 }
+                //  else if (response.data.state == 40400) {
+                //     this.$router.push("/manage-login")
+                //     this.$notify.warning({
+                //         message: 'ログインが期限切れです,再度ログインしてください',
+                //         type: 'warn'
+                //     });
+                // }
                 this.getMember(this.userId, this.tableOptions.page, this.tableOptions.itemsPerPage)
                 this.dialogVisible = false
             } catch (error) {
@@ -255,22 +256,23 @@ export default {
         getUploadStatusText(status) {
             return status === 1 ? '済み' : 'ー';
         },
-     async getMember (id1, pageNum1, pageSize1) {
-       const response = await memberListGet(id1, pageNum1, pageSize1)
-       if (response.data.state == 20000) {
-                        this.$store.state.companyMemberInfo = response.data.data.records
-                        this.memberList = response.data.data.records
-                        this.totalItems = response.data.data.total
-                        if (response.data.data.size == -1) {
-                            this.totalItems = 1
-                        }
-                    } else if (response.data.state == 40400) {
-                        this.$router.push("/manage-login")
-                        this.$notify.warning({
-                            message: 'ログインが期限切れです,再度ログインしてください',
-                            type: 'warn'
-                        });
-                    }
+        async getMember(id1, pageNum1, pageSize1) {
+            const response = await memberListGet(id1, pageNum1, pageSize1)
+            if (response.data.state == 20000) {
+                this.$store.state.companyMemberInfo = response.data.data.records
+                this.memberList = response.data.data.records
+                this.totalItems = response.data.data.total
+                if (response.data.data.size == -1) {
+                    this.totalItems = 1
+                }
+            }
+            // else if (response.data.state == 40400) {
+            //     this.$router.push("/manage-login")
+            //     this.$notify.warning({
+            //         message: 'ログインが期限切れです,再度ログインしてください',
+            //         type: 'warn'
+            //     });
+            // }
             // const token = localStorage.getItem('token');
             // console.log(token);
             // if (token) {

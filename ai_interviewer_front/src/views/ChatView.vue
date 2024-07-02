@@ -108,7 +108,7 @@
 <script>
 import axios from "axios";
 import { Message } from "element-ui";
-import { chatMessageSend1,fileSend,MessageSend2,MessageSend3} from '@/api'
+import { chatMessageSend1, fileSend, MessageSend2, MessageSend3 } from '@/api'
 export default {
   data() {
     return {
@@ -253,13 +253,15 @@ export default {
           this.$nextTick(() => {
             this.scrollToBottom();
           });
-        } else if (response.data.state == 40400) {
-          this.$router.push("/interview/user/login")
-          this.$notify.warning({
-            message: 'ログインが期限切れです,再度ログインしてください',
-            type: 'warn'
-          });
-        } else {
+        }
+        // else if (response.data.state == 40400) {
+        //   this.$router.push("/interview/user/login")
+        //   this.$notify.warning({
+        //     message: 'ログインが期限切れです,再度ログインしてください',
+        //     type: 'warn'
+        //   });
+        // } 
+        else {
           console.error("API response error:", response.data);
           this.renderMessages.push({
             text: response.data.message,
@@ -368,13 +370,15 @@ export default {
           this.$nextTick(() => {
             this.scrollToBottom();
           });
-        } else if (response.data.state == 40400) {
-          this.$router.push("/interview/user/login")
-          this.$notify.warning({
-            message: 'ログインが期限切れです,再度ログインしてください',
-            type: 'warn'
-          });
-        } else {
+        }
+        //  if (response.data.state == 40400) {
+        //   this.$router.push("/interview/user/login")
+        //   this.$notify.warning({
+        //     message: 'ログインが期限切れです,再度ログインしてください',
+        //     type: 'warn'
+        //   });
+        // } 
+        else {
           console.error("API response error:", response.data);
           this.renderMessages.push({
             text: response.data.message,
@@ -544,13 +548,15 @@ export default {
               this.scrollToBottom();
             });
             this.confirm()
-          } else if (response.data.state == 40400) {
-            this.$router.push("/interview/user/login")
-            this.$notify.warning({
-              message: 'ログインが期限切れです,再度ログインしてください',
-              type: 'warn'
-            });
-          } else {
+          }
+          //  if (response.data.state == 40400) {
+          //   this.$router.push("/interview/user/login")
+          //   this.$notify.warning({
+          //     message: 'ログインが期限切れです,再度ログインしてください',
+          //     type: 'warn'
+          //   });
+          // }
+          else {
             console.error("API response error:", response.data);
             this.renderMessages.push({
               text: response.data.message,
@@ -636,8 +642,8 @@ export default {
           return JSON.stringify({ role: role, content: rowData.text });
         }).join(',');
         const response = await MessageSend2({
-            message: chatBody + ",{\"role\":\"user\", \"content\":\"CSVインポートしたいので、表を2つ出力してください。１つ目は面接での質問と回答を出力してください。必ず「質問項番」,「質問内容」,「回答」の3列にしてください。質問項番は1～10で順番に出力してください。質問内容は要約せずにそのまま出力してください。回答内容は要約せずにそのまま出力してください。２つ目は面接での評価を出力してください。必ず、「総合評価点」,「技術的スキル（0～40点）」,「コミュニケーション能力 (0-30点)」,「問題解決能力 (0-20点)」,「適応性と学習意欲 (0-10点)」,「評価理由」,「改善点」の7列にしてください。10個の回答を評価し、技術的スキル、コミュニケーション能力、問題解決能力 、適応性と学習意欲ごとに採点してください。総合評価点は各プログラム評価点の値の和とします。評価理由は4行程度で出力してください。改善点は4行程度で出力してください。CSV以外の出力はしないでください。CSVデータとそうではないところがわかるように、CSVデータは```で囲ってください。\" }"
-          });
+          message: chatBody + ",{\"role\":\"user\", \"content\":\"CSVインポートしたいので、表を2つ出力してください。１つ目は面接での質問と回答を出力してください。必ず「質問項番」,「質問内容」,「回答」の3列にしてください。質問項番は1～10で順番に出力してください。質問内容は要約せずにそのまま出力してください。回答内容は要約せずにそのまま出力してください。２つ目は面接での評価を出力してください。必ず、「総合評価点」,「技術的スキル（0～40点）」,「コミュニケーション能力 (0-30点)」,「問題解決能力 (0-20点)」,「適応性と学習意欲 (0-10点)」,「評価理由」,「改善点」の7列にしてください。10個の回答を評価し、技術的スキル、コミュニケーション能力、問題解決能力 、適応性と学習意欲ごとに採点してください。総合評価点は各プログラム評価点の値の和とします。評価理由は4行程度で出力してください。改善点は4行程度で出力してください。CSV以外の出力はしないでください。CSVデータとそうではないところがわかるように、CSVデータは```で囲ってください。\" }"
+        });
         // デバッグ用
         // let response; 
         // response = await this.sleep(500).then( () => {return {data: {state: 20000, data: "以下がCSVファイルです。\n```\n質問,回答\nほげ1,ふが1\n今日の朝ごはん,卵焼き\n```\n"}}}); // 0.5秒後にテストデータを返す.
@@ -662,7 +668,7 @@ export default {
           //   .then(response => {
           //     // ユーザーに見る必要ないから何もしない
           //     console.log("csvアプロードしました。");
-    //   })
+          //   })
           const response = await MessageSend3(formData)
             .catch(error => {
               console.error("API request error:", error);

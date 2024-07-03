@@ -89,6 +89,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/interviewerInfo/downLoadCsv/{fileId}").hasAnyRole(DataDictionary.ROLE_CONTRACT.getValue())
                 .antMatchers(HttpMethod.POST, "/companyMember/insert").hasAnyRole(DataDictionary.ROLE_CONTRACT.getValue())
                 .antMatchers(HttpMethod.DELETE, "/companyMember/delete").hasAnyRole(DataDictionary.ROLE_CONTRACT.getValue())
+                .antMatchers(HttpMethod.DELETE, "/companyMember/deleteByIds").hasAnyRole(DataDictionary.ROLE_CONTRACT.getValue())
                 .antMatchers(HttpMethod.POST, "/companyMember/receiveFile").hasAnyRole(DataDictionary.ROLE_CONTRACT.getValue())
                 .antMatchers(HttpMethod.GET, "/companyMember/list").hasAnyRole(DataDictionary.ROLE_CONTRACT.getValue())
                 .antMatchers(HttpMethod.GET, "/companyMember/getAllMebmer").hasAnyRole(DataDictionary.ROLE_CONTRACT.getValue())

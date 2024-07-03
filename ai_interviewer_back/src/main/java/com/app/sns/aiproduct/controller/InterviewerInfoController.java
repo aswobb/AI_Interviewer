@@ -24,7 +24,10 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.zip.ZipOutputStream;
 
 @RestController
 @RequestMapping("/interviewerInfo")
@@ -35,8 +38,10 @@ public class InterviewerInfoController {
     private InterviewerInfoService interviewerInfoService;
     @Resource
     private LockManager lockManager;
+
     /**
      * 契約会社は面接者情報を大量作成する
+     *
      * @param interviewerInfoVO
      * @param request
      * @return
@@ -52,9 +57,9 @@ public class InterviewerInfoController {
         try {
             interviewerInfoService.batchCreate(userId, 20);
             return JsonResult.ok();
-        }catch (Exception e){
+        } catch (Exception e) {
             throw e;
-        }finally {
+        } finally {
             lock.unlock();
         }
 
@@ -62,19 +67,20 @@ public class InterviewerInfoController {
 
     /**
      * 面接者情報をリストする
+     *
      * @param interviewerInfoVO
      * @param request
      * @return
      */
     @GetMapping("/list")
-    public JsonResult list(@ModelAttribute   InterviewerInfoVO interviewerInfoVO,
-                                       HttpServletRequest request
+    public JsonResult list(@ModelAttribute InterviewerInfoVO interviewerInfoVO,
+                           HttpServletRequest request
     ) {
         int pageSize = interviewerInfoVO.getPageSize();
         Page<InterviewerInfo> page;
         if (pageSize == -1) {
             page = new Page<>(0, Integer.MAX_VALUE);
-        }else{
+        } else {
             page = new Page<>(interviewerInfoVO.getPageNum(), interviewerInfoVO.getPageSize());
         }
         QueryWrapper<InterviewerInfo> wrapper = new QueryWrapper<>();
@@ -97,6 +103,7 @@ public class InterviewerInfoController {
 
     /**
      * 面接者情報を更新する
+     *
      * @param interviewerInfoVO
      * @return
      */
@@ -108,17 +115,18 @@ public class InterviewerInfoController {
         if (EmptyUtil.isNull(interviewerInfoVO.getInterviewerName())) {
             throw new ServiceException(ServiceCodeEnum.ERR_PAR_EMPTY);
         }
-        return  JsonResult.ok(interviewerInfoService.updateInterviewerInfo(interviewerInfoVO.getId(), interviewerInfoVO));
+        return JsonResult.ok(interviewerInfoService.updateInterviewerInfo(interviewerInfoVO.getId(), interviewerInfoVO));
     }
 
     /**
      * 面接の流れ完了して、CSVファイルをアップロード
+     *
      * @param request
      * @param file
      * @return
      */
     @PostMapping("/completeInterviewerInfo")
-    public JsonResult completeInterviewerInfo(HttpServletRequest request,@RequestParam("file") MultipartFile file) {
+    public JsonResult completeInterviewerInfo(HttpServletRequest request, @RequestParam("file") MultipartFile file) {
         if (file.isEmpty()) {
             throw new ServiceException(ServiceCodeEnum.ERR_PAR_EMPTY);
         }
@@ -128,9 +136,9 @@ public class InterviewerInfoController {
         lock.lock();
         try {
             return JsonResult.ok(interviewerInfoService.completeInterviewerInfo(userId, file));
-        }catch (Exception e){
+        } catch (Exception e) {
             throw e;
-        }finally {
+        } finally {
             lock.unlock();
         }
 
@@ -140,11 +148,12 @@ public class InterviewerInfoController {
 
     /**
      * CSVファイル　ダウンロード
+     *
      * @param fileId
      * @return
      */
     @GetMapping("/downLoadCsv/{fileId}")
-    public ResponseEntity  downLoadCsv(@PathVariable Long fileId) {
+    public ResponseEntity downLoadCsv(@PathVariable Long fileId) {
         if (EmptyUtil.isNull(fileId)) {
             throw new ServiceException(ServiceCodeEnum.ERR_PAR_EMPTY);
         }
@@ -162,25 +171,38 @@ public class InterviewerInfoController {
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .body(resource);
     }
-//    @PostMapping
-//    public InterviewerInfo createInterviewerInfo(@RequestBody InterviewerInfoVO interviewerInfoVO) {
-//        return interviewerInfoService.createInterviewerInfo(interviewerInfoVO);
-//    }
-//
-//    @PutMapping("/{id}")
-//    public InterviewerInfo updateInterviewerInfo(@PathVariable("id") Long id, @RequestBody InterviewerInfoVO interviewerInfoVO) {
-//
-//        return interviewerInfoService.updateInterviewerInfo(id, interviewerInfoVO);
-//    }
-//
-//    @GetMapping("/{id}")
-//    public InterviewerInfoVO getInterviewerInfo(@PathVariable("id") Long id) {
-//        return interviewerInfoService.getInterviewerInfo(id);
-//    }
-//
-//    @DeleteMapping("/{id}")
-//    public void deleteInterviewerInfo(@PathVariable("id") Long id) {
-//        interviewerInfoService.deleteInterviewerInfo(id);
-//    }
-}
 
+//    /**
+//     * CSVファイル　複数ダウンロード
+//     *
+//     * @param ids
+//     * @return
+//     */
+//    @PostMapping("/downLoadCsvs")
+//    public ResponseEntity downLoadCsv(@RequestBody List<Long> ids) {
+//        for (int i = 0; i < ids.size(); i++) {
+//            CsvFile csvFile = interviewerInfoService.getCsvFile(ids.get(i));
+//            if (EmptyUtil.isNull(csvFile)) {
+//                throw new ServiceException(ServiceCodeEnum.ERR_NOT_FOUND);
+//            }
+//
+//            ByteArrayResource resource = new ByteArrayResource(csvFile.getFileContent());
+//            ZipOutputStream zos = new ZipOutputStream(resource);
+//
+//        }
+////
+////        HttpHeaders headers = new HttpHeaders();
+////        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=output.csv");
+//        return ResponseEntity.ok()
+//                .headers(headers)
+//                .contentLength(csvFile.getFileContent().length)
+//                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+//                .body(resource);
+//    }
+//    private void addToZip(ZipOutputStream zos, String fileName, byte[] content) throws IOException {
+//        zos.putNextEntry(new ZipEntry(fileName));
+//        zos.write(content);
+//        zos.closeEntry();
+//    }
+
+}

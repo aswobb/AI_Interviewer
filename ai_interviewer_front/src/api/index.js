@@ -141,6 +141,18 @@ export const interviewInfoDownload = (ID) => {
 }
 
 /**
+ * 面接評判ダウンロード
+ */
+
+export const interviewDownloadMajority = (ids) => {
+  return request({
+    url: '/interviewerInfo/downLoadCsv',
+    method: 'GET',
+    data: ids
+  })
+}
+
+/**
  * 会社員情報を取得
  */
 
@@ -285,5 +297,16 @@ export const getCompanyAPI = (pageNum, pageSize) => {
       pageNum,
       pageSize
     }
+  })
+}
+
+/**
+ * 会社員複数削除
+ */
+export const companyMembersDelAPI = (ids) => {
+  return request({
+    url: '/companyMember/deleteByIds',
+    method: 'DELETE',
+    data: ids
   })
 }

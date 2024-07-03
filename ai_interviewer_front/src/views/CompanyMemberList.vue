@@ -6,6 +6,9 @@
 
         <v-data-table class="equa-width-table" disable-sort="false" :headers="headers" :items="memberList" item-key="id"
             :options.sync="tableOptions" :server-items-length="totalItems">
+            <template v-slot:[`item.action`]="{ item }">
+                <v-checkbox v-model="selectedItems" :value="item.id" @change="updateSelection"></v-checkbox>
+            </template>
             <template v-slot:item.uploadStatus="{ item }">
                 {{ getUploadStatusText(item.uploadStatus) }}
             </template>
@@ -21,6 +24,7 @@
         </v-data-table>
         <v-card-actions class="justify-center">
             <v-btn color="primary" dark @click="addDataFlag = true">会社員追加</v-btn>
+            <v-btn color="primary" dark @click="openDelDialog">複数削除</v-btn>
         </v-card-actions>
         <el-dialog append-to-body title="履歴書アップロードしてください" :visible.sync="dialogVisible" width="30%">
             <span>
@@ -32,6 +36,16 @@
                 <el-button @click="dialogVisible = false">キャンセル</el-button>
             </span>
         </el-dialog>
+
+        <el-dialog :visible.sync="deleteMembersFlag" width="30%">
+            <p>選択したデータを削除してもよろしいですか？</p>
+            <span slot="footer" class="dialog-footer">
+                <el-button type="primary" @click="deleteMembers">確認</el-button>
+                <el-button @click="deleteMembersFlag = false">キャンセル</el-button>
+            </span>
+        </el-dialog>
+
+
 
         <el-dialog :visible.sync="deleteFlag" width="30%">
             <p>本当にこのデータを削除してもよろしいですか？</p>
@@ -57,7 +71,7 @@
 </template>
 <script>
 import { Message } from "element-ui";
-import { memberPlus, memberDelete, fileSend2, memberListGet } from '@/api'
+import { memberPlus, memberDelete, fileSend2, memberListGet, companyMembersDelAPI } from '@/api'
 export default {
     created() {
         this.userId = this.$route.query.id
@@ -65,6 +79,8 @@ export default {
     },
     data() {
         return {
+            selectedItems: [],
+            deleteMembersFlag: false,
             addDataFlag: false,
             form: {
                 id: null,
@@ -94,6 +110,7 @@ export default {
             memberList: [],
             userId: 0,
             headers: [
+                { text: '複数', value: 'action', sortable: false },
                 { text: '会社員名', value: 'name' },
                 { text: '履歴書状態', value: 'uploadStatus' },
                 { text: '操作', value: 'actions', sortable: false }
@@ -101,6 +118,26 @@ export default {
         }
     },
     methods: {
+        openDelDialog() {
+            console.log(this.selectedItems);
+            if (this.selectedItems.length == 0) {
+                Message.warning("先に削除したいデータを選んでください！")
+            } else {
+                this.deleteMembersFlag = true
+            }
+        },
+        async deleteMembers() {
+            const response = await companyMembersDelAPI(this.selectedItems)
+            if (response.data.state == 20000) {
+                Message.success("削除しました！")
+                this.getMember(this.userId, this.tableOptions.page, this.tableOptions.itemsPerPage)
+                this.deleteMembersFlag = false
+                this.selectedItems = []
+            }
+        },
+        updateSelection() {
+            console.log(109, this.selectedItems);
+        },
         submitForm(formName) {
             this.$refs[formName].validate(async (valid) => {
                 this.form.userId = this.userId

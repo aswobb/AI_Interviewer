@@ -80,4 +80,12 @@ public class CompanyMemberController {
         int i = companyMemberService.insertMember(companyMember);
         return JsonResult.ok(i);
     }
+    @DeleteMapping("/deleteByIds")
+    public JsonResult deleteEntities( @RequestBody List<Long> ids) {
+        boolean result = companyMemberService.deleteByIds(ids);
+        if (result){
+            return JsonResult.ok();
+        }
+        throw new ServiceException(ServiceCodeEnum.ERR_READ_FILE);
+    }
 }

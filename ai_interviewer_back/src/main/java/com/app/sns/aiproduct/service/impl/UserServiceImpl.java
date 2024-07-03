@@ -4,10 +4,7 @@ import com.app.sns.aiproduct.constant.DataDictionary;
 import com.app.sns.aiproduct.constant.ServiceCodeEnum;
 import com.app.sns.aiproduct.ex.ServiceException;
 import com.app.sns.aiproduct.lock.LockManager;
-import com.app.sns.aiproduct.mapper.BillingCourseMapper;
-import com.app.sns.aiproduct.mapper.InterviewerInfoMapper;
-import com.app.sns.aiproduct.mapper.UserBillingHistoryMapper;
-import com.app.sns.aiproduct.mapper.UserMapper;
+import com.app.sns.aiproduct.mapper.*;
 import com.app.sns.aiproduct.pojo.entity.BillingCourse;
 import com.app.sns.aiproduct.pojo.entity.SnsUser;
 import com.app.sns.aiproduct.pojo.entity.UserBillingHistory;
@@ -45,6 +42,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, SnsUser> implements
     private InterviewerInfoService interviewerInfoService;
     @Autowired
     private InterviewerInfoMapper interviewerInfoMapper;
+    @Autowired
+    private CompanyMemberMapper companyMemberMapper;
 
     @Override
     public SnsUser getUserById(Long id) {
@@ -146,29 +145,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, SnsUser> implements
             userBillingHistoryMapper.insert(userBillingHistory);
             isChangeRemainNum = true;
         }
-//            if (!EmptyUtil.isNull(userVO.getUserBillingHistoryVO())) {
-//                UserBillingHistoryVO userBillingHistoryVO = userVO.getUserBillingHistoryVO();
-//                if (!EmptyUtil.isNull(userBillingHistoryVO.getAddMonth()) && userBillingHistoryVO.getAddMonth() > 0) {
-//                    LocalDateTime currentTime = LocalDateTime.now();
-//                    if (EmptyUtil.isNull(oldData.getEffectiveTime()) || oldData.getEffectiveTime().isBefore(currentTime)) {
-//                        oldData.setEffectiveTime(currentTime.plus(userBillingHistoryVO.getAddMonth(), ChronoUnit.MONTHS));
-//                    } else {
-//                        oldData.setEffectiveTime(oldData.getEffectiveTime().plus(userBillingHistoryVO.getAddMonth(), ChronoUnit.MONTHS));
-//                    }
-//                }
-//                if (!EmptyUtil.isNull(userBillingHistoryVO.getAddUsageCount()) && userBillingHistoryVO.getAddUsageCount() > 0) {
-//                    Integer usageCount = EmptyUtil.isNull(oldData.getRemainNum()) ? 0 : oldData.getRemainNum();
-//                    oldData.setRemainNum(usageCount + userBillingHistoryVO.getAddUsageCount());
-//                }
-//                UserBillingHistory userBillingHistory = new UserBillingHistory();
-//                BeanUtils.copyProperties(userBillingHistoryVO, userBillingHistory);
-//                userBillingHistory.setEffectiveTime(oldData.getEffectiveTime());
-//                userBillingHistory.setRemainNum(oldData.getRemainNum());
-//                userBillingHistory.setUserId(oldData.getId());
-//                userBillingHistory.setCreator(creator);
-//                userBillingHistory.setGmtCreate(LocalDateTime.now());
-//                userBillingHistoryMapper.insert(userBillingHistory);
-//            }
         if (!EmptyUtil.isNull(userVO.getRemainNum())) {
             oldData.setRemainNum(userVO.getRemainNum());
             isChangeRemainNum = true;
@@ -187,11 +163,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, SnsUser> implements
     public int deleteUser(@Param("ID") Long id) {
         SnsUser user = userMapper.selectById(id);
         if (user != null) {
-//            user.setEnable(1);
-//            user.setGmtUpdate(LocalDateTime.now());
-//            userMapper.updateById(user);
             userMapper.deleteById(id);
             interviewerInfoMapper.deleteByUserId(id);
+            companyMemberMapper.deleteByUserId(id);
             return 1;
         } else {
             return 0;

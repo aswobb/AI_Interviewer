@@ -65,7 +65,7 @@ public class CompanyMemberController {
         if (flag == 1) {
             return JsonResult.ok();
         } else {
-            throw new ServiceException(ServiceCodeEnum.ERR_INSERT);
+            throw new ServiceException(ServiceCodeEnum.ERR_READ_FILE);
         }
     }
 

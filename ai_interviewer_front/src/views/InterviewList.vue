@@ -177,54 +177,6 @@ export default {
                 this.companyInfo.remainNum = response.data.data.remainNum
                 this.companyInfo.usageCount = response.data.data.usageCount
             }
-            //  else if (response.data.state == 40400) {
-            //     this.$router.push("/manage-login")
-            //     this.$notify.warning({
-            //         message: 'ログインが期限切れです,再度ログインしてください',
-            //         type: 'warn'
-            //     });
-            // } else {
-            //     this.$notify.error({
-            //         message: '面接者情報の取得に失敗しました',
-            //         type: 'error'
-            //     });
-            // }
-            // const token = localStorage.getItem('token');
-            // console.log(token);
-            // if (token) {
-            //     let url = 'api/snsUser/getCurrentUser'
-            //     this.axios.get(url, {
-            //         headers: {
-            //             'token': token
-            //         },
-
-            //     }).then((response) => {
-            //         if (response.data.state == 20000) {
-            //             console.log(response);
-            //             this.companyInfo.contractor = response.data.data.contractor
-            //             this.companyInfo.remainNum = response.data.data.remainNum
-            //             this.companyInfo.usageCount = response.data.data.usageCount
-
-            //         } else if (response.data.state == 40400) {
-            //             this.$router.push("/manage-login")
-            //             this.$notify.warning({
-            //                 message: 'ログインが期限切れです,再度ログインしてください',
-            //                 type: 'warn'
-            //             });
-            //         } else {
-            //             this.$notify.error({
-            //                 message: '面接者情報の取得に失敗しました',
-            //                 type: 'error'
-            //             });
-            //         }
-            //     });
-            // } else {
-            //     this.$router.push('/manage-login');
-            //     this.$message({
-            //         message: 'ログインが期限切れです,再度ログインしてください',
-            //         type: 'warn'
-            //     });
-            // }
         },
 
         //增加条数
@@ -239,70 +191,6 @@ export default {
                     type: 'success'
                 })
             }
-            // else if (response.data.state == 40400) {
-            //     this.$router.push("/manage-login")
-            //     this.$notify.warning({
-            //         message: 'ログインが期限切れです,再度ログインしてください',
-            //         type: 'warn'
-            //     });
-            // }else if (response.data.state == 70001) {
-            //     this.$notify.error({
-            //         message: '残高が不足です。',
-            //         type: 'error'
-            //     });
-            // } else {
-            //     this.$notify.error({
-            //         message: '面接者データ追加に失敗しました。',
-            //         type: 'error'
-            //     });
-            // }
-            // const token = localStorage.getItem('token');
-            // console.log(token);
-            // if (token) {
-
-            //     let data = {}
-            //     let url = 'api/interviewerInfo/batchCreate'
-            //     this.axios.post(url, data, {
-            //         headers: {
-            //             'token': token
-            //         },
-
-            //     }).then((response) => {
-            //         if (response.data.state == 20000) {
-            //             this.changePage(this.tableOptions.page, this.tableOptions.itemsPerPage)
-            //             this.getCompanyInfo()
-            //             this.$message({
-            //                 message: '面接者データ20件追加成功しました。',
-            //                 type: 'success'
-            //             })
-            //         } else if (response.data.state == 40400) {
-            //             this.$router.push("/manage-login")
-            //             this.$notify.warning({
-            //                 message: 'ログインが期限切れです,再度ログインしてください',
-            //                 type: 'warn'
-            //             });
-            //         } else if (response.data.state == 70001) {
-            //             this.$notify.error({
-            //                 message: '残高が不足です。',
-            //                 type: 'error'
-            //             });
-            //         } else {
-
-            //             this.$notify.error({
-            //                 message: '面接者データ追加に失敗しました。',
-            //                 type: 'error'
-            //             });
-            //         }
-
-            //     });
-
-            // } else {
-            //     this.$router.push('/manage-login');
-            //     this.$message({
-            //         message: 'ログインが期限切れです。再度ログインしてください',
-            //         type: 'warn'
-            //     });
-            // }
         },
         //打开修改面板
         async openChangeInfo(item) {
@@ -316,6 +204,7 @@ export default {
         // //下载结果信息
         async download(Id) {
             const response = await interviewInfoDownload(Id);
+            console.log(207, response);
             if (response.data.state == 40400) {
                 this.$router.push("/manage-login")
                 this.$notify.warning({
@@ -339,45 +228,6 @@ export default {
                     });
                 }
             }
-            //     if (token) {
-            //         let url = 'api/interviewerInfo/downLoadCsv/' + Id
-            //         this.axios.get(url, {
-            //             headers: {
-            //                 'token': token
-            //             },
-            //             responseType: 'blob'
-            //         }).then((response) => {
-            //             if (response.data.state == 40400) {
-            //                 this.$router.push("/manage-login")
-            //                 this.$notify.warning({
-            //                     message: 'ログインが期限切れです,再度ログインしてください',
-            //                     type: 'warn'
-            //                 });
-            //             } else {
-            //                 try {
-            //                     const blob = new Blob([response.data], { type: 'application/octet-stream' }); // ダウンロードリンクを作成 
-            //                     const url = window.URL.createObjectURL(blob);
-            //                     const link = document.createElement('a');
-            //                     link.href = url;
-            //                     link.setAttribute('download', 'output.csv'); // ダウンロードファイル名を設定 // リンクをクリックしてファイルをダウンロード 
-            //                     document.body.appendChild(link);
-            //                     link.click(); // リンクを削除 
-            //                     document.body.removeChild(link);
-            //                 } catch (error) {
-            //                     this.$message({
-            //                         message: error.message,
-            //                         type: 'error'
-            //                     });
-            //                 }
-            //             }
-            //         });
-            //     } else {
-            //         this.$router.push('/manage-login');
-            //         this.$message({
-            //             message: 'ログインが期限切れです。再度ログインしてください',
-            //             type: 'warn'
-            //         });
-            //     }
         },
         //修改面试者信息
         async sumbit() {
@@ -409,64 +259,6 @@ export default {
                         this.changePage(this.tableOptions.page, this.tableOptions.itemsPerPage)
                         this.dialog = false
                     }
-                    //  else if (response.data.state == 40400) {
-                    //     this.$router.push("/manage-login")
-                    //     this.$notify.warning({
-                    //         message: 'ログインが期限切れです,再度ログインしてください',
-                    //         type: 'warn'
-                    //     });
-                    // } else {
-                    //     this.$notify.error({
-                    //         message: '面接者情報の取得に失敗しました',
-                    //         type: 'error'
-                    //     });
-                    // }
-                    // const token = localStorage.getItem('token');
-                    // console.log(token);
-                    // if (token) {
-                    //     let data = {
-                    //         id: this.changeInfo.id,
-                    //         interviewerName: this.companyMemberInfo.name,
-                    //         companyMemberId: this.companyMemberInfo.id,
-                    //         uploadStatus: this.companyMemberInfo.uploadStatus
-                    //     }
-                    //     this.companyMemberInfo = null
-                    //     let url = 'api/interviewerInfo/updateInterviewerInfo'
-                    //     this.axios.post(url, data, {
-                    //         headers: {
-                    //             'token': token
-                    //         },
-
-                    //     }).then((response) => {
-                    //         if (response.data.state == 20000) {
-                    //             this.$message({
-                    //                 message: '変更に成功しました',
-                    //                 type: 'success'
-                    //             });
-                    //             //数据回显
-                    //             this.changePage(this.tableOptions.page, this.tableOptions.itemsPerPage)
-                    //             this.dialog = false
-                    //         } else if (response.data.state == 40400) {
-                    //             this.$router.push("/manage-login")
-                    //             this.$notify.warning({
-                    //                 message: 'ログインが期限切れです,再度ログインしてください',
-                    //                 type: 'warn'
-                    //             });
-                    //         } else {
-                    //             this.$notify.error({
-                    //                 message: '面接者情報の取得に失敗しました',
-                    //                 type: 'error'
-                    //             });
-                    //         }
-                    //     });
-                    // } else {
-                    //     this.$router.push('/manage-login');
-                    //     this.$message({
-                    //         message: 'ログインが期限切れです。再度ログインしてください',
-                    //         type: 'warn'
-                    //     });
-                    // }
-
                 }
             } else {
                 Message.error("会社ではこの名前がありません")
@@ -482,41 +274,6 @@ export default {
                 this.interviewerList = this.$store.state.interviewerInfo
                 this.totalItems = this.$store.state.totalItems
             }
-            //  else {
-            //     this.$notify.error({
-            //         message: response.data.message,
-            //         type: 'error'
-            //     });
-            // }
-            // const token = localStorage.getItem('token');
-            // if (token) {
-            //     let url = 'api/interviewerInfo/list'
-            //     this.axios.get(url, {
-            //         params: { pageNum: pageNum1, pageSize: pageSize1 },
-            //         headers: {
-            //             'token': token
-            //         },
-            //     }).then((response) => {
-            //         if (response.data.state == 20000) {
-            //             console.log(response);
-            //             //面试者信息赋值
-            //             this.$store.commit('initInterviewerInfo', response.data)
-            //             this.interviewerList = this.$store.state.interviewerInfo
-            //             this.totalItems = this.$store.state.totalItems
-            //         } else {
-            //             this.$notify.error({
-            //                 message: response.data.message,
-            //                 type: 'error'
-            //             });
-            //         }
-            //     });
-            // } else {
-            //     this.$router.push('/manage-login');
-            //     this.$message({
-            //         message: 'ログインが期限切れです。再度ログインしてください',
-            //         type: 'warn'
-            //     });
-            // }
         }
     },
     //监听器

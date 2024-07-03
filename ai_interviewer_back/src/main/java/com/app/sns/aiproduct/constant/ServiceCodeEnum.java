@@ -18,6 +18,7 @@ public enum ServiceCodeEnum {
     ERR_UPDATE(50002, "データの変更時にエラーが発生しました。"),
     ERR_DELETE(50003, "データの削除時にエラーが発生しました。"),
     ERR_TOKEN(50401, "ユーザー認証に失敗しました。"),
+    ERR_READ_FILE(50402, "履歴書の解析に失敗しました。"),
     INVALID_OLD_PASSWORD(60001, "古いパスワードが正しくありません。"),
     INSUFFICIENT_BALANCE(70001, "残高が不足です。");
 

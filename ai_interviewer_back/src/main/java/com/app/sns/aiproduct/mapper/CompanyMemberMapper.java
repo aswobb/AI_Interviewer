@@ -13,4 +13,5 @@ public interface CompanyMemberMapper extends BaseMapper<CompanyMember> {
     List<MemberVo> getAllList(@Param("USERID")int userId);
     MemberVo getById(@Param("ID")int id);
     Long getLastID();
+    int deleteByUserId(@Param("USERID")Long userId);
 }

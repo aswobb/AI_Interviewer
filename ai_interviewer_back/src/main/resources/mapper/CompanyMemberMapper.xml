@@ -26,7 +26,9 @@
         <result property="uploadStatus" column="upload_status"/>
         <result property="resume" column="resume"/>
     </resultMap>
-    
+    <delete id="deleteByUserId">
+        delete from company_member where user_id=#{USERID}
+    </delete>
     <select id="getLastID" resultType="java.lang.Long">
         SELECT id FROM company_member ORDER BY id DESC LIMIT 1
     </select>

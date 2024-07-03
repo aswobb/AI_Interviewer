@@ -4,7 +4,7 @@ import request from '@/utils/request'
  */
 export const loginAPI = ({ username, password }) => {
   return request({
-    url: '/api/users/login',
+    url: '/users/login',
     method: 'POST',
     data: {
       username,
@@ -13,12 +13,13 @@ export const loginAPI = ({ username, password }) => {
   })
 }
 
+
 /**
  * chatpageの履歴書をバックに転送
  */
 export const fileSend = (fd) => {
   return request({
-    url: '/api/chat/receiveFile',
+    url: '/chat/receiveFile',
     method: 'POST',
     data: fd
   })
@@ -29,7 +30,7 @@ export const fileSend = (fd) => {
  */
 export const fileSend2 = (fd) => {
   return request({
-    url: '/api/companyMember/receiveFile',
+    url: '/companyMember/receiveFile',
     method: 'POST',
     data: fd
   })
@@ -41,7 +42,7 @@ export const fileSend2 = (fd) => {
 
 export const chatMessageSend1 = (chatmessage) => {
   return request({
-    url: '/api/chat/sendContentByGoogleCloud',
+    url: '/chat/sendContentByGoogleCloud',
     method: 'POST',
     data: chatmessage
   })
@@ -52,7 +53,7 @@ export const chatMessageSend1 = (chatmessage) => {
  */
 export const MessageSend2 = (message) => {
   return request({
-    url: '/api/chat/sendMessage',
+    url: '/chat/sendMessage',
     method: 'POST',
     data:
       message
@@ -64,7 +65,7 @@ export const MessageSend2 = (message) => {
  */
 export const MessageSend3 = (message) => {
   return request({
-    url: '/api/interviewerInfo/completeInterviewerInfo',
+    url: '/interviewerInfo/completeInterviewerInfo',
     method: 'POST',
     data:
       message
@@ -72,12 +73,13 @@ export const MessageSend3 = (message) => {
   })
 }
 
+
 /**
  * 新社員名追加
  */
 export const memberPlus = (form) => {
   return request({
-    url: '/api/companyMember/insert',
+    url: '/companyMember/insert',
     method: 'POST',
     data:
       form
@@ -90,7 +92,7 @@ export const memberPlus = (form) => {
  */
 export const interviewerLogin = ({ interviewerId, interviewerName }) => {
   return request({
-    url: '/api/users/interviewerLoginInfo',
+    url: '/users/interviewerLoginInfo',
     method: 'POST',
     data: {
       interviewerId,
@@ -99,12 +101,13 @@ export const interviewerLogin = ({ interviewerId, interviewerName }) => {
   })
 }
 
+
 /**
  *  面接listに新たな面接追加API
  */
 export const interviewListAdd = (idid) => {
   return request({
-    url: '/api/interviewerInfo/batchCreate',
+    url: '/interviewerInfo/batchCreate',
     method: 'POST',
     data: {
       idid
@@ -117,7 +120,7 @@ export const interviewListAdd = (idid) => {
  */
 export const managerPwChange = (dada) => {
   return request({
-    url: '/api/snsUser/updatePassword',
+    url: '/snsUser/updatePassword',
     method: 'POST',
     data: dada
   })
@@ -129,7 +132,7 @@ export const managerPwChange = (dada) => {
 
 export const interviewInfoDownload = (ID) => {
   return request({
-    url: '/api/interviewerInfo/downLoadCsv/' + ID,
+    url: '/interviewerInfo/downLoadCsv/' + ID,
     method: 'GET',
     params: {
 
@@ -143,7 +146,7 @@ export const interviewInfoDownload = (ID) => {
 
 export const memberGet = (obj) => {
   return request({
-    url: '/api/companyMember/getAllMebmer',
+    url: '/companyMember/getAllMebmer',
     method: 'GET',
     params: obj
   })
@@ -155,7 +158,7 @@ export const memberGet = (obj) => {
 
 export const memberListGet = (id1, pageNum1, pageSize1) => {
   return request({
-    url: '/api/companyMember/list',
+    url: '/companyMember/list',
     method: 'GET',
     params: {
       userId: id1,
@@ -169,7 +172,7 @@ export const memberListGet = (id1, pageNum1, pageSize1) => {
  */
 export const interviewInfoUpdate = (paramter) => {
   return request({
-    url: '/api/interviewerInfo/updateInterviewerInfo',
+    url: '/interviewerInfo/updateInterviewerInfo',
     method: 'POST',
     data: paramter
   })
@@ -180,7 +183,7 @@ export const interviewInfoUpdate = (paramter) => {
  */
 export const managerUpdate = ({ id, username, contractor, password, userBillingHistoryVO: { courseId, courseCustomNum }, remainNum }) => {
   return request({
-    url: '/api/snsUser/update',
+    url: '/snsUser/update',
     method: 'POST',
     data: {
       id,
@@ -202,7 +205,7 @@ export const managerUpdate = ({ id, username, contractor, password, userBillingH
 
 export const managerPlus = ({ id, username, contractor, password, userBillingHistoryVO: { courseId, courseCustomNum }, remainNum }) => {
   return request({
-    url: '/api/snsUser/create',
+    url: '/snsUser/create',
     method: 'POST',
     data: {
       id,
@@ -224,7 +227,7 @@ export const managerPlus = ({ id, username, contractor, password, userBillingHis
 
 export const getInterviewMessageAPI = (pageNum, pageSize) => {
   return request({
-    url: '/api/interviewerInfo/list',
+    url: '/interviewerInfo/list',
     method: 'GET',
     params: {
       pageNum,
@@ -239,7 +242,7 @@ export const getInterviewMessageAPI = (pageNum, pageSize) => {
 
 export const getCurrentUserAPI = () => {
   return request({
-    url: '/api/snsUser/getCurrentUser',
+    url: '/snsUser/getCurrentUser',
     method: 'GET'
   })
 }
@@ -249,7 +252,7 @@ export const getCurrentUserAPI = () => {
  */
 export const memberDelete = (memberId) => {
   return request({
-    url: '/api/companyMember/delete',
+    url: '/companyMember/delete',
     method: 'DELETE',
     params: memberId
 
@@ -261,7 +264,7 @@ export const memberDelete = (memberId) => {
  */
 export const companyDelAPI = (id) => {
   return request({
-    url: '/api/snsUser/delete/' + id,
+    url: '/snsUser/delete/' + id,
     method: 'DELETE',
     params: {
 
@@ -276,7 +279,7 @@ export const companyDelAPI = (id) => {
  */
 export const getCompanyAPI = (pageNum, pageSize) => {
   return request({
-    url: '/api/snsUser/list',
+    url: '/snsUser/list',
     method: 'GET',
     params: {
       pageNum,
@@ -284,4 +287,3 @@ export const getCompanyAPI = (pageNum, pageSize) => {
     }
   })
 }
-

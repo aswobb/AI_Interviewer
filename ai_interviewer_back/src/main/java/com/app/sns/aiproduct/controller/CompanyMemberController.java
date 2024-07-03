@@ -70,14 +70,14 @@ public class CompanyMemberController {
     }
 
     @DeleteMapping("/delete")
-    public int deleteMember(int memberId) {
+    public JsonResult deleteMember(int memberId) {
         int i = companyMemberMapper.deleteById(memberId);
-        return i;
+        return JsonResult.ok(i);
     }
 
     @PostMapping("/insert")
-    public int addMember(@RequestBody CompanyMember companyMember) {
+    public JsonResult addMember(@RequestBody CompanyMember companyMember) {
         int i = companyMemberService.insertMember(companyMember);
-        return i;
+        return JsonResult.ok(i);
     }
 }

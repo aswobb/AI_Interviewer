@@ -156,7 +156,6 @@ public class InterviewerInfoController {
 
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=output.csv");
-
         return ResponseEntity.ok()
                 .headers(headers)
                 .contentLength(csvFile.getFileContent().length)

@@ -72,18 +72,20 @@ export default {
               sessionStorage.setItem('username', this.ruleForm.interviewerId);
               this.$gtm.sendLoginEvent(this.ruleForm.interviewerId); // ログインイベント送出
               this.$router.push({ name: 'ChatApp' })
-            } else {
-              console.log('ログインに失敗しました。ユーザー名またはパスワードが正しくありません.')
-              this.$notify.error({
-                title: 'ログインに失敗しました.',
-                message: 'ログインに失敗しました。ユーザー名またはパスワードが正しくありません.'
-              });
             }
+            // else {
+            //   console.log('ログインに失敗しました。ユーザー名またはパスワードが正しくありません.')
+            //   this.$notify.error({
+            //     title: 'ログインに失敗しました.',
+            //     message: 'ログインに失敗しました。ユーザー名またはパスワードが正しくありません.'
+            //   });
+            // }
           });
-        } else {
-          console.log('error submit!!')
-          return false;
         }
+        // else {
+        //   console.log('error submit!!')
+        //   return false;
+        // }
       });
     },
     onReset() {

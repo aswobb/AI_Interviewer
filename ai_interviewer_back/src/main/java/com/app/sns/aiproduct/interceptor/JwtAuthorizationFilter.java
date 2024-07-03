@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.app.sns.aiproduct.constant.ServiceCodeEnum;
 import com.app.sns.aiproduct.web.JWTUtil;
 import com.app.sns.aiproduct.web.JsonResult;
+import org.apache.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -11,6 +12,7 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 import org.springframework.util.StringUtils;
 
 import javax.servlet.FilterChain;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -35,12 +37,20 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             filterChain.doFilter(request, response);
         }else{
-            response.setContentType("application/json;charset=utf-8");
-            PrintWriter out = response.getWriter();
-            String json = JSONObject.toJSONString(JsonResult.fail(ServiceCodeEnum.ERR_NOT_FOUND.getCode(), "ユーザー認証に失敗しました"));
-            out.write(json);
-            out.flush();
-            out.close();
+//            response.setContentType("application/json;charset=utf-8");
+//            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+//            PrintWriter out = response.getWriter();
+//
+//            String json = JSONObject.toJSONString(JsonResult.fail(ServiceCodeEnum.ERR_NOT_FOUND.getCode(), "ユーザー認証に失敗しました"));
+//            out.write(json);
+//            out.flush();
+//            out.close();
+            // 清空安全上下文
+            SecurityContextHolder.clearContext();
+
+            // 转发请求到 /token/fail
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/token/fail");
+            dispatcher.forward(request, response);
         }
 
 

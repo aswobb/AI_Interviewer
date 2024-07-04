@@ -19,5 +19,6 @@ public interface UserService extends IService<SnsUser> {
 
     int deleteUser(@Param("ID") Long id);
 
+
     boolean updatePassword(Long userId, String oldPassword, String newPassword);
 }

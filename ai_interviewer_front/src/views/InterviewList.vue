@@ -18,12 +18,15 @@
         </v-container>
         <v-data-table disable-sort="false" :headers="headers" :items="interviewerList" item-key="id" class="elevation-1"
             :options.sync="tableOptions" :server-items-length="totalItems">
+            <!-- <template v-slot:[`item.action`]="{ item }">
+                <v-checkbox v-model="selectedItems" :value="item.id" @change="updateSelection"></v-checkbox>
+            </template> -->
             <template v-slot:item.uploadStatus="{ item }">
                 {{ getUploadStatusText(item.uploadStatus) }}
             </template>
             <template v-slot:item.actions="{ item }">
                 <div class="d-flex">
-                    <v-btn color="primary" :disabled="!item.executionDate" class="mx-2" @click="download(item.id)">
+                    <v-btn color="primary" :disabled="!item.executionDate" class="mx-2" @click="download(item)">
                         ダウンロード
                     </v-btn>
                     <!-- 每一行的更改按钮 -->
@@ -68,6 +71,7 @@ export default {
     },
     data() {
         return {
+            selectedItems: [],
             flag: false,
             search: '',
             companyMemberInfo: null,
@@ -133,37 +137,6 @@ export default {
                 this.memberList = response.data.data
                 console.log(129, this.memberList);
             }
-            // else if (response.data.state == 40400) {
-            //     this.$router.push("/manage-login")
-            //     this.$notify.warning({
-            //         message: 'ログインが期限切れです,再度ログインしてください',
-            //         type: 'warn'
-            //     });
-            // }  
-            // const token = localStorage.getItem('token');
-            // console.log(token);
-            // if (token) {
-            //     let url = '/api/companyMember/getAllMebmer'
-            //     this.axios.get(url, {
-            //         params: { userId: id },
-            //         headers: {
-            //             'token': token
-            //         },
-
-            //     }).then((response) => {
-            //         if (response.data.state == 20000) {
-            //             this.$store.state.companyMemberInfo = response.data.data
-            //             this.memberList = response.data.data
-            //             console.log(129, this.memberList);
-            //         } else if (response.data.state == 40400) {
-            //             this.$router.push("/manage-login")
-            //             this.$notify.warning({
-            //                 message: 'ログインが期限切れです,再度ログインしてください',
-            //                 type: 'warn'
-            //             });
-            //         }
-            //     })
-            // }
         },
         back() {
             this.$router.push('/manage-info')
@@ -202,7 +175,37 @@ export default {
             this.changeInfo.interviewerId = item.interviewerId
         },
         // //下载结果信息
-        async download(Id) {
+        async download(item) {
+            console.log(180, item);
+            let id = item.id
+            const response = await interviewInfoDownload(id);
+            console.log(207, response);
+            if (response.data.state == 40400) {
+                this.$router.push("/manage-login")
+                this.$notify.warning({
+                    message: 'ログインが期限切れです,再度ログインしてください',
+                    type: 'warn'
+                });
+            } else {
+                try {
+                    const blob = new Blob([response.data], { type: 'application/octet-stream' }); // ダウンロードリンクを作成 
+                    const url = window.URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.setAttribute('download', item.interviewerName + item.executionDate + '.csv'); // ダウンロードファイル名を設定 // リンクをクリックしてファイルをダウンロード 
+                    document.body.appendChild(link);
+                    link.click(); // リンクを削除 
+                    document.body.removeChild(link);
+                } catch (error) {
+                    this.$message({
+                        message: error.message,
+                        type: 'error'
+                    });
+                }
+            }
+        },
+        //
+        async downloadByIds() {
             const response = await interviewInfoDownload(Id);
             console.log(207, response);
             if (response.data.state == 40400) {
@@ -229,6 +232,7 @@ export default {
                 }
             }
         },
+
         //修改面试者信息
         async sumbit() {
             this.memberList.some(item => {

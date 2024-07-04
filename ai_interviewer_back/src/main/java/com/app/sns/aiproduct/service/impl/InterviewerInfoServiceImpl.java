@@ -15,14 +15,22 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 @Slf4j
 @Service
@@ -158,5 +166,49 @@ public class InterviewerInfoServiceImpl extends ServiceImpl<InterviewerInfoMappe
         csvFileQueryWrapper.lambda().eq(CsvFile::getInterviewersInfoId, interviewersInfoId);
         CsvFile csvFile = csvFileMapper.selectOne(csvFileQueryWrapper);
         return csvFile;
+    }
+
+    @Override
+    public ResponseEntity downLoadCsvs(List<Long> ids) throws IOException {
+
+        List<CsvFile> csvFiles = new ArrayList<>();
+        for (int i = 0; i < ids.size(); i++) {
+            CsvFile csvFile = getCsvFile(ids.get(i));
+            if (EmptyUtil.isNull(csvFile)) {
+                throw new ServiceException(ServiceCodeEnum.ERR_NOT_FOUND);
+            }
+            csvFiles.add(csvFile);
+        }
+        // 创建一个内存流用于存储 ZIP 文件内容
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ZipOutputStream zipOut = new ZipOutputStream(baos);
+
+        // 将每个 CSV 文件添加到 ZIP 中
+        for (int i = 0; i < csvFiles.size(); i++) {
+            addToZip(zipOut, "test" + i, csvFiles.get(i).getFileContent());
+        }
+//            for (CsvFile csvFile : csvFiles) {
+//                addToZip(zipOut, "test"+, csvFile.getFileContent());
+//            }
+
+        zipOut.close();
+
+        // 构建响应实体并返回 ZIP 文件流
+        ByteArrayResource zipFile = new ByteArrayResource(baos.toByteArray());
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=files.zip");
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(zipFile);
+    }
+
+    private void addToZip(ZipOutputStream zipOut, String filename, byte[] content) throws IOException {
+        ZipEntry zipEntry = new ZipEntry(filename);
+        zipOut.putNextEntry(zipEntry);
+        zipOut.write(content);
+        zipOut.closeEntry();
     }
 }

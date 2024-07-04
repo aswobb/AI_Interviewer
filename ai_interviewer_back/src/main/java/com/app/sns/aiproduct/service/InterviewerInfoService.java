@@ -4,8 +4,10 @@ import com.app.sns.aiproduct.pojo.entity.CsvFile;
 import com.app.sns.aiproduct.pojo.entity.InterviewerInfo;
 import com.app.sns.aiproduct.pojo.vo.InterviewerInfoVO;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface InterviewerInfoService extends IService<InterviewerInfo> {
@@ -17,4 +19,5 @@ public interface InterviewerInfoService extends IService<InterviewerInfo> {
 
     InterviewerInfo completeInterviewerInfo(Long userId, MultipartFile file);
     CsvFile getCsvFile(Long interviewersInfoId);
+    ResponseEntity downLoadCsvs(List<Long> ids) throws IOException;
 }

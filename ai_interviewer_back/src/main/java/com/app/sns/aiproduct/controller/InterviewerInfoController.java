@@ -22,11 +22,15 @@ import org.springframework.web.multipart.MultipartFile;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 @RestController
@@ -172,37 +176,15 @@ public class InterviewerInfoController {
                 .body(resource);
     }
 
-//    /**
-//     * CSVファイル　複数ダウンロード
-//     *
-//     * @param ids
-//     * @return
-//     */
-//    @PostMapping("/downLoadCsvs")
-//    public ResponseEntity downLoadCsv(@RequestBody List<Long> ids) {
-//        for (int i = 0; i < ids.size(); i++) {
-//            CsvFile csvFile = interviewerInfoService.getCsvFile(ids.get(i));
-//            if (EmptyUtil.isNull(csvFile)) {
-//                throw new ServiceException(ServiceCodeEnum.ERR_NOT_FOUND);
-//            }
-//
-//            ByteArrayResource resource = new ByteArrayResource(csvFile.getFileContent());
-//            ZipOutputStream zos = new ZipOutputStream(resource);
-//
-//        }
-////
-////        HttpHeaders headers = new HttpHeaders();
-////        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=output.csv");
-//        return ResponseEntity.ok()
-//                .headers(headers)
-//                .contentLength(csvFile.getFileContent().length)
-//                .contentType(MediaType.APPLICATION_OCTET_STREAM)
-//                .body(resource);
-//    }
-//    private void addToZip(ZipOutputStream zos, String fileName, byte[] content) throws IOException {
-//        zos.putNextEntry(new ZipEntry(fileName));
-//        zos.write(content);
-//        zos.closeEntry();
-//    }
+    /**
+     * CSVファイル　複数ダウンロード
+     *
+     * @param ids
+     * @return
+     */
+    @PostMapping("/downLoadCsvs")
+    public ResponseEntity downLoadCsvs(@RequestBody List<Long> ids) throws IOException {
+        return interviewerInfoService.downLoadCsvs(ids);
+    }
 
 }

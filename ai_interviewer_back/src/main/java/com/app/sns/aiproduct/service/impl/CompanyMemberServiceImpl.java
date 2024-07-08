@@ -11,17 +11,19 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 @Service
-public class CompanyMemberServiceImpl extends ServiceImpl<CompanyMemberMapper,CompanyMember> implements CompanyMemberService {
+public class CompanyMemberServiceImpl extends ServiceImpl<CompanyMemberMapper, CompanyMember> implements CompanyMemberService {
     private Lock lock = new ReentrantLock();
     @Autowired
     private CompanyMemberMapper companyMemberMapper;
     @Autowired
     private InterviewerInfoMapper interviewerInfoMapper;
+
     @Override
     public List<CompanyMember> getCompanyMember() {
         List<CompanyMember> companyMembers = companyMemberMapper.selectList(null);
@@ -37,13 +39,14 @@ public class CompanyMemberServiceImpl extends ServiceImpl<CompanyMemberMapper,Co
 
     @Override
     public boolean deleteByIds(List<Long> idList) {
+        cleaninterviewerInfo(idList);
         QueryWrapper<CompanyMember> queryWrapper = new QueryWrapper<>();
         queryWrapper.in("id", idList); // 使用 in 方法指定多个条件
         return this.remove(queryWrapper);
     }
 
     @Override
-    public int updateById(StringBuilder stringBuilder,Long id) {
+    public int updateById(StringBuilder stringBuilder, Long id) {
         CompanyMember companyMember = new CompanyMember();
         companyMember.setId(id);
         companyMember.setResume(String.valueOf(stringBuilder));
@@ -60,12 +63,33 @@ public class CompanyMemberServiceImpl extends ServiceImpl<CompanyMemberMapper,Co
 
         // 执行更新操作
         int flag2 = interviewerInfoMapper.update(interviewerInfo, updateWrapper);
-        if(flag1==flag2&&flag2==1){
+        if (flag1 ==1) {
             return flag1;
-        }
-        else {
+        } else {
             return 0;
         }
 
+    }
+
+    @Override
+    public int deleteById(Long id) {
+        int i = companyMemberMapper.deleteById(id);
+        List<Long> ids = new ArrayList<>();
+        ids.add(id);
+        cleaninterviewerInfo(ids);
+        return i;
+    }
+
+    void cleaninterviewerInfo(List<Long> ids) {
+        // 创建更新条件
+        UpdateWrapper<InterviewerInfo> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.in("company_member_id", ids)
+                .set("interviewer_name", null)
+                .set("upload_status", null)
+                .set("company_member_id", null)
+                .eq("enable", 0);
+
+        // 执行更新操作
+        interviewerInfoMapper.update(null, updateWrapper);
     }
 }

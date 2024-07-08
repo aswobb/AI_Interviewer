@@ -9,4 +9,5 @@ public interface CompanyMemberService {
     int insertMember(CompanyMember companyMember);
     boolean deleteByIds(List<Long> idList);
     int updateById(StringBuilder stringBuilder, Long id);
+    int deleteById(Long id);
 }

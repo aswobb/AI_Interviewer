@@ -75,8 +75,8 @@ public class CompanyMemberController {
     }
 
     @DeleteMapping("/delete")
-    public JsonResult deleteMember(int memberId) {
-        int i = companyMemberMapper.deleteById(memberId);
+    public JsonResult deleteMember(Long memberId) {
+        int i = companyMemberService.deleteById(memberId);
         return JsonResult.ok(i);
     }
 

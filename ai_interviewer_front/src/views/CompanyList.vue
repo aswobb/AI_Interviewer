@@ -3,7 +3,7 @@
         <v-btn icon @click="logout">
             <v-icon>mdi-exit-to-app</v-icon>
         </v-btn>
-        <v-data-table disable-sort="false" :headers="headers" :items="companyInfo" item-key="id" class="elevation-1"
+        <v-data-table :disable-sort="false" :headers="headers" :items="companyInfo" item-key="id" class="elevation-1"
             :options.sync="tableOptions" :server-items-length="totalItems">
             <template v-slot:item.actions="{ item }">
                 <div class="d-flex">

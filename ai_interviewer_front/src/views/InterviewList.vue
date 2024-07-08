@@ -16,27 +16,29 @@
                 </v-col>
             </v-row>
         </v-container>
-        <v-data-table disable-sort="false" :headers="headers" :items="interviewerList" item-key="id" class="elevation-1"
+
+        <v-data-table :disable-sort="false" :headers="headers" :items="interviewerList" item-key="id" class="elevation-1"
             :options.sync="tableOptions" :server-items-length="totalItems">
-            <!-- <template v-slot:[`item.action`]="{ item }">
-                <v-checkbox v-model="selectedItems" :value="item.id" @change="updateSelection"></v-checkbox>
-            </template> -->
+            <template v-slot:item.checkbox="{ item }">
+                <v-checkbox  @change="toggleSelection(item)"></v-checkbox>
+            </template>
             <template v-slot:item.uploadStatus="{ item }">
                 {{ getUploadStatusText(item.uploadStatus) }}
             </template>
             <template v-slot:item.actions="{ item }">
                 <div class="d-flex">
-                    <v-btn color="primary" :disabled="!item.executionDate" class="mx-2" @click="download(item)">
+                    <v-btn color="primary" :disabled="!Boolean(item.executionDate)" class="mx-2" @click="download(item)">
                         ダウンロード
                     </v-btn>
                     <!-- 每一行的更改按钮 -->
-                    <v-btn color="primary" :disabled="item.executionDate" class="mx-2"
+                    <v-btn color="primary" :disabled="Boolean(item.executionDate)" class="mx-2"
                         @click="openChangeInfo(item)">情報の変更</v-btn>
 
                 </div>
             </template>
         </v-data-table>
         <v-card-actions class="justify-center">
+            <v-btn color="primary" dark @click="downLoadCsvs">一括ダウンロード</v-btn>
             <v-btn color="primary" dark @click="addData">面接者データを20件追加</v-btn>
         </v-card-actions>
         <!-- 更改信息弹出框 -->
@@ -58,7 +60,9 @@
 
 <script>
 import { Message } from 'element-ui';
-import { memberGet, getCurrentUserAPI, interviewInfoDownload, interviewListAdd, interviewInfoUpdate, getInterviewMessageAPI } from '@/api'
+import { memberGet, getCurrentUserAPI, interviewInfoDownload, interviewListAdd, interviewInfoUpdate, getInterviewMessageAPI, downLoadCsvsAPI } from '@/api'
+import JSZip from 'jszip';
+
 export default {
     created() {
         this.userId = this.$route.query.id
@@ -109,6 +113,7 @@ export default {
             totalItems: null,
             //表头属性
             headers: [
+                { text: 'チェック', value: 'checkbox' },
                 { text: '面接id', value: 'interviewerId' },
                 { text: '面接者', value: 'interviewerName' },
                 { text: '履歴書状態', value: 'uploadStatus' },
@@ -204,6 +209,45 @@ export default {
                 }
             }
         },
+
+        // CSVファイル　複数ダウンロード
+        async downLoadCsvs(item) {
+            const userIds = this.selectedItems
+            console.log(userIds);
+            const response = await downLoadCsvsAPI(userIds);
+
+            console.log(response)
+            if (response.data.state == 40400) {
+                this.$router.push("/manage-login")
+                this.$notify.warning({
+                    message: 'ログインが期限切れです,再度ログインしてください',
+                    type: 'warn'
+                });
+            } else {
+                try {
+                    const zip = new JSZip();
+                    await zip.loadAsync(response.data);
+                    const selectedItems = this.selectedItems;
+                    const fileName = multiple_files.zip;
+                    const blob = await zip.generateAsync({ type: 'blob' });
+                    const url = window.URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.setAttribute('download', fileName);
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    window.URL.revokeObjectURL(url);
+            } catch (error) {
+                console.error('Failed to download ZIP file:', error);
+                this.$message({
+                    message: 'Failed to download ZIP file.',
+                    type: 'error'
+                });
+            }
+        }
+        },
+
         //
         async downloadByIds() {
             const response = await interviewInfoDownload(Id);
@@ -278,6 +322,17 @@ export default {
                 this.interviewerList = this.$store.state.interviewerInfo
                 this.totalItems = this.$store.state.totalItems
             }
+        },
+   
+        toggleSelection(item) {
+            // 切换选中状态时更新 selectedItems 数组
+            const index = this.selectedItems.indexOf(item.id);
+            if (index !== -1) {
+                this.selectedItems.splice(index, 1);
+            } else {
+                this.selectedItems.push(item.id);
+            }
+            console.log(this.selectedItems)
         }
     },
     //监听器

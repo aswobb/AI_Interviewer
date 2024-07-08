@@ -151,7 +151,17 @@ export const interviewDownloadMajority = (ids) => {
     data: ids
   })
 }
+/**
+ * CSVファイル　複数ダウンロード
+ */
 
+export const downLoadCsvsAPI = (ids) => {
+  return request({
+    url: '/interviewerInfo/downLoadCsvs',
+    method: 'POST',
+    data: ids
+  })
+}
 /**
  * 会社員情報を取得
  */

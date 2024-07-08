@@ -166,50 +166,6 @@ export default {
                     type: 'success'
                 })
             }
-            // else if (response.data.state == 40400) {
-            //             this.$router.push("/manage-login")
-            //             this.$notify.warning({
-            //                 message: 'ログインが期限切れです,再度ログインしてください',
-            //                 type: 'warn'
-            //             });
-            //         }else {
-            //             this.$notify.error({
-            //                 message: '情報の取得に失敗しました',
-            //                 type: 'error'
-            //             });
-            //         }
-
-            // const token = localStorage.getItem('token');
-            // console.log(token);
-            // if (token) {
-            //     let url = 'api/snsUser/delete/' + this.deleteId
-            //     this.axios.delete(url, {
-            //         headers: {
-            //             'token': token
-            //         },
-            //     }).then((response) => {
-            //         console.log(166, response);
-            //         if (response.data == 1) {
-            //             this.dialog = false
-            //             this.getCompanyInfo(this.tableOptions.page, this.tableOptions.itemsPerPage)
-            //             this.$message({
-            //                 message: '削除に成功しました！',
-            //                 type: 'success'
-            //             })
-            //         } else if (response.data.state == 40400) {
-            //             this.$router.push("/manage-login")
-            //             this.$notify.warning({
-            //                 message: 'ログインが期限切れです,再度ログインしてください',
-            //                 type: 'warn'
-            //             });
-            //         } else {
-            //             this.$notify.error({
-            //                 message: '情報の取得に失敗しました',
-            //                 type: 'error'
-            //             });
-            //         }
-            //     });
-            // }
         },
         a(n) {
             if (n === this.userInfo.userBillingHistoryVO.courseId) {
@@ -270,56 +226,6 @@ export default {
                 this.companyInfo = this.$store.state.companyInfo
                 this.totalItems = this.$store.state.companyTotalItems
             }
-            // else if (response.data.state == 40400) {
-            //     this.$router.push("/manage-login")
-            //     this.$notify.warning({
-            //         message: 'ログインが期限切れです,再度ログインしてください',
-            //         type: 'warn'
-            //     });
-            // } else {
-            //     this.$notify.error({
-            //         message: '情報の取得に失敗しました',
-            //         type: 'error'
-            //     });
-            // }
-
-            // const token = localStorage.getItem('token');
-            // console.log(token);
-            // if (token) {
-            // let url = 'api/snsUser/list'
-            // this.axios.get(url, {
-            //     params: { pageNum: pageNum1, pageSize: pageSize1 },
-            //     headers: {
-            //         'token': token
-            //     },
-
-            // }).then((response) => {
-            //     if (response.data.state == 20000) {
-            //         console.log(response);
-            //         this.$store.commit('initCompanyInfo', response.data)
-            //         this.companyInfo = this.$store.state.companyInfo
-            //         this.totalItems = this.$store.state.companyTotalItems
-            //     } else if (response.data.state == 40400) {
-            //         this.$router.push("/manage-login")
-            //         this.$notify.warning({
-            //             message: 'ログインが期限切れです,再度ログインしてください',
-            //             type: 'warn'
-            //         });
-            //     } else {
-            //         this.$notify.error({
-            //             message: '情報の取得に失敗しました',
-            //             type: 'error'
-            //         });
-            //     }
-            // });
-            // }
-            //  else {
-            //     this.$router.push("/manage-login")
-            //     this.$message({
-            //         message: 'ログインが期限切れです。再度ログインしてください',
-            //         type: 'warn'
-            //     });
-            // }
         },
         sumbit() {
             if (this.$refs.form.validate()) {
@@ -335,14 +241,6 @@ export default {
 
 
         async addUser() {
-            // let url = 'api/snsUser/create'
-            // let config = {
-            //     headers: {
-            //         'token': token
-            //     },
-            // };
-            // console.log("add", this.userInfo);
-
             const response = await managerPlus(this.userInfo);
             if (response.data.state == 20000) {
                 this.$message({
@@ -354,43 +252,6 @@ export default {
                 //关闭对话框
                 this.close()
             }
-            // else if (response.data.state == 40400) {
-            //     this.$router.push("/manage-login")
-            //     this.$notify.warning({
-            //         message: 'ログインが期限切れです,再度ログインしてください',
-            //         type: 'warn'
-            //     });
-            // } else {
-            //     this.$message({
-            //         message: response.data.message,
-            //         type: 'error'
-            //     });
-            // }
-
-            // this.axios.post(url, this.userInfo, config).then((response) => {
-            //     if (response.data.state == 20000) {
-            //         this.$message({
-            //             message: 'ユーザーの追加が成功しました.',
-            //             type: 'success'
-            //         });
-            //         //回显
-            //         this.getCompanyInfo(this.tableOptions.page, this.tableOptions.itemsPerPage)
-            //         //关闭对话框
-            //         this.close()
-            //     } else if (response.data.state == 40400) {
-            //         this.$router.push("/manage-login")
-            //         this.$notify.warning({
-            //             message: 'ログインが期限切れです,再度ログインしてください',
-            //             type: 'warn'
-            //         });
-            //     } else {
-            //         this.$message({
-            //             message: response.data.message,
-            //             type: 'error'
-            //         });
-            //     }
-
-            // });
         },
 
 
@@ -407,50 +268,6 @@ export default {
                 //关闭对话框
                 this.close()
             }
-            //  else if (response.data.state == 40400) {
-            //     this.$router.push("/manage-login")
-            //     this.$notify.warning({
-            //         message: 'ログインが期限切れです,再度ログインしてください',
-            //         type: 'warn'
-            //     });
-            // } else {
-            //     this.$message({
-            //         message: response.data.message,
-            //         type: 'error'
-            //     });
-            // }
-
-
-            // let url = 'api/snsUser/update'
-            // let config = {
-            //     headers: {
-            //         'token': token
-            //     },
-            // };
-            // this.axios.post(url, this.userInfo, config).then((response) => {
-            //     if (response.data.state == 20000) {
-            //         this.$message({
-            //             message: 'ユーザーの変更が成功しました.',
-            //             type: 'success'
-            //         });
-            //回显
-            //         this.getCompanyInfo(this.tableOptions.page, this.tableOptions.itemsPerPage)
-            //         //关闭对话框
-            //         this.close()
-            //     } else if (response.data.state == 40400) {
-            //         this.$router.push("/manage-login")
-            //         this.$notify.warning({
-            //             message: 'ログインが期限切れです,再度ログインしてください',
-            //             type: 'warn'
-            //         });
-            //     } else {
-            //         this.$message({
-            //             message: response.data.message,
-            //             type: 'error'
-            //         });
-            //     }
-
-            // });
         }
 
     },

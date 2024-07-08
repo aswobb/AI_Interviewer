@@ -70,8 +70,6 @@ export default {
           console.log('请求路径为:' + url)
           console.log('请求参数为:' + this.ruleForm)
           console.log(this.ruleForm)
-          // let dateFrom = this.qs.stringify(this.ruleForm)
-          // 设置请求头为 application/json
           let config = {
             headers: {
               'Content-Type': 'application/json'
@@ -91,13 +89,6 @@ export default {
               this.$gtm.sendLoginEvent(this.ruleForm.username); // ログインイベント送出
               this.$router.push({ name: 'ChatApp' })
             }
-            // else {
-            //   console.log('ログインに失敗しました。ユーザー名またはパスワードが正しくありません.')
-            //   this.$notify.error({
-            //     title: 'ログインに失敗しました.',
-            //     message: 'ログインに失敗しました。ユーザー名またはパスワードが正しくありません.'
-            //   });
-            // }
           });
         }
       });

@@ -59,6 +59,7 @@
             <el-form :model="form" :rules="rules" ref="form">
                 <el-form-item style="color: black" label="会社員名前" prop="name">
                     <el-input v-model="form.name"></el-input>
+                    <el-input v-show="false"></el-input>
                 </el-form-item>
                 <div style="text-align: center;">
                     <el-button type="primary" @click="submitForm('form')">提出</el-button>
@@ -140,14 +141,16 @@ export default {
         },
         submitForm(formName) {
             this.$refs[formName].validate(async (valid) => {
-                this.form.userId = this.userId
-                let data = this.form
-                const response = await memberPlus(data)
-                this.form.name = ''
-                this.addDataFlag = false
-                if (response.data.state == 20000) {
-                    Message.success("追加しました！")
-                    this.getMember(this.userId, this.tableOptions.page, this.tableOptions.itemsPerPage)
+                if (valid) {
+                    this.form.userId = this.userId
+                    let data = this.form
+                    const response = await memberPlus(data)
+                    this.form.name = ''
+                    this.addDataFlag = false
+                    if (response.data.state == 20000) {
+                        Message.success("追加しました！")
+                        this.getMember(this.userId, this.tableOptions.page, this.tableOptions.itemsPerPage)
+                    }
                 }
             });
         },

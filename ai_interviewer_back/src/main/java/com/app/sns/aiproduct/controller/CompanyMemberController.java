@@ -3,14 +3,18 @@ package com.app.sns.aiproduct.controller;
 import com.app.sns.aiproduct.constant.ServiceCodeEnum;
 import com.app.sns.aiproduct.ex.ServiceException;
 import com.app.sns.aiproduct.mapper.CompanyMemberMapper;
+import com.app.sns.aiproduct.mapper.InterviewerInfoMapper;
 import com.app.sns.aiproduct.pojo.entity.CompanyMember;
+import com.app.sns.aiproduct.pojo.entity.InterviewerInfo;
 import com.app.sns.aiproduct.service.CompanyMemberService;
 import com.app.sns.aiproduct.service.UploadFileService;
 import com.app.sns.aiproduct.vo.MemberVo;
 import com.app.sns.aiproduct.web.JsonResult;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -29,6 +33,9 @@ public class CompanyMemberController {
     private CompanyMemberService companyMemberService;
     @Autowired
     private CompanyMemberMapper companyMemberMapper;
+
+    @Autowired
+    private InterviewerInfoMapper interviewerInfoMapper;
 
     @GetMapping("/getAllMebmer")
     public JsonResult getAllList(int userId) {
@@ -56,12 +63,10 @@ public class CompanyMemberController {
         if (file.isEmpty()) {
             throw new ServiceException(ServiceCodeEnum.ERR_FILE_EMPTY);
         }
+
         StringBuilder stringBuilder = uploadFileService.uploadFile(file);
-        CompanyMember companyMember = new CompanyMember();
-        companyMember.setId(id);
-        companyMember.setResume(String.valueOf(stringBuilder));
-        companyMember.setUploadStatus(1);
-        int flag = companyMemberMapper.updateById(companyMember);
+        int flag = companyMemberService.updateById(stringBuilder,id);
+
         if (flag == 1) {
             return JsonResult.ok();
         } else {
@@ -75,15 +80,18 @@ public class CompanyMemberController {
         return JsonResult.ok(i);
     }
 
+    @Transactional
     @PostMapping("/insert")
     public JsonResult addMember(@RequestBody CompanyMember companyMember) {
         int i = companyMemberService.insertMember(companyMember);
+
         return JsonResult.ok(i);
     }
+
     @DeleteMapping("/deleteByIds")
-    public JsonResult deleteEntities( @RequestBody List<Long> ids) {
+    public JsonResult deleteEntities(@RequestBody List<Long> ids) {
         boolean result = companyMemberService.deleteByIds(ids);
-        if (result){
+        if (result) {
             return JsonResult.ok();
         }
         throw new ServiceException(ServiceCodeEnum.ERR_READ_FILE);

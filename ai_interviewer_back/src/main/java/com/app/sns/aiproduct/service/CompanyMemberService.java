@@ -8,4 +8,5 @@ public interface CompanyMemberService {
     List<CompanyMember> getCompanyMember();
     int insertMember(CompanyMember companyMember);
     boolean deleteByIds(List<Long> idList);
+    int updateById(StringBuilder stringBuilder, Long id);
 }

@@ -17,17 +17,18 @@
             </v-row>
         </v-container>
 
-        <v-data-table :disable-sort="false" :headers="headers" :items="interviewerList" item-key="id" class="elevation-1"
-            :options.sync="tableOptions" :server-items-length="totalItems">
+        <v-data-table :disable-sort="false" :headers="headers" :items="interviewerList" item-key="id"
+            class="elevation-1" :options.sync="tableOptions" :server-items-length="totalItems">
             <template v-slot:item.checkbox="{ item }">
-                <v-checkbox  @change="toggleSelection(item)"></v-checkbox>
+                <v-checkbox :disabled="!Boolean(item.executionDate)" @change="toggleSelection(item)"></v-checkbox>
             </template>
             <template v-slot:item.uploadStatus="{ item }">
                 {{ getUploadStatusText(item.uploadStatus) }}
             </template>
             <template v-slot:item.actions="{ item }">
                 <div class="d-flex">
-                    <v-btn color="primary" :disabled="!Boolean(item.executionDate)" class="mx-2" @click="download(item)">
+                    <v-btn color="primary" :disabled="!Boolean(item.executionDate)" class="mx-2"
+                        @click="download(item)">
                         ダウンロード
                     </v-btn>
                     <!-- 每一行的更改按钮 -->
@@ -212,40 +213,38 @@ export default {
 
         // CSVファイル　複数ダウンロード
         async downLoadCsvs(item) {
-            const userIds = this.selectedItems
-            console.log(userIds);
-            const response = await downLoadCsvsAPI(userIds);
+            if (this.selectedItems.length > 0) {
+                const userIds = this.selectedItems
+                console.log(userIds);
+                const response = await downLoadCsvsAPI(userIds);
 
-            console.log(response)
-            if (response.data.state == 40400) {
-                this.$router.push("/manage-login")
-                this.$notify.warning({
-                    message: 'ログインが期限切れです,再度ログインしてください',
-                    type: 'warn'
-                });
-            } else {
+                console.log(response)
                 try {
                     const zip = new JSZip();
-                    await zip.loadAsync(response.data);
-                    const selectedItems = this.selectedItems;
-                    const fileName = multiple_files.zip;
-                    const blob = await zip.generateAsync({ type: 'blob' });
-                    const url = window.URL.createObjectURL(blob);
-                    const link = document.createElement('a');
-                    link.href = url;
-                    link.setAttribute('download', fileName);
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                    window.URL.revokeObjectURL(url);
-            } catch (error) {
-                console.error('Failed to download ZIP file:', error);
-                this.$message({
-                    message: 'Failed to download ZIP file.',
-                    type: 'error'
-                });
+                    const content = await zip.loadAsync(response.data);
+
+                    // 提取 ZIP 文件中的每个文件并自动下载
+                    content.forEach(async (relativePath, file) => {
+                        const blob = await file.async('blob');
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = relativePath;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url); // 释放 URL 对象
+                    });
+                } catch (error) {
+                    console.error('Failed to download ZIP file:', error);
+                    this.$message({
+                        message: 'Failed to download ZIP file.',
+                        type: 'error'
+                    });
+                }
+            } else {
+                Message.warning("少なくとも1つのファイルを選択してください！");
             }
-        }
         },
 
         //
@@ -323,7 +322,7 @@ export default {
                 this.totalItems = this.$store.state.totalItems
             }
         },
-   
+
         toggleSelection(item) {
             // 切换选中状态时更新 selectedItems 数组
             const index = this.selectedItems.indexOf(item.id);

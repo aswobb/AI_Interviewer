@@ -179,13 +179,15 @@ public class InterviewerInfoServiceImpl extends ServiceImpl<InterviewerInfoMappe
             }
             csvFiles.add(csvFile);
         }
+
         // 创建一个内存流用于存储 ZIP 文件内容
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ZipOutputStream zipOut = new ZipOutputStream(baos);
 
         // 将每个 CSV 文件添加到 ZIP 中
         for (int i = 0; i < csvFiles.size(); i++) {
-            addToZip(zipOut, "test" + i + ".csv", csvFiles.get(i).getFileContent());
+            InterviewerInfo interviewerInfo = interviewerInfoMapper.selectById(ids.get(i));
+            addToZip(zipOut, interviewerInfo.getInterviewerName() + " "+interviewerInfo.getExecutionDate() + ".csv", csvFiles.get(i).getFileContent());
         }
 
         zipOut.close();

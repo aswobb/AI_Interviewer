@@ -85,13 +85,6 @@ export default {
                             this.$router.push('/company-list')
                         }
                     }
-                    // else if (response.data.state == 40002) {
-                    //     Message({
-                    //         message: 'ログインに失敗しました。ユーザー名またはパスワードが正しくありません!',
-                    //         type: 'error',
-                    //         customClass: 'custom-message'  // 添加自定义类名
-                    //     });
-                    // }
                 }
             });
         },

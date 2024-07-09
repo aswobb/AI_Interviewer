@@ -159,7 +159,8 @@ export const downLoadCsvsAPI = (ids) => {
   return request({
     url: '/interviewerInfo/downLoadCsvs',
     method: 'POST',
-    data: ids
+    data: ids,
+    responseType: 'blob'
   })
 }
 /**

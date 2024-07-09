@@ -24,7 +24,7 @@
         </v-data-table>
         <v-card-actions class="justify-center">
             <v-btn color="primary" dark @click="addDataFlag = true">会社員追加</v-btn>
-            <v-btn color="primary" dark @click="openDelDialog">複数削除</v-btn>
+            <v-btn color="primary" dark @click="openDelDialog">一括削除</v-btn>
         </v-card-actions>
         <el-dialog append-to-body title="履歴書アップロードしてください" :visible.sync="dialogVisible" width="30%">
             <span>

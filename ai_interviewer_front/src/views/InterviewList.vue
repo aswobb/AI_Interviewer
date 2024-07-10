@@ -20,7 +20,8 @@
         <v-data-table :disable-sort="false" :headers="headers" :items="interviewerList" item-key="id"
             class="elevation-1" :options.sync="tableOptions" :server-items-length="totalItems">
             <template v-slot:item.checkbox="{ item }">
-                <v-checkbox :disabled="!Boolean(item.executionDate)" @change="toggleSelection(item)"></v-checkbox>
+                <v-checkbox v-model="item.checkbox" :disabled="!Boolean(item.executionDate)"
+                    @change="toggleSelection(item)"></v-checkbox>
             </template>
             <template v-slot:item.uploadStatus="{ item }">
                 {{ getUploadStatusText(item.uploadStatus) }}
@@ -212,7 +213,7 @@ export default {
         },
 
         // CSVファイル　複数ダウンロード
-        async downLoadCsvs(item) {
+        async downLoadCsvs() {
             if (this.selectedItems.length > 0) {
                 const userIds = this.selectedItems
                 console.log(userIds);
@@ -235,7 +236,16 @@ export default {
                         document.body.removeChild(a);
                         URL.revokeObjectURL(url); // 释放 URL 对象
                     });
+                    this.interviewerList.forEach(item => {
+                        item.checkbox = false; // 假设表格数据中有一个 isSelected 属性用于管理选中状态
+                    });
+                    this.selectedItems
+                    Message.success("アップロード成功しました！")
                 } catch (error) {
+                    this.interviewerList.forEach(item => {
+                        item.checkbox = false; // 假设表格数据中有一个 isSelected 属性用于管理选中状态
+                    });
+                    this.selectedItems = []
                     console.error('Failed to download ZIP file:', error);
                     this.$message({
                         message: 'Failed to download ZIP file.',
@@ -250,29 +260,20 @@ export default {
         //
         async downloadByIds() {
             const response = await interviewInfoDownload(Id);
-            console.log(207, response);
-            if (response.data.state == 40400) {
-                this.$router.push("/manage-login")
-                this.$notify.warning({
-                    message: 'ログインが期限切れです,再度ログインしてください',
-                    type: 'warn'
+            try {
+                const blob = new Blob([response.data], { type: 'application/octet-stream' }); // ダウンロードリンクを作成 
+                const url = window.URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', 'output.csv'); // ダウンロードファイル名を設定 // リンクをクリックしてファイルをダウンロード 
+                document.body.appendChild(link);
+                link.click(); // リンクを削除 
+                document.body.removeChild(link);
+            } catch (error) {
+                this.$message({
+                    message: error.message,
+                    type: 'error'
                 });
-            } else {
-                try {
-                    const blob = new Blob([response.data], { type: 'application/octet-stream' }); // ダウンロードリンクを作成 
-                    const url = window.URL.createObjectURL(blob);
-                    const link = document.createElement('a');
-                    link.href = url;
-                    link.setAttribute('download', 'output.csv'); // ダウンロードファイル名を設定 // リンクをクリックしてファイルをダウンロード 
-                    document.body.appendChild(link);
-                    link.click(); // リンクを削除 
-                    document.body.removeChild(link);
-                } catch (error) {
-                    this.$message({
-                        message: error.message,
-                        type: 'error'
-                    });
-                }
             }
         },
 

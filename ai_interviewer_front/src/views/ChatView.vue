@@ -644,11 +644,13 @@ export default {
         const response = await MessageSend2({
           message: chatBody + ",{\"role\":\"user\", \"content\":\"CSVインポートしたいので、表を2つ出力してください。１つ目は面接での質問と回答を出力してください。必ず「質問項番」,「質問内容」,「回答」の3列にしてください。質問項番は1～10で順番に出力してください。質問内容は要約せずにそのまま出力してください。回答内容は要約せずにそのまま出力してください。２つ目は面接での評価を出力してください。必ず、「総合評価点」,「技術的スキル（0～40点）」,「コミュニケーション能力 (0-30点)」,「問題解決能力 (0-20点)」,「適応性と学習意欲 (0-10点)」,「評価理由」,「改善点」の7列にしてください。10個の回答を評価し、技術的スキル、コミュニケーション能力、問題解決能力 、適応性と学習意欲ごとに採点してください。総合評価点は各プログラム評価点の値の和とします。評価理由は4行程度で出力してください。改善点は4行程度で出力してください。CSV以外の出力はしないでください。CSVデータとそうではないところがわかるように、CSVデータは```で囲ってください。\" }"
         });
+        console.log(647, response.data && response.data.state === 20000);
         // デバッグ用
         // let response; 
         // response = await this.sleep(500).then( () => {return {data: {state: 20000, data: "以下がCSVファイルです。\n```\n質問,回答\nほげ1,ふが1\n今日の朝ごはん,卵焼き\n```\n"}}}); // 0.5秒後にテストデータを返す.
         // デバッグ用ここまで
         if (response.data && response.data.state === 20000) {
+          console.log(652, response);
           // console.log("response : " + response.data.data);
           // const csvData = response.data.data.match(/```([\s\S]*?)```/g).slice(-1)[0].replace(/(```.*\n*|^\n$|^[^,]+$)/g,""); 
           const csvData = response.data.data;
@@ -669,15 +671,15 @@ export default {
           //     // ユーザーに見る必要ないから何もしない
           //     console.log("csvアプロードしました。");
           //   })
-          const response = await MessageSend3(formData)
-            .catch(error => {
-              console.error("API request error:", error);
-              this.$notify.error({
-                title: "DBへのCSVファイルアプロード失敗しました.",
-                message: error,
-              });
-              // 处理错误
-            });
+          const response1 = await MessageSend3(formData)
+          // .catch(error => {
+          //   console.error("API request error:", error);
+          //   this.$notify.error({
+          //     title: "DBへのCSVファイルアプロード失敗しました.",
+          //     message: error,
+          //   });
+          //   // 处理错误
+          // });
 
 
 

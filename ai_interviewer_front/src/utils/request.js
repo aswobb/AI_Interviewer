@@ -4,7 +4,8 @@ import router from "@/router";
 import { Message } from "element-ui";
 const myAxios = axios.create({
     // baseURL: 'http://localhost:9999'
-    baseURL: 'https://ainterviewer.jp/api'
+    baseURL: 'https://ainterviewer.jp:444/api'
+    // baseURL: 'http://35.73.43.148/api'
 })
 // 定义请求拦截器
 myAxios.interceptors.request.use(function (config) {

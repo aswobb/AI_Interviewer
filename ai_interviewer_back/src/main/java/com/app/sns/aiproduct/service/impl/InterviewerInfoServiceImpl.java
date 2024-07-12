@@ -186,6 +186,7 @@ public class InterviewerInfoServiceImpl extends ServiceImpl<InterviewerInfoMappe
 
         // 将每个 CSV 文件添加到 ZIP 中
         for (int i = 0; i < csvFiles.size(); i++) {
+            //每次遍历查询对应id的名称，并将其与时间组合命名
             InterviewerInfo interviewerInfo = interviewerInfoMapper.selectById(ids.get(i));
             addToZip(zipOut, interviewerInfo.getInterviewerName() + " "+interviewerInfo.getExecutionDate() + ".csv", csvFiles.get(i).getFileContent());
         }

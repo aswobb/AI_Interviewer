@@ -15,7 +15,6 @@
                     <el-button @click="resetForm()">リセット</el-button>
                 </el-form-item>
             </el-form>
-
         </div>
     </div>
 </template>

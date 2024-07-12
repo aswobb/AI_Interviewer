@@ -112,6 +112,7 @@ import { chatMessageSend1, fileSend, MessageSend2, MessageSend3 } from '@/api'
 export default {
   data() {
     return {
+      voices: [],
       selectedVoice: null,
       disabledByConfim: false,
       flag: false,//面接者に新しい履歴書をアップロードするかどうか選んでもらう
@@ -169,6 +170,7 @@ export default {
   },
   created() {
     this.memberVo = this.$store.state.companyMemberInfo
+    this.getVoice()
   },
   computed: {
     getPlaceholderText() {
@@ -191,6 +193,21 @@ export default {
     }
   },
   methods: {
+    getVoice() {
+      // 获取所有语音对象
+      this.voices = window.speechSynthesis.getVoices();
+
+      // 尝试自动选择 Microsoft Ichiro - Japanese (Japan)
+      this.selectedVoice = this.voices.find(voice => voice.name === 'Microsoft Ichiro - Japanese (Japan)');
+
+      // 如果没找到，再重新获取语音对象
+      if (!this.selectedVoice) {
+        window.speechSynthesis.onvoiceschanged = () => {
+          this.voices = window.speechSynthesis.getVoices();
+          this.selectedVoice = this.voices.find(voice => voice.name === 'Microsoft Ichiro - Japanese (Japan)');
+        };
+      }
+    },
     cancleUpload() {
       this.dialogVisible = false
       this.flag = true
@@ -289,13 +306,8 @@ export default {
       this.disabledByConfim = false
       // 创建一个新的 SpeechSynthesisUtterance 实例
       const utterance = new SpeechSynthesisUtterance("ご承知いたしました、ごスキルシートを入力しください");
-      this.selectedVoice = window.speechSynthesis.getVoices().find(voice => voice.name === 'Google 日本語');
-      console.log(205, this.selectedVoice);
       utterance.voice = this.selectedVoice;
-      // 设置语言
-      utterance.lang = 'ja-JP'; // 设置为日语，可以根据需要更改
-
-      // 使用 speechSynthesis 进行文本转语音
+      utterance.lang = 'ja-JP'; // 设置语言为日语
       window.speechSynthesis.speak(utterance);
     },
     reUpload() {
@@ -651,8 +663,6 @@ export default {
         // デバッグ用ここまで
         if (response.data && response.data.state === 20000) {
           console.log(652, response);
-          // console.log("response : " + response.data.data);
-          // const csvData = response.data.data.match(/```([\s\S]*?)```/g).slice(-1)[0].replace(/(```.*\n*|^\n$|^[^,]+$)/g,""); 
           const csvData = response.data.data;
           const encodeData = new TextEncoder('utf-8').encode('\ufeff' + csvData);
           // console.log("encodeData : " + encodeData);
@@ -660,30 +670,7 @@ export default {
 
           const formData = new FormData(); // csvファイルbackendへ送信 
           formData.append('file', blob, csvFileName);
-          // axios.post('/api/interviewerInfo/completeInterviewerInfo', formData, { // backendのapiに変更
-          //   headers: {
-          //     'Content-Type': 'multipart/form-data', // 指定请求头
-          //     'token': token,
-          //     // 如果需要其他的请求头，可以在此添加
-          //   },
-          // })
-          //   .then(response => {
-          //     // ユーザーに見る必要ないから何もしない
-          //     console.log("csvアプロードしました。");
-          //   })
           const response1 = await MessageSend3(formData)
-          // .catch(error => {
-          //   console.error("API request error:", error);
-          //   this.$notify.error({
-          //     title: "DBへのCSVファイルアプロード失敗しました.",
-          //     message: error,
-          //   });
-          //   // 处理错误
-          // });
-
-
-
-
           const blobUrl = URL.createObjectURL(blob);  // ダウンロードリンク作成
           // console.log(blobUrl);
           this.renderMessages.push({

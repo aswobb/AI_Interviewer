@@ -64,7 +64,7 @@ public class GoogleVoiceSericeImpl implements GoogleVoiceSerice {
 
             String languageCode = "ja-JP";
             voice.put("languageCode", languageCode);
-            voice.put("name", "ja-JP-Standard-A");
+            voice.put("name", "ja-JP-Wavenet-C");
             JSONObject jsonPayload = new JSONObject();
             jsonPayload.put("audioConfig", audioConfig);
             jsonPayload.put("input", input);

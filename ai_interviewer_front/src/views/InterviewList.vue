@@ -28,20 +28,19 @@
             </template>
             <template v-slot:item.actions="{ item }">
                 <div class="d-flex">
-                    <v-btn color="primary" :disabled="!Boolean(item.executionDate)" class="mx-2"
-                        @click="download(item)">
+                    <v-btn :disabled="!Boolean(item.executionDate)" class="mx-2 green-button" @click="download(item)">
                         ダウンロード
                     </v-btn>
                     <!-- 每一行的更改按钮 -->
-                    <v-btn color="primary" :disabled="Boolean(item.executionDate)" class="mx-2"
+                    <v-btn :disabled="Boolean(item.executionDate)" class="mx-2 green-button"
                         @click="openChangeInfo(item)">情報の変更</v-btn>
 
                 </div>
             </template>
         </v-data-table>
         <v-card-actions class="justify-center">
-            <v-btn color="primary" dark @click="downLoadCsvs">一括ダウンロード</v-btn>
-            <v-btn color="primary" dark @click="addData">面接者データを20件追加</v-btn>
+            <v-btn @click="downLoadCsvs" class="mx-2 green-button">一括ダウンロード</v-btn>
+            <v-btn @click="addData" class="mx-2 green-button">面接者データを20件追加</v-btn>
         </v-card-actions>
         <!-- 更改信息弹出框 -->
         <v-dialog v-model="dialog" max-width="400">
@@ -53,8 +52,8 @@
             </v-form>
             <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="green darken-1" @click="sumbit">変更</v-btn>
-                <v-btn color="green darken-1" @click="cancel">キャンセル</v-btn>
+                <v-btn @click="sumbit" class="green-button">変更</v-btn>
+                <v-btn @click="cancel" class="green-button">キャンセル</v-btn>
             </v-card-actions>
         </v-dialog>
     </div>
@@ -362,6 +361,11 @@ export default {
 
 .custom-text-field {
     width: 150px;
+}
+
+.green-button {
+  background-color: rgb(0, 155, 99) !important;
+  color: white !important;
 }
 </style>
 <!-- 刷新同步 -->

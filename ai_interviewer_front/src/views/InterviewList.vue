@@ -28,19 +28,19 @@
             </template>
             <template v-slot:item.actions="{ item }">
                 <div class="d-flex">
-                    <v-btn :disabled="!Boolean(item.executionDate)" class="mx-2 green-button" @click="download(item)">
+                    <v-btn :disabled="!Boolean(item.executionDate)" class="green-button" @click="download(item)">
                         ダウンロード
                     </v-btn>
                     <!-- 每一行的更改按钮 -->
-                    <v-btn :disabled="Boolean(item.executionDate)" class="mx-2 green-button"
+                    <v-btn :disabled="Boolean(item.executionDate)" class="green-button"
                         @click="openChangeInfo(item)">情報の変更</v-btn>
 
                 </div>
             </template>
         </v-data-table>
         <v-card-actions class="justify-center">
-            <v-btn @click="downLoadCsvs" class="mx-2 green-button">一括ダウンロード</v-btn>
-            <v-btn @click="addData" class="mx-2 green-button">面接者データを20件追加</v-btn>
+            <v-btn @click="downLoadCsvs" class="green-button">一括ダウンロード</v-btn>
+            <v-btn @click="addData" class="green-button">面接者データを20件追加</v-btn>
         </v-card-actions>
         <!-- 更改信息弹出框 -->
         <v-dialog v-model="dialog" max-width="400">

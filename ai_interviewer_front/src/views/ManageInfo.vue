@@ -44,14 +44,14 @@
                     </v-simple-table>
                 </v-card-text>
                 <v-card-actions class="d-flex justify-center">
-                    <v-btn color="primary"
+                    <v-btn class="green-button"
                         @click="dialog = true; changePwForm.password = ''; changePwForm.newPassword = ''; changePwForm.reNewPassword = ''">
                         PW再設定
                     </v-btn>
-                    <v-btn color="primary" @click="editUser">
+                    <v-btn class="green-button" @click="editUser">
                         面接情報——
                     </v-btn>
-                    <v-btn color="primary" @click="editCompanyMember">
+                    <v-btn class="green-button" @click="editCompanyMember">
                         会社員情報
                     </v-btn>
                 </v-card-actions>
@@ -69,8 +69,8 @@
             </v-form>
             <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="green darken-1" @click="changePw">変更</v-btn>
-                <v-btn color="green darken-1" @click="dialog = false">キャンセル</v-btn>
+                <v-btn class="green-button" @click="changePw">変更</v-btn>
+                <v-btn class="green-button" @click="dialog = false">キャンセル</v-btn>
             </v-card-actions>
         </v-dialog>
     </div>
@@ -229,5 +229,10 @@ export default {
 .v-dialog {
     background: #fff;
     height: 350px;
+}
+
+.green-button {
+  background-color: rgb(0, 155, 99) !important;
+  color: white !important;
 }
 </style>

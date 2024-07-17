@@ -7,17 +7,17 @@
             :options.sync="tableOptions" :server-items-length="totalItems">
             <template v-slot:item.actions="{ item }">
                 <div class="d-flex">
-                    <v-btn color="primary" class="mx-2" @click="openDialog(item)">
+                    <v-btn class="green-button" @click="openDialog(item)">
                         変更
                     </v-btn>
-                    <v-btn color="primary" class="mx-2" @click="showDeleteConfirmation(item.id)">
+                    <v-btn class="green-button" @click="showDeleteConfirmation(item.id)">
                         削除
                     </v-btn>
                 </div>
             </template>
         </v-data-table>
         <v-card-actions class="justify-center">
-            <v-btn color="primary" dark @click="openDialog(1)">ユーザーの追加</v-btn>
+            <v-btn class="green-button" dark @click="openDialog(1)">ユーザーの追加</v-btn>
         </v-card-actions>
         <v-dialog v-model="addUserDialog" max-width="400">
             <v-card-title class="headline">ユーザーの{{ operation }}</v-card-title>
@@ -44,16 +44,16 @@
             </v-form>
             <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="green darken-1" @click="sumbit()">{{ operation }}</v-btn>
-                <v-btn color="green darken-1" @click="close">キャンセル</v-btn>
+                <v-btn class="green-button" @click="sumbit()">{{ operation }}</v-btn>
+                <v-btn class="green-button" @click="close">キャンセル</v-btn>
             </v-card-actions>
         </v-dialog>
 
         <div v-if="dialog" class="modal">
             <div class="modal-content">
                 <p>本当にこのデータを削除してもよろしいですか？</p>
-                <button @click="deleteData" class="confirm-button">はい</button>
-                <button @click="closeDialog" class="cancel-button">いいえ</button>
+                <button @click="deleteData" class="green-button">はい</button>
+                <button @click="closeDialog" class="green-button">いいえ</button>
             </div>
         </div>
     </div>
@@ -353,6 +353,10 @@ export default {
 .confirm-button:hover,
 .cancel-button:hover {
     background-color: #d32f2f;
+}
+.green-button {
+  background-color: rgb(0, 155, 99) !important;
+  color: white !important;
 }
 </style>
 <!-- 刷新同步 -->

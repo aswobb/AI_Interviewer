@@ -14,17 +14,17 @@
             </template>
             <template v-slot:item.actions="{ item }">
                 <div class="d-flex">
-                    <v-btn color="primary" class="mx-2" @click="deleteButton(item.id)">
+                    <v-btn class="green-button" @click="deleteButton(item.id)">
                         削除
                     </v-btn>
-                    <v-btn color="primary" class="mx-2" @click="openDialog(item)">{{
+                    <v-btn class="green-button" @click="openDialog(item)">{{
                         item.uploadStatus === 1 ? '履歴書更新' : '履歴書アップロード' }}</v-btn>
                 </div>
             </template>
         </v-data-table>
         <v-card-actions class="justify-center">
-            <v-btn color="primary" dark @click="addDataFlag = true">会社員追加</v-btn>
-            <v-btn color="primary" dark @click="openDelDialog">一括削除</v-btn>
+            <v-btn class="green-button" dark @click="addDataFlag = true">会社員追加</v-btn>
+            <v-btn class="green-button" dark @click="openDelDialog">一括削除</v-btn>
         </v-card-actions>
         <el-dialog append-to-body title="履歴書アップロードしてください" :visible.sync="dialogVisible" width="30%">
             <span>
@@ -32,16 +32,16 @@
 
             </span>
             <span slot="footer" class="dialog-footer">
-                <el-button type="primary" @click="submitFile">アップロード</el-button>
-                <el-button @click="dialogVisible = false">キャンセル</el-button>
+                <el-button class="green-button" @click="submitFile">アップロード</el-button>
+                <el-button class="green-button" @click="dialogVisible = false">キャンセル</el-button>
             </span>
         </el-dialog>
 
         <el-dialog :visible.sync="deleteMembersFlag" width="30%">
             <p>選択したデータを削除してもよろしいですか？</p>
             <span slot="footer" class="dialog-footer">
-                <el-button type="primary" @click="deleteMembers">確認</el-button>
-                <el-button @click="deleteMembersFlag = false">キャンセル</el-button>
+                <el-button class="green-button" @click="deleteMembers">確認</el-button>
+                <el-button class="green-button" @click="deleteMembersFlag = false">キャンセル</el-button>
             </span>
         </el-dialog>
 
@@ -50,8 +50,8 @@
         <el-dialog :visible.sync="deleteFlag" width="30%">
             <p>本当にこのデータを削除してもよろしいですか？</p>
             <span slot="footer" class="dialog-footer">
-                <el-button type="primary" @click="deleteMember">確認</el-button>
-                <el-button @click="deleteFlag = false">キャンセル</el-button>
+                <el-button class="green-button" @click="deleteMember">確認</el-button>
+                <el-button class="green-button"@click="deleteFlag = false">キャンセル</el-button>
             </span>
         </el-dialog>
         <el-dialog :show-close="false" :close-on-click-modal="false" title="会社員追加" width="300px"
@@ -62,8 +62,8 @@
                     <el-input v-show="false"></el-input>
                 </el-form-item>
                 <div style="text-align: center;">
-                    <el-button type="primary" @click="submitForm('form')">提出</el-button>
-                    <el-button @click="addDataFlag = false">キャンセル</el-button>
+                    <el-button class="green-button" @click="submitForm('form')">提出</el-button>
+                    <el-button class="green-button" @click="addDataFlag = false">キャンセル</el-button>
                 </div>
             </el-form>
         </el-dialog>
@@ -258,5 +258,9 @@ export default {
 
 .dialog-style {
     height: 600px;
+}
+.green-button {
+  background-color: rgb(0, 155, 99) !important;
+  color: white !important;
 }
 </style>

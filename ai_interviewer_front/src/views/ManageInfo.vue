@@ -77,7 +77,7 @@
 </template>
 
 <script>
-import { getInterviewMessageAPI, managerPwChange } from '@/api'
+import { getInterviewMessageAPI, managerPwChange, refreshRedis } from '@/api'
 export default {
     data() {
         return {
@@ -105,8 +105,19 @@ export default {
     },
     created() {
         this.user = this.$store.state.manageInfo
+
+        // 首次立即执行一次任务
+        this.executeTask();
+        // 每隔30秒执行一次任务
+        this.timerId = setInterval(() => {
+            this.executeTask();
+        }, 30000); // 30秒
     },
     methods: {
+        async executeTask() {
+            let key = "userId:" + this.user.id
+            const res = await refreshRedis(key)
+        },
         editCompanyMember() {
 
             this.$router.push({
@@ -232,7 +243,7 @@ export default {
 }
 
 .green-button {
-  background-color: rgb(0, 155, 99) !important;
-  color: white !important;
+    background-color: rgb(0, 155, 99) !important;
+    color: white !important;
 }
 </style>

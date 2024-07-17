@@ -12,6 +12,17 @@ export const loginAPI = ({ username, password }) => {
     }
   })
 }
+/**
+ * リフレッシュredis
+ */
+export const refreshRedis = (key) => {
+  return request({
+    url: '/refresh/userRedis/' + key,
+    method: 'GET',
+    params: {
+    }
+  })
+}
 
 
 /**
@@ -56,7 +67,7 @@ export const MessageSend2 = (message) => {
     url: '/chat/sendMessage',
     method: 'POST',
     data:
-      message
+    message
   })
 }
 
@@ -68,7 +79,7 @@ export const MessageSend3 = (message) => {
     url: '/interviewerInfo/completeInterviewerInfo',
     method: 'POST',
     data:
-      message
+    message
 
   })
 }
@@ -82,7 +93,7 @@ export const memberPlus = (form) => {
     url: '/companyMember/insert',
     method: 'POST',
     data:
-      form
+    form
 
   })
 }
@@ -191,7 +202,7 @@ export const memberListGet = (id1, pageNum1, pageSize1) => {
   })
 }
 /**
- * 面接情報変更 
+ * 面接情報変更
  */
 export const interviewInfoUpdate = (paramter) => {
   return request({
@@ -297,7 +308,7 @@ export const companyDelAPI = (id) => {
 
 /**
  * 会社情報を取得する
- * @param { pageNum, pageSize } 
+ * @param { pageNum, pageSize }
  * @returns Promise对象
  */
 export const getCompanyAPI = (pageNum, pageSize) => {

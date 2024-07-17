@@ -21,7 +21,7 @@ myAxios.interceptors.request.use(function (config) {
 
 // 定义响应拦截器
 myAxios.interceptors.response.use(function (response) {
-    let errorCode = [40000, 40001, 40009, 40002, 40003, 40004, 40005, 40400, 40401, 40402, 40900, 50000, 50001, 50002, 50003, 50401, 50402, 60001, 70001]
+    let errorCode = [40000, 40001, 40009, 40002, 40003, 40006, 40004, 40005, 40400, 40401, 40402, 40900, 50000, 50001, 50002, 50003, 50401, 50402, 60001, 70001]
     if (errorCode.includes(response.data.state)) {
         Message.error(response.data.message)
     }

@@ -4,7 +4,7 @@
       <div class="d-flex align-center">
 
         <div class="box">
-          <v-menu v-if="isPathNotEmpty" offset-y>
+          <v-menu v-if="getPathFlag" offset-y>
             <template v-slot:activator="{ on, attrs }">
               <img src="./assets/menu.png" alt="Menu Icon" v-bind="attrs" v-on="on" 
                 class="menu-icon" />
@@ -45,8 +45,21 @@ export default {
     this.user = this.$store.state.manageInfo
   },
   computed: {
-    isPathNotEmpty() {
-      return this.$route.path !== '/';
+    getPathFlag() {
+      const path = this.$route.path; 
+      let pathFlag = true;
+      if(path == '/interview/user/login'){
+        pathFlag = false;
+      }
+
+      if(path == '/'){
+        pathFlag = false;
+      }
+
+      if(path == '/chat'){
+        pathFlag = false;
+      }
+      return pathFlag;
     }
   },
   data: () => ({

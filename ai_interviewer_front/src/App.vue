@@ -4,9 +4,24 @@
       <div class="d-flex align-center">
 
         <div class="box">
+          <v-menu offset-y>
+            <template v-slot:activator="{ on, attrs }">
+              <img src="./assets/menu.png" alt="Menu Icon" v-bind="attrs" v-on="on" @click="handleClick"
+                class="menu-icon" />
+            </template>
 
-          <h5 style="font-style: italic;color: black">AI面接官</h5>
-
+            <v-list>
+              <v-list-item @click="navigateToManageInfo">
+                <v-list-item-title>管理者情報</v-list-item-title>
+              </v-list-item>
+              <v-list-item @click="navigateToInterview">
+                <v-list-item-title>面接情報</v-list-item-title>
+              </v-list-item>
+              <v-list-item @click="navigateToCompanymember">
+                <v-list-item-title>会社員情報</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
         </div>
 
 
@@ -26,10 +41,31 @@
 
 export default {
   name: 'App',
-
+  created() {
+    this.user = this.$store.state.manageInfo
+  },
   data: () => ({
     //
   }),
+  methods: {
+    navigateToManageInfo() {
+      this.$router.push({
+        path: '/manage-info'
+      });
+    },
+    navigateToCompanymember() {
+      this.$router.push({
+        path: '/companymember',
+        query: { id: this.user.id },
+      });
+    },
+    navigateToInterview() {
+      this.$router.push({
+        path: '/interview-list',
+        query: { id: this.user.id },
+      });
+    },
+  },
 };
 </script>
 
@@ -50,5 +86,11 @@ export default {
   width: 120px;
   height: 30px;
   margin-right: 10px;
+}
+
+.menu-icon {
+  cursor: pointer;
+  width: 24px;
+  height: 24px;
 }
 </style>

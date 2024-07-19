@@ -67,7 +67,7 @@ export const MessageSend2 = (message) => {
     url: '/chat/sendMessage',
     method: 'POST',
     data:
-    message
+      message
   })
 }
 
@@ -79,7 +79,7 @@ export const MessageSend3 = (message) => {
     url: '/interviewerInfo/completeInterviewerInfo',
     method: 'POST',
     data:
-    message
+      message
 
   })
 }
@@ -93,7 +93,7 @@ export const memberPlus = (form) => {
     url: '/companyMember/insert',
     method: 'POST',
     data:
-    form
+      form
 
   })
 }

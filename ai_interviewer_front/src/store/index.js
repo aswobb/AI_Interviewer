@@ -14,7 +14,6 @@ export default new Vuex.Store({
     totalItems: null,
     //会社管理信息
     companyInfo: [],
-    companyInfo: [],
     //公司总数
     companyTotalItems: null
 

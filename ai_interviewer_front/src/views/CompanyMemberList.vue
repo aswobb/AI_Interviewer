@@ -23,8 +23,8 @@
             </template>
         </v-data-table>
         <v-card-actions class="justify-center">
-            <v-btn class="green-button" dark @click="addDataFlag = true">会社員追加</v-btn>
-            <v-btn class="green-button" dark @click="openDelDialog">一括削除</v-btn>
+            <v-btn class="green-button" dark @click="addDataFlag = true">社員追加</v-btn>
+            <v-btn class="green-button" dark @click="openDelDialog">選択削除</v-btn>
         </v-card-actions>
         <el-dialog append-to-body title="履歴書アップロードしてください" :visible.sync="dialogVisible" width="30%">
             <span>
@@ -51,7 +51,7 @@
             <p>本当にこのデータを削除してもよろしいですか？</p>
             <span slot="footer" class="dialog-footer">
                 <el-button class="green-button" @click="deleteMember">確認</el-button>
-                <el-button class="green-button"@click="deleteFlag = false">キャンセル</el-button>
+                <el-button class="green-button" @click="deleteFlag = false">キャンセル</el-button>
             </span>
         </el-dialog>
         <el-dialog :show-close="false" :close-on-click-modal="false" title="会社員追加" width="300px"
@@ -72,11 +72,21 @@
 </template>
 <script>
 import { Message } from "element-ui";
-import { memberPlus, memberDelete, fileSend2, memberListGet, companyMembersDelAPI } from '@/api'
+import { memberPlus, memberDelete, fileSend2, memberListGet, companyMembersDelAPI, refreshRedis } from '@/api'
 export default {
     created() {
         this.userId = this.$route.query.id
         this.getMember(this.userId, 1, 5)
+        // 第一次执行任务
+        this.executeTask();
+        // 每隔30秒执行任务
+        this.timerId = setInterval(() => {
+            this.executeTask();
+        }, 30000); // 30秒
+    },
+    beforeDestroy() {
+        // 在组件销毁时清除定时任务，避免内存泄漏
+        clearInterval(this.timerId);
     },
     data() {
         return {
@@ -119,6 +129,10 @@ export default {
         }
     },
     methods: {
+        async executeTask() {
+            let key = "userId:" + this.userId
+            const res = await refreshRedis(key)
+        },
         openDelDialog() {
             console.log(this.selectedItems);
             if (this.selectedItems.length == 0) {
@@ -259,8 +273,9 @@ export default {
 .dialog-style {
     height: 600px;
 }
+
 .green-button {
-  background-color: rgb(0, 155, 99) !important;
-  color: white !important;
+    background-color: rgb(0, 155, 99) !important;
+    color: white !important;
 }
 </style>

@@ -9,11 +9,11 @@
                     <div class="text-center">会社:{{ companyInfo.contractor }}</div>
                 </v-col>
                 <v-col cols="12" md="auto">
-                    <div class="text-center">利用实績:{{ companyInfo.usageCount }}回</div>
+                    <div class="text-center">利用実績:{{ companyInfo.usageCount }}回</div>
                 </v-col>
-                <v-col cols="12" md="auto">
+                <!-- <v-col cols="12" md="auto">
                     <div class="text-center">残面接:{{ companyInfo.remainNum }}回</div>
-                </v-col>
+                </v-col> -->
             </v-row>
         </v-container>
 
@@ -26,11 +26,16 @@
             <template v-slot:item.uploadStatus="{ item }">
                 {{ getUploadStatusText(item.uploadStatus) }}
             </template>
+
             <template v-slot:item.actions="{ item }">
-                <div class="d-flex">
+                <div class="button-group">
                     <v-btn :disabled="!Boolean(item.executionDate)" class="green-button" @click="download(item)">
                         ダウンロード
                     </v-btn>
+                </div>
+            </template>
+            <template v-slot:item.setting="{ item }">
+                <div class="button-group">
                     <!-- 每一行的更改按钮 -->
                     <v-btn :disabled="Boolean(item.executionDate)" class="green-button"
                         @click="openChangeInfo(item)">情報の変更</v-btn>
@@ -41,6 +46,9 @@
         <v-card-actions class="justify-center">
             <v-btn @click="downLoadCsvs" class="green-button">一括ダウンロード</v-btn>
             <v-btn @click="addData" class="green-button">面接者データを20件追加</v-btn>
+
+
+            <div class="text-center remain-info">{{ companyInfo.remainNum }}件まで追加可能です。</div>
         </v-card-actions>
         <!-- 更改信息弹出框 -->
         <v-dialog v-model="dialog" max-width="400">
@@ -61,7 +69,7 @@
 
 <script>
 import { Message } from 'element-ui';
-import { memberGet, getCurrentUserAPI, interviewInfoDownload, interviewListAdd, interviewInfoUpdate, getInterviewMessageAPI, downLoadCsvsAPI } from '@/api'
+import { memberGet, getCurrentUserAPI, interviewInfoDownload, interviewListAdd, interviewInfoUpdate, getInterviewMessageAPI, downLoadCsvsAPI, refreshRedis } from '@/api'
 import JSZip from 'jszip';
 
 export default {
@@ -73,6 +81,17 @@ export default {
         this.totalItems = this.$store.state.totalItems
         this.getCompanyInfo()
         console.log(58, this.interviewerList);
+
+        // 第一次执行任务
+        this.executeTask();
+        // 每隔30秒执行任务
+        this.timerId = setInterval(() => {
+            this.executeTask();
+        }, 30000); // 30秒
+    },
+    beforeDestroy() {
+        // 在组件销毁时清除定时任务，避免内存泄漏
+        clearInterval(this.timerId);
     },
     data() {
         return {
@@ -114,18 +133,23 @@ export default {
             totalItems: null,
             //表头属性
             headers: [
-                { text: 'チェック', value: 'checkbox' },
-                { text: '面接id', value: 'interviewerId' },
+                { text: '選択', value: 'checkbox' },
+                { text: '面接', value: 'interviewerId' },
                 { text: '面接者', value: 'interviewerName' },
                 { text: '履歴書状態', value: 'uploadStatus' },
                 { text: '実施日', value: 'executionDate' },
-                { text: '操作', value: 'actions', sortable: false }
+                { text: '面接記録ダウンロード', value: 'actions', sortable: false },
+                { text: '面接設定', value: 'setting', sortable: false }
             ],
             //面试者信息
             interviewerList: {},
         };
     },
     methods: {
+        async executeTask() {
+            let key = "userId:" + this.userId
+            const res = await refreshRedis(key)
+        },
         cancel() {
             this.dialog = false
             this.companyMemberInfo = null
@@ -364,8 +388,20 @@ export default {
 }
 
 .green-button {
-  background-color: rgb(0, 155, 99) !important;
-  color: white !important;
+    background-color: rgb(0, 155, 99) !important;
+    color: white !important;
+}
+
+.button-group {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    /* 设置按钮之间的间距 */
+}
+
+.remain-info {
+    margin-left: 30px;
+    /* 设置文字与按钮之间的上边距 */
 }
 </style>
 <!-- 刷新同步 -->

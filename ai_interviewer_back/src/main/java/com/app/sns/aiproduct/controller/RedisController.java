@@ -16,14 +16,15 @@ public class RedisController {
     @Autowired
     private RedisUtil redisUtil;
     @GetMapping("/userRedis/{key}")
-    public JsonResult setoken(@PathVariable String key){
+    public JsonResult setUserRedis(@PathVariable String key){
+        //フロントエンドから送られてくるステータスメッセージを30秒ごとに受け取る
         redisUtil.setValueWithExpiry(key,1,31, TimeUnit.SECONDS);
         return JsonResult.ok();
     }
-    @GetMapping("/redis1")
-    public Object getoken(){
-        Object lihao = redisUtil.getValue("lihao");
-        return lihao;
-    }
+//    @GetMapping("/managerRedis/{key}")
+//    public JsonResult setManagerRedis(@PathVariable String key){
+//        redisUtil.setValueWithExpiry(key,1,31, TimeUnit.SECONDS);
+//        return JsonResult.ok();
+//    }
 
 }

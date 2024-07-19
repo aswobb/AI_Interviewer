@@ -875,7 +875,7 @@ html {
   cursor: pointer;
   height: 60px;
   width: 100px;
-  background-color: rgb(0, 155, 99)!important;
+  background-color: rgb(0, 155, 99) !important;
   color: white !important;
 }
 
@@ -924,8 +924,9 @@ html {
   border-radius: 18px;
   padding: 10px 20px;
   box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.15);
-  margin-bottom: 40px;  border: 1px solid #eaeaea;
-  background-color: rgb(153, 255, 153)!important;
+  margin-bottom: 40px;
+  border: 1px solid #eaeaea;
+  background-color: rgb(153, 255, 153) !important;
   color: #000000;
 }
 

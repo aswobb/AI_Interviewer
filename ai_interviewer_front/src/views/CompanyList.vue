@@ -49,13 +49,15 @@
             </v-card-actions>
         </v-dialog>
 
-        <div v-if="dialog" class="modal">
-            <div class="modal-content">
-                <p>本当にこのデータを削除してもよろしいですか？</p>
-                <button @click="deleteData" class="green-button">はい</button>
-                <button @click="closeDialog" class="green-button">いいえ</button>
+
+        <el-dialog :show-close="false" :close-on-click-modal="false" title="ユーザー削除" width="300px" :visible.sync="dialog"
+            class="dialog-style">
+            <p>本当にこのデータを削除してもよろしいですか？</p>
+            <div style="text-align: center;">
+                <el-button class="green-button" @click="deleteData">はい</el-button>
+                <el-button class="green-button" @click="closeDialog">いいえ</el-button>
             </div>
-        </div>
+        </el-dialog>
     </div>
 </template>
 
@@ -89,7 +91,7 @@ export default {
                 ],
                 username: [
                     v => !!v || 'ユーザー名を入力してください',
-                    v => (v && v.length <= 15) || '文字数は2から15文字まで',
+                    v => (v && v.length <= 10) || 'ユーザ名10桁以下入力してください',
                     v => (v && v.length >= 2) || '文字数は2から15文字まで',
                 ],
                 password: [
@@ -354,9 +356,22 @@ export default {
 .cancel-button:hover {
     background-color: #d32f2f;
 }
+
+.container {
+    display: flex;
+    justify-content: center;
+    /* 水平居中 */
+    align-items: center;
+    /* 垂直居中 */
+    height: 50px;
+    /* 容器高度 */
+}
+
 .green-button {
-  background-color: rgb(0, 155, 99) !important;
-  color: white !important;
+    background-color: rgb(0, 155, 99) !important;
+    color: white !important;
+    margin: 0 10px;
+    /* 按钮之间的间距 */
 }
 </style>
 <!-- 刷新同步 -->

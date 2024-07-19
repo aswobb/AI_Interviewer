@@ -49,10 +49,10 @@
                         PW再設定
                     </v-btn>
                     <v-btn class="green-button" @click="editUser">
-                        面接情報——
+                        面接練習設定
                     </v-btn>
                     <v-btn class="green-button" @click="editCompanyMember">
-                        会社員情報
+                        社員情報登録
                     </v-btn>
                 </v-card-actions>
             </v-card>
@@ -106,12 +106,16 @@ export default {
     created() {
         this.user = this.$store.state.manageInfo
 
-        // 首次立即执行一次任务
+        // 第一次执行任务
         this.executeTask();
-        // 每隔30秒执行一次任务
+        // 每隔30秒执行任务
         this.timerId = setInterval(() => {
             this.executeTask();
         }, 30000); // 30秒
+    },
+    beforeDestroy() {
+        // 在组件销毁时清除定时任务，避免内存泄漏
+        clearInterval(this.timerId);
     },
     methods: {
         async executeTask() {

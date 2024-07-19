@@ -1,11 +1,11 @@
 <template>
   <div id="app">
     <audio ref="audioPlayer"></audio>
-    <el-row class="title">
+    <!-- <el-row class="title">
       {{ pageTitle + '・AI面接官' }}
       <el-dropdown class="title-menu">
       </el-dropdown>
-    </el-row>
+    </el-row> -->
     <el-row class="content">
       <el-col class="bot-message" :xl="getBreakpointConfig('xl', false)" :lg="getBreakpointConfig('lg', false)"
         :md="getBreakpointConfig('md', false)" :sm="getBreakpointConfig('sm', false)"
@@ -60,7 +60,7 @@
             :placeholder="getPlaceholderText" @compositionstart="handleCompositionStart"
             @compositionend="handleCompositionEnd" v-model="userMessage" type="textarea" class="long-input" />
           <div class="button-group">
-            <el-button type="primary" @click="sendMessage" :disabled="isButtonDisabled || isLoading || disabledByConfim"
+            <el-button type="green" @click="sendMessage" :disabled="isButtonDisabled || isLoading || disabledByConfim"
               :icon="isLoading ? '' : 'el-icon-s-promotion'
                 " class="action-button" round>
               <template v-if="isLoading">
@@ -68,7 +68,7 @@
                 <i class="el-icon-loading"></i>
               </template>
               送信</el-button>
-            <el-button :type="!speechRecognitionActive ? 'primary' : 'danger'" class="action-button" round
+            <el-button :type="!speechRecognitionActive ? 'green' : 'danger'" class="action-button" round
               :disabled="isInputDisabled || disabledByConfim" @click="toggleSpeechRecognition" color="purple-7">
               {{ speechRecognitionActive ? '音声停止' : '音声入力' }}</el-button>
           </div>
@@ -875,6 +875,8 @@ html {
   cursor: pointer;
   height: 60px;
   width: 100px;
+  background-color: rgb(0, 155, 99)!important;
+  color: white !important;
 }
 
 .title {
@@ -922,22 +924,15 @@ html {
   border-radius: 18px;
   padding: 10px 20px;
   box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.15);
-  margin-bottom: 40px;
-  background-color: white;
-  border: 1px solid #eaeaea;
-
+  margin-bottom: 40px;  border: 1px solid #eaeaea;
+  background-color: rgb(153, 255, 153)!important;
+  color: #000000;
 }
 
 .user-message {
   background-color: #dddddd;
   color: #000000;
 }
-
-.bot-message {
-  background-color: #a6e1fa;
-  color: #000000;
-}
-
 
 .footer {
   width: 100%;

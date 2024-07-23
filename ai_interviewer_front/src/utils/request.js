@@ -26,7 +26,6 @@ myAxios.interceptors.response.use(function (response) {
     if (errorCode.includes(response.data.state)) {
         Message.error(response.data.message)
     }
-
     return response
 }, function (error) {
     if (error.response.status == 401) {

@@ -144,6 +144,7 @@ export const managerPwChange = (dada) => {
 export const interviewInfoDownload = (ID) => {
   return request({
     url: '/interviewerInfo/downLoadCsv/' + ID,
+    responseType: 'arraybuffer', // 设置 responseType 为 arraybuffer
     method: 'GET',
     params: {
 
@@ -158,6 +159,7 @@ export const interviewInfoDownload = (ID) => {
 export const interviewDownloadMajority = (ids) => {
   return request({
     url: '/interviewerInfo/downLoadCsv',
+    type: 'text/csv;charset=utf-8;',
     method: 'GET',
     data: ids
   })

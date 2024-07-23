@@ -6,8 +6,7 @@
         <div class="box">
           <v-menu v-if="getPathFlag" offset-y>
             <template v-slot:activator="{ on, attrs }">
-              <img src="./assets/menu.png" alt="Menu Icon" v-bind="attrs" v-on="on" 
-                class="menu-icon" />
+              <img src="./assets/menu.png" alt="Menu Icon" v-bind="attrs" v-on="on" class="menu-icon" />
             </template>
 
             <v-list>
@@ -26,9 +25,11 @@
 
 
       </div>
-
+      <div class="ellipse-box" v-show="isChatPage">
+        <span class="ellipse-text">{{ getCompanyName }}</span>
+      </div>
       <v-spacer></v-spacer>
-      <img v-if="getChatViewFlag" :src="require('./assets/snsLogo.png')" alt="Logo" class="box__logo">
+      <img v-show="!isChatPage" :src="require('./assets/snsLogo.png')" alt="Logo" class="box__logo">
     </v-app-bar>
 
     <v-main>
@@ -43,37 +44,50 @@ export default {
   name: 'App',
   created() {
     this.user = this.$store.state.manageInfo
+
+
   },
   computed: {
+    getCompanyName() {
+      let companyName = null
+      if (this.$store.state.contractor != null) {
+        companyName = this.$store.state.contractor
+      }
+      return companyName
+    },
     getPathFlag() {
-      const path = this.$route.path; 
+      const path = this.$route.path;
       let pathFlag = true;
-      if(path == '/interview/user/login'){
+      if (path == '/interview/user/login') {
         pathFlag = false;
       }
 
-      if(path == '/'){
+      if (path == '/') {
         pathFlag = false;
       }
-      if(path == '/chat'){
+
+      if (path == '/chat') {
+        pathFlag = false;
+      }
+      if (path == '/manage-login') {
         pathFlag = false;
       }
       return pathFlag;
     },
-    
-    getChatViewFlag() {
-      const path = this.$route.path; 
-      let pathFlag = true;
-
-      if(path == '/chat'){
-        pathFlag = false;
+    isChatPage() {
+      let chatFlag = false
+      const path = this.$route.path;
+      if (path == '/chat') {
+        chatFlag = true;
       }
-      return pathFlag;
+      return chatFlag
     }
   },
-  data: () => ({
-    //
-  }),
+  data() {
+    return {
+      companyNmae: null
+    }
+  },
   methods: {
     navigateToManageInfo() {
       this.$router.push({
@@ -97,6 +111,32 @@ export default {
 </script>
 
 <style>
+.ellipse-box {
+  margin-left: 10%;
+  left: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 80%;
+  /* 根据需要调整宽度 */
+  height: 40px;
+  /* 根据需要调整高度 */
+  border-radius: 50px;
+  /* 椭圆形的关键属性 */
+  background-color: #4CAF50;
+  /* 背景颜色 */
+  color: white;
+  /* 文字颜色 */
+  font-size: 18px;
+  /* 文字大小 */
+  text-align: center;
+}
+
+.ellipse-text {
+  font-weight: bold;
+  /* 文字加粗 */
+}
+
 .box {
   display: flex;
   justify-content: center;

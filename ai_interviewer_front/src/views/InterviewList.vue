@@ -38,7 +38,7 @@
                 <div class="button-group">
                     <!-- 每一行的更改按钮 -->
                     <v-btn :disabled="Boolean(item.executionDate)" class="green-button"
-                        @click="openChangeInfo(item)">情報の変更</v-btn>
+                        @click="openChangeInfo(item)">面接者割当</v-btn>
 
                 </div>
             </template>
@@ -52,7 +52,7 @@
         </v-card-actions>
         <!-- 更改信息弹出框 -->
         <v-dialog v-model="dialog" max-width="400">
-            <v-card-title class="headline">情報の変更</v-card-title>
+            <v-card-title class="headline">面接者割当</v-card-title>
             <v-form ref="form" :model="changeInfo" lazy-validation>
                 <v-text-field v-model="changeInfo.interviewerId" label="面接id" readonly></v-text-field>
                 <v-combobox v-model="companyMemberInfo" :items="memberList" label="Search" item-text="name"

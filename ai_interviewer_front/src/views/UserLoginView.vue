@@ -61,9 +61,9 @@ export default {
                         });
                         console.log(75, response.data.data.InterviewInfo.contractor);
                         const token = response.data.data.InterviewInfo.token;
-                        const contractor = response.data.data.InterviewInfo.contractor;
+                        this.$store.state.contractor = response.data.data.InterviewInfo.contractor;
                         localStorage.setItem('token', token);
-                        localStorage.setItem('contractor', contractor);
+                        localStorage.setItem('contractor', this.$store.state.contractor);
                         this.$store.state.companyMemberInfo = response.data.data.memberInfo
                         sessionStorage.setItem('username', this.ruleForm.interviewerId);
                         this.$gtm.sendLoginEvent(this.ruleForm.interviewerId); // ログインイベント送出

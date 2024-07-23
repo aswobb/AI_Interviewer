@@ -44,8 +44,8 @@
             </template>
         </v-data-table>
         <v-card-actions class="justify-center">
-            <v-btn @click="downLoadCsvs" class="green-button">一括ダウンロード</v-btn>
-            <v-btn @click="addData" class="green-button">面接者データを20件追加</v-btn>
+            <v-btn @click="downLoadCsvs" class="green-button">面接記録一括ダウンロード</v-btn>
+            <v-btn @click="addData" class="green-button">面接練習を20件追加</v-btn>
 
 
             <div class="text-center remain-info">{{ companyInfo.remainNum }}件まで追加可能です。</div>

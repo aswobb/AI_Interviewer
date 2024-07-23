@@ -18,7 +18,7 @@
                 <el-form-item>
                     <el-button type="primary" @click="submitForm('ruleForm')">ログイン</el-button>
                     <el-button @click="resetForm('ruleForm')">リセット</el-button>
-                    <el-button type="primary" @click="goTouserLogin()">面接者登録へ</el-button>
+                    <el-button type="primary" @click="goTouserLogin()">面接練習ログイン画面へ</el-button>
                 </el-form-item>
             </el-form>
 

@@ -28,7 +28,7 @@
       </div>
 
       <v-spacer></v-spacer>
-      <img :src="require('./assets/snsLogo.png')" alt="Logo" class="box__logo">
+      <img v-if="getChatViewFlag" :src="require('./assets/snsLogo.png')" alt="Logo" class="box__logo">
     </v-app-bar>
 
     <v-main>
@@ -55,6 +55,15 @@ export default {
       if(path == '/'){
         pathFlag = false;
       }
+      if(path == '/chat'){
+        pathFlag = false;
+      }
+      return pathFlag;
+    },
+    
+    getChatViewFlag() {
+      const path = this.$route.path; 
+      let pathFlag = true;
 
       if(path == '/chat'){
         pathFlag = false;

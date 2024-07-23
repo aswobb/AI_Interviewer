@@ -14,10 +14,10 @@
             </template>
             <template v-slot:item.actions="{ item }">
                 <div class="d-flex">
-                    <v-btn class="green-button" @click="deleteButton(item.id)">
+                    <v-btn class="green-button mx-2" @click="deleteButton(item.id)">
                         削除
                     </v-btn>
-                    <v-btn class="green-button" @click="openDialog(item)">{{
+                    <v-btn class="green-button mx-2" @click="openDialog(item)">{{
                         item.uploadStatus === 1 ? '履歴書更新' : '履歴書アップロード' }}</v-btn>
                 </div>
             </template>

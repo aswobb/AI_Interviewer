@@ -1,45 +1,40 @@
-<head>
-    <!-- 其他头部内容 -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-</head>
-
 <template>
-    <div id="background" class="login">
-        <!-- test用 -->
-        <div :style="textStyle">
-            <h1 style="text-align: center; margin: 10px 0; color: #00FFFF; font-weight: bold;">管理者 ログイン</h1>
-            <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
-                <el-form-item label="ユーザー" prop="username">
-                    <el-input v-model="ruleForm.username"></el-input>
-                </el-form-item>
-                <el-form-item label="パスワード" prop="password">
-                    <el-input v-model="ruleForm.password" type="password"></el-input>
-                </el-form-item>
-                <el-form-item>
-                    <el-button type="primary" @click="submitForm('ruleForm')">ログイン</el-button>
-                    <el-button @click="resetForm('ruleForm')">リセット</el-button>
-                    <el-button type="primary" @click="goTouserLogin()">面接練習ログイン画面へ</el-button>
-                </el-form-item>
-            </el-form>
-
+    <div class="custom">
+        <div class="user">
+            <div class="login-form">
+                <header class="user__header">
+                    <img class="menu-icon" src="../assets/bot.png" alt="" />
+                    <h1 class="user__title"></h1>
+                </header>
+                <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px">
+                    <el-form-item  prop="username">
+                        <div class="custom-form-item">
+                            <label class="custom-form-item-lable"> ユーザー</label>
+                            <el-input v-model="ruleForm.username"></el-input>
+                        </div>
+                    </el-form-item>
+                    <el-form-item  prop="password">
+                        <div class="custom-form-item">
+                            <label class="custom-form-item-lable"> パスワード</label>
+                            <el-input v-model="ruleForm.password" type="password"></el-input>
+                        </div>
+                    </el-form-item>
+                    <div class="button-container">
+                        <el-button type="primary" @click="submitForm('ruleForm')">ログイン</el-button>
+                        <el-button @click="resetForm('ruleForm')">リセット</el-button>
+                        <el-button type="primary" @click="goTouserLogin()">面接者登録へ</el-button>
+                    </div>
+                </el-form>
+            </div>
         </div>
     </div>
 </template>
 <script>
-import { Message } from 'element-ui';
 import bgImg from '../assets/image.png'
 import { loginAPI } from '@/api';
 export default {
     data() {
         return {
-            textStyle: {
-                fontWeight: 'bold', // 粗体
-                color: '#00FFFF', // 黑色
-                backgroundColor: 'rgba(0, 0, 0, 0.4)',
-                paddingRight: '20px',
-                paddingLeft: '10px',
-                // 如果需要其他样式，可以继续添加
-            },
             bgImg: bgImg,
             isDesktop: window.innerWidth > 600,
             ruleForm: {
@@ -68,7 +63,6 @@ export default {
         submitForm(formName) {
             this.$refs[formName].validate(async (valid) => {
                 if (valid) {
-                    //////////
                     const response = await loginAPI(this.ruleForm)
                     if (response.data.state == 20000) {
                         this.$message({
@@ -93,111 +87,205 @@ export default {
         },
 
         goTouserLogin() {
-
-            // 使用 $router.push() 方法进行页面导航
-            // window.location.href = '/interview/user/login';
             this.$router.replace({ path: '/interview/user/login' });
-
         }
-
     }
 };
 </script>
 
-<style>
-.custom-message .el-message__content {
-    font-size: 20px;
+
+<style scoped lang="scss">
+$font-family: "Roboto";
+$font-size: 25px;
+$color-primary: #ABA194;
+$white: rgba(255, 255, 255, 0.2);
+
+a,
+input:focus,
+select:focus,
+textarea:focus,
+button:focus {
+    outline: none;
 }
 
-body {
-    background-color: #fae6f9 !important;
-    background-position: center;
-    /* 背景图片居中 */
-
-}
-
-.el-form-item__label {
-    color: rgb(249, 242, 49) !important;
-    /* 设置标签文字颜色为红色 */
-    font-weight: bold;
-    font-size: 15px;
-}
-
-.my-button {
-    margin-top: 100px;
-}
-</style>
-<style scoped>
-.login-form {
-    background-color: rgba(33, 110, 33, 0);
-    width: 100%;
-    /* 使用100%宽度，充满整个屏幕 */
+.custom {
+    margin: 0px;
+    padding: 1px;
     box-sizing: border-box;
-    /* 使padding不会撑大宽度 */
-    padding: 20px;
-    /* 减小padding，以适应小屏幕 */
-    margin: 0;
-    /* 取消上下边距，以充分利用空间 */
-
-}
-
-@media only screen and (min-width: 1025px) {
-    #background {
-        background-Image: url('../assets/image.png');
-        background-size: cover;
-        /* 调整背景图片显示方式 */
-    }
-}
-
-@media only screen and (max-width: 600px) {
-    #background {
-        background-Image: url('../assets/image.png');
-        background-size: cover;
-        background-size: (100% 100%);
-        /* 调整背景图片显示方式 */
-    }
-}
-
-@media only screen and (min-width: 601px) and (max-width: 1024px) {
-    #background {
-        background-image: url('../assets/image.png');
-        background-size: (100% 100%);
-        background-size: cover;
-    }
-}
-
-
-
-
-
-
-
-/* 如果需要保持在大屏幕上的一些样式，可以使用媒体查询 */
-@media only screen and (min-width: 600px) {
-    .login-form {
-        width: 500px;
-        /* 在大屏幕上保持原有宽度 */
-        margin: 50px auto;
-        /* 保持上下居中 */
-        padding: 30px 50px;
-        padding-top: 100px;
-    }
-}
-
-h1 {
-    text-align: center;
-    margin: 10px 0;
-    font-size: 1.7em;
-}
-
-.login {
-    display: flex;
-    justify-content: center;
-    /* 水平居中 */
-    align-items: center;
-    /* 垂直居中 */
-    width: 100vw;
+    font-family: $font-family;
+    font-size: $font-size;
+    background-size: 200% 100% !important;
+    animation: move 6s ease infinite;
+    transform: translate3d(0, 0, 0);
+    background: linear-gradient(45deg, #49D49D 10%, #adb0d2 90%);
     height: 100vh;
-    /* 容器的高度 */
 }
+
+.user {
+    width: 100%;
+    max-width: 553px;
+    margin: 10vh auto;
+}
+
+.user__header {
+    text-align: center;
+    opacity: 0;
+    transform: translate3d(0, 500px, 0);
+    animation: arrive 500ms ease-in-out 0.7s forwards;
+    margin-top: -35px;
+}
+
+.user__title {
+    font-size: $font-size;
+    font-weight: 500;
+    color: white;
+}
+
+.form {
+    margin-top: 40px;
+    border-radius: 6px;
+    overflow: hidden;
+    opacity: 0;
+    transform: translate3d(0, 500px, 0);
+    animation: arrive 500ms ease-in-out 0.9s forwards;
+}
+
+.form--no {
+    animation: NO 1s ease-in-out;
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+}
+
+.form__input {
+    display: block;
+    width: 100%;
+    padding: 20px;
+    font-family: $font-family;
+    -webkit-appearance: none;
+    border: 0;
+    outline: 0;
+    transition: 0.3s;
+
+    &:focus {
+        background: darken(#fff, 3%);
+    }
+}
+
+.btn {
+    display: block;
+    width: 100%;
+    padding: 20px;
+    font-family: $font-family;
+    -webkit-appearance: none;
+    outline: 0;
+    border: 0;
+    color: white;
+    background: $color-primary;
+    transition: 0.3s;
+
+    &:hover {
+        background: darken($color-primary, 5%);
+    }
+}
+
+@keyframes NO {
+
+    from,
+    to {
+        -webkit-transform: translate3d(0, 0, 0);
+        transform: translate3d(0, 0, 0);
+    }
+
+    10%,
+    30%,
+    50%,
+    70%,
+    90% {
+        -webkit-transform: translate3d(-10px, 0, 0);
+        transform: translate3d(-10px, 0, 0);
+    }
+
+    20%,
+    40%,
+    60%,
+    80% {
+        -webkit-transform: translate3d(10px, 0, 0);
+        transform: translate3d(10px, 0, 0);
+    }
+}
+
+@keyframes arrive {
+    0% {
+        opacity: 0;
+        transform: translate3d(0, 50px, 0);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+@keyframes move {
+    0% {
+        background-position: 0 0;
+    }
+
+    50% {
+        background-position: 100% 0;
+    }
+
+    100% {
+        background-position: 0 0;
+    }
+}
+
+.menu-icon {
+    cursor: pointer;
+    width: 80px;
+    height: 80px;
+}
+
+.login-form {
+    padding-top: 35px;
+    background: rgba(255, 255, 255, 0.13);
+    /* 半透明白色背景 */
+    padding: 3em;
+    height: 100%;
+    width: 100%;
+    border-radius: 76px;
+    box-shadow: 20px 20px 40px -6px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    position: relative;
+    transition: all 0.2s ease-in-out;
+    z-index: 1;
+}
+
+.button-container {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-start;
+    width: 100%;
+    margin-left: 36px;
+    margin-top: 40px;
+    .el-button{
+        border-radius: 76px;
+    }
+}
+
+.custom-form-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-right: 84px;
+}
+
+.custom-form-item-lable{
+  text-align: left;
+  width: 100%;
+  margin-bottom: 8px;
+  padding: 0;
+}
+
+
 </style>

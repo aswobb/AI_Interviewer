@@ -1,20 +1,33 @@
 <template>
-    <div id="background" class="login">
-        <!-- test用 -->
-        <div>
-            <h1 style="text-align: center; margin: 10px 0; color: #00FFFF; font-weight: bold;">面接者 ログイン</h1>
-            <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
-                <el-form-item label="面接ID" prop="interviewerId">
-                    <el-input style="width: 250px;" v-model="ruleForm.interviewerId"></el-input>
-                </el-form-item>
-                <el-form-item label="面接者氏名" prop="interviewerName">
-                    <el-input v-model="ruleForm.interviewerName" type="username"></el-input>
-                </el-form-item>
-                <el-form-item>
-                    <el-button type="primary" @click="onSubmit('ruleForm')">ログイン</el-button>
-                    <el-button @click="resetForm()">リセット</el-button>
-                </el-form-item>
-            </el-form>
+    <div class="custom">
+        <div class="user">
+            <div class="login-form">
+                <header class="user__header">
+                    <img class="menu-icon" src="../assets/bot.png" alt="" />
+                    <h1 class="user__title"></h1>
+                </header>
+                <el-form :model="ruleForm" :rules="rules" ref="ruleForm"  label-width="100px">
+                    <el-form-item prop="interviewerId">
+                        <div class="custom-form-item">
+                            <label class="custom-form-item-lable"> 面接ID</label>
+                            <el-input style="width: 250px;" v-model="ruleForm.interviewerId"></el-input>
+                        </div>
+                    </el-form-item>
+                    <el-form-item prop="interviewerName">
+
+                        <div class="custom-form-item">
+                            <label class="custom-form-item-lable"> 面接者氏名</label>
+                            <el-input style="width: 250px;" v-model="ruleForm.interviewerName" type="username"></el-input>
+                        </div>
+                    </el-form-item>
+                    <div class="button-container">
+                        <el-form-item>
+                            <el-button type="primary" @click="onSubmit('ruleForm')">ログイン</el-button>
+                            <el-button @click="resetForm()">リセット</el-button>
+                        </el-form-item>
+                    </div>
+                </el-form>
+            </div>
         </div>
     </div>
 </template>
@@ -80,96 +93,198 @@ export default {
 }
 </script>
 
-<style>
-body {
-    background-color: #fae6f9 !important;
-    background-position: center;
-    /* 背景图片居中 */
+<style scoped lang="scss">
+$font-family: "Roboto";
+$font-size: 25px;
+$color-primary: #ABA194;
+$white: rgba(255, 255, 255, 0.2);
 
+a,
+input:focus,
+select:focus,
+textarea:focus,
+button:focus {
+    outline: none;
 }
 
-.el-form-item__label {
-    color: rgb(249, 242, 49) !important;
-    /* 设置标签文字颜色为红色 */
-    font-weight: bold;
-    font-size: 15px;
-}
-
-.my-button {
-    margin-top: 100px;
-}
-</style>
-<style scoped>
-.login-form {
-    background-color: rgba(33, 110, 33, 0);
-    width: 100%;
-    /* 使用100%宽度，充满整个屏幕 */
+.custom {
+    margin: 0px;
+    padding: 1px;
     box-sizing: border-box;
-    /* 使padding不会撑大宽度 */
-    padding: 20px;
-    /* 减小padding，以适应小屏幕 */
-    margin: 0;
-    /* 取消上下边距，以充分利用空间 */
-
-}
-
-@media only screen and (min-width: 1025px) {
-    #background {
-        background-Image: url('../assets/image.png');
-        background-size: cover;
-        /* 调整背景图片显示方式 */
-    }
-}
-
-@media only screen and (max-width: 600px) {
-    #background {
-        background-Image: url('../assets/image.png');
-        background-size: (100% 100%);
-        background-position: center;
-        /* 调整背景图片显示方式 */
-    }
-}
-
-@media only screen and (min-width: 601px) and (max-width: 1024px) {
-    #background {
-        background-image: url('../assets/image.png');
-        background-size: (100% 100%);
-        background-position: center
-    }
-}
-
-
-
-
-
-
-
-/* 如果需要保持在大屏幕上的一些样式，可以使用媒体查询 */
-@media only screen and (min-width: 600px) {
-    .login-form {
-        width: 500px;
-        /* 在大屏幕上保持原有宽度 */
-        margin: 50px auto;
-        /* 保持上下居中 */
-        padding: 30px 50px;
-        padding-top: 100px;
-    }
-}
-
-h1 {
-    text-align: center;
-    margin: 10px 0;
-    font-size: 1.7em;
-}
-
-.login {
-    display: flex;
-    justify-content: center;
-    /* 水平居中 */
-    align-items: center;
-    /* 垂直居中 */
-    width: 100vw;
+    font-family: $font-family;
+    font-size: $font-size;
+    background-size: 200% 100% !important;
+    animation: move 6s ease infinite;
+    transform: translate3d(0, 0, 0);
+    background: linear-gradient(45deg, #49D49D 10%, #adb0d2 90%);
     height: 100vh;
-    /* 容器的高度 */
 }
+
+.user {
+    width: 100%;
+    max-width: 553px;
+    margin: 10vh auto;
+}
+
+.user__header {
+    text-align: center;
+    opacity: 0;
+    transform: translate3d(0, 500px, 0);
+    animation: arrive 500ms ease-in-out 0.7s forwards;
+    margin-top: -35px;
+}
+
+.user__title {
+    font-size: $font-size;
+    font-weight: 500;
+    color: white;
+}
+
+.form {
+    margin-top: 40px;
+    border-radius: 6px;
+    overflow: hidden;
+    opacity: 0;
+    transform: translate3d(0, 500px, 0);
+    animation: arrive 500ms ease-in-out 0.9s forwards;
+}
+
+.form--no {
+    animation: NO 1s ease-in-out;
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+}
+
+.form__input {
+    display: block;
+    width: 100%;
+    padding: 20px;
+    font-family: $font-family;
+    -webkit-appearance: none;
+    border: 0;
+    outline: 0;
+    transition: 0.3s;
+
+    &:focus {
+        background: darken(#fff, 3%);
+    }
+}
+
+.btn {
+    display: block;
+    width: 100%;
+    padding: 20px;
+    font-family: $font-family;
+    -webkit-appearance: none;
+    outline: 0;
+    border: 0;
+    color: white;
+    background: $color-primary;
+    transition: 0.3s;
+
+    &:hover {
+        background: darken($color-primary, 5%);
+    }
+}
+
+@keyframes NO {
+
+    from,
+    to {
+        -webkit-transform: translate3d(0, 0, 0);
+        transform: translate3d(0, 0, 0);
+    }
+
+    10%,
+    30%,
+    50%,
+    70%,
+    90% {
+        -webkit-transform: translate3d(-10px, 0, 0);
+        transform: translate3d(-10px, 0, 0);
+    }
+
+    20%,
+    40%,
+    60%,
+    80% {
+        -webkit-transform: translate3d(10px, 0, 0);
+        transform: translate3d(10px, 0, 0);
+    }
+}
+
+@keyframes arrive {
+    0% {
+        opacity: 0;
+        transform: translate3d(0, 50px, 0);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+@keyframes move {
+    0% {
+        background-position: 0 0;
+    }
+
+    50% {
+        background-position: 100% 0;
+    }
+
+    100% {
+        background-position: 0 0;
+    }
+}
+
+.menu-icon {
+    cursor: pointer;
+    width: 80px;
+    height: 80px;
+}
+
+.login-form {
+    padding-top: 35px;
+    background: rgba(255, 255, 255, 0.13);
+    /* 半透明白色背景 */
+    padding: 3em;
+    height: 100%;
+    width: 100%;
+    border-radius: 76px;
+    box-shadow: 20px 20px 40px -6px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    position: relative;
+    transition: all 0.2s ease-in-out;
+    z-index: 1;
+}
+
+.button-container {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-start;
+    width: 100%;
+    margin-left: 8px;
+    margin-top: 40px;
+
+    .el-button {
+        border-radius: 76px;
+    }
+}
+
+.custom-form-item {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-right: 84px;
+}
+
+.custom-form-item-lable{
+  text-align: left;
+  width: 100%;
+  margin-bottom: 8px;
+  padding: 0;
+}
+
 </style>

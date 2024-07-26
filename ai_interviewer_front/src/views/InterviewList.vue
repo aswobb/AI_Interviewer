@@ -23,6 +23,9 @@
                 <v-checkbox v-model="item.checkbox" :disabled="!Boolean(item.executionDate)"
                     @change="toggleSelection(item)"></v-checkbox>
             </template>
+            <template v-slot:header.actions>
+                <span>面接記録ダウンロード&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;面接設定</span>
+            </template>
             <template v-slot:item.uploadStatus="{ item }">
                 {{ getUploadStatusText(item.uploadStatus) }}
             </template>
@@ -32,14 +35,8 @@
                     <v-btn :disabled="!Boolean(item.executionDate)" class="green-button" @click="download(item)">
                         ダウンロード
                     </v-btn>
-                </div>
-            </template>
-            <template v-slot:item.setting="{ item }">
-                <div class="button-group">
-                    <!-- 每一行的更改按钮 -->
                     <v-btn :disabled="Boolean(item.executionDate)" class="green-button"
                         @click="openChangeInfo(item)">面接者割当</v-btn>
-
                 </div>
             </template>
         </v-data-table>
@@ -139,7 +136,7 @@ export default {
                 { text: '履歴書状態', value: 'uploadStatus' },
                 { text: '実施日', value: 'executionDate' },
                 { text: '面接記録ダウンロード', value: 'actions', sortable: false },
-                { text: '面接設定', value: 'setting', sortable: false }
+                // { text: '面接設定', value: 'setting', sortable: false }
             ],
             //面试者信息
             interviewerList: {},

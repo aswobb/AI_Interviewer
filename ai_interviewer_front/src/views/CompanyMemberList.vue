@@ -9,6 +9,9 @@
             <template v-slot:[`item.action`]="{ item }">
                 <v-checkbox v-model="selectedItems" :value="item.id" @change="updateSelection"></v-checkbox>
             </template>
+            <template v-slot:header.actions>
+                <span class="custom-header">操作</span>
+            </template>
             <template v-slot:item.uploadStatus="{ item }">
                 {{ getUploadStatusText(item.uploadStatus) }}
             </template>
@@ -124,7 +127,7 @@ export default {
                 { text: '複数', value: 'action', sortable: false },
                 { text: '会社員名', value: 'name' },
                 { text: '履歴書状態', value: 'uploadStatus' },
-                { text: '操作', value: 'actions', sortable: false }
+                { text: '操作', value: 'actions', sortable: false, class: 'custom-header' }
             ],
         }
     },
@@ -277,5 +280,10 @@ export default {
 .green-button {
     background-color: rgb(0, 155, 99) !important;
     color: white !important;
+}
+
+.custom-header {
+    padding-left: 70px;
+    /* 根据需要调整填充量 */
 }
 </style>

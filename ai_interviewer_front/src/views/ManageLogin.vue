@@ -287,5 +287,45 @@ button:focus {
   padding: 0;
 }
 
+@media (max-width: 600px) {
+  .login-form {
+    padding: 20px;
+    border-radius: 16px;
+    max-width: 70%;
+    margin: 0 auto;
+  }
+  .user__header{
+    margin-top: -8px;
+  }
 
+  .button-container {
+    flex-direction: column;
+    align-items: center;
+    margin-left: 0;
+  }
+
+  .custom-form-item {
+    margin-left: -38px;
+    width: 100%;
+  }
+
+  .custom-form-item-lable {
+    font-size: 16px;
+  }
+
+  .user__title {
+    font-size: 20px;
+  }
+
+  .menu-icon {
+    width: 50px;
+    height: 50px;
+  }
+}
+
+@media (min-width: 601px) {
+  .button-container {
+    flex-direction: row;
+}
+}
 </style>

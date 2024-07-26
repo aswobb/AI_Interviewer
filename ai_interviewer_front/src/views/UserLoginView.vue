@@ -10,14 +10,14 @@
                     <el-form-item prop="interviewerId">
                         <div class="custom-form-item">
                             <label class="custom-form-item-lable"> 面接ID</label>
-                            <el-input style="width: 250px;" v-model="ruleForm.interviewerId"></el-input>
+                            <el-input v-model="ruleForm.interviewerId"></el-input>
                         </div>
                     </el-form-item>
                     <el-form-item prop="interviewerName">
 
                         <div class="custom-form-item">
                             <label class="custom-form-item-lable"> 面接者氏名</label>
-                            <el-input style="width: 250px;" v-model="ruleForm.interviewerName" type="username"></el-input>
+                            <el-input v-model="ruleForm.interviewerName" type="username"></el-input>
                         </div>
                     </el-form-item>
                     <div class="button-container">
@@ -285,6 +285,52 @@ button:focus {
   width: 100%;
   margin-bottom: 8px;
   padding: 0;
+}
+
+
+@media (max-width: 600px) {
+  .login-form {
+    padding: 20px;
+    border-radius: 16px;
+    max-width: 70%;
+    margin: 0 auto;
+  }
+  .user__header{
+    margin-top: -8px;
+  }
+
+  .button-container {
+    flex-direction: column;
+    align-items: center;
+    margin-left: -50px;
+  }
+
+  .custom-form-item {
+    margin-left: -38px;
+    width: 100%;
+  }
+
+  .custom-form-item-lable {
+    font-size: 16px;
+    .el-input{
+        width: 174px;
+    }
+  }
+
+  .user__title {
+    font-size: 20px;
+  }
+
+  .menu-icon {
+    width: 50px;
+    height: 50px;
+  }
+}
+
+@media (min-width: 601px) {
+  .button-container {
+    flex-direction: row;
+}
 }
 
 </style>
